@@ -74,11 +74,13 @@ public class LoginActivity extends BaseActivity {
                     public void onNext(String s) {
                         try {
                             org.json.JSONObject result = new org.json.JSONObject(s);
+                            if (result.getInt("status") == 0) {
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                startActivity(intent);
+                            }
                             showToast(result.getString("message"));
-                            Intent intent = new Intent(LoginActivity.this,MainActivity.class);
-                            startActivity(intent);
                         } catch (JSONException e) {
-                            Log.e("login_error",e.toString());
+                            Log.e("login_error", e.toString());
                         }
                     }
                 });
