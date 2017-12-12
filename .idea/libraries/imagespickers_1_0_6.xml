@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="imagespickers-1.0.6">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.android/build-cache/1fec309a4cd387fb8dc0821f403d2ffc2984a3af/output/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.android/build-cache/1fec309a4cd387fb8dc0821f403d2ffc2984a3af/output/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/wrapper/dists/gradle-3.3-all/caches/modules-2/files-2.1/com.jaikydota.imagespickers/imagespickers/1.0.6/e5f6434d413c258dd15333cadc9bafc19ec73218/imagespickers-1.0.6-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

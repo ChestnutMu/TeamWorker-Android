@@ -1,0 +1,88 @@
+package cn.chestnut.mvvm.teamworker.http;
+
+import com.alibaba.fastjson.JSONObject;
+
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
+import java.util.zip.DataFormatException;
+
+import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
+import cn.chestnut.mvvm.teamworker.utils.JS;
+import cn.chestnut.mvvm.teamworker.utils.StringUtil;
+
+/**
+ * Copyright (c) 2017, Chestnut All rights reserved
+ * Author: Chestnut
+ * CreateTime：at 2017/12/10 20:49:36
+ * Description：网络请求回调实现
+ * Email: xiaoting233zhang@126.com
+ */
+
+public abstract class RQCallBack
+        implements AppCallBack<String> {
+    BaseActivity baseActivity;
+
+    public RQCallBack() {
+    }
+
+    public RQCallBack(BaseActivity baseActivity) {
+        this.baseActivity = baseActivity;
+    }
+
+    @Override
+    public void cb(String jsonStr) {
+        // 解析返回数据
+        JSONObject json = JSONObject.parseObject(jsonStr);
+        //注意：下面这句判断是否请求成功的代码需要根据根据返回数据做具体处理
+        boolean success = JS.getBoolean(json, "status", false);
+        if (success) {
+            if (baseActivity != null) {
+                String msg = JS.getString(json, "message");
+                if (!StringUtil.isBlank(msg))
+                    baseActivity.showToast(msg);
+                baseActivity.hideProgressDialog();
+            }
+            fail(json);
+            return;
+        }
+        success(json);
+    }
+
+    @Override
+    public void complete() {
+        if (baseActivity != null) {
+            baseActivity.hideProgressDialog();
+
+        }
+    }
+
+    @Override
+    public void before() {
+        if (baseActivity != null) {
+            baseActivity.showProgressDialog(baseActivity);
+        }
+    }
+
+    public abstract void success(JSONObject json);
+
+    public abstract void fail(JSONObject json);
+
+    @Override
+    public void error(Throwable error) {
+        if (baseActivity != null) {
+            baseActivity.hideProgressDialog();
+            if (error != null) {
+                if (error instanceof ConnectException) {
+                    baseActivity.showToast("服务器连接失败！");
+                } else if (error instanceof SocketTimeoutException) {
+                    baseActivity.showToast("连接超时!");
+                } else if (error instanceof DataFormatException) {
+                    baseActivity.showToast("数据格式异常!");
+                } else {
+                    baseActivity.showToast("请求异常!");
+                }
+            }
+
+        }
+    }
+}

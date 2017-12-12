@@ -1,0 +1,56 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion "26.0.0"
+    defaultConfig {
+        applicationId "cn.chestnet.mvvm.teamworker"
+        minSdkVersion 15
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0.1"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+        ndk {
+            abiFilters 'armeabi', 'armeabi-v7a', 'armeabi-v8a', 'x86', 'x86_64', 'mips', 'mips64'
+        }
+        dataBinding {
+            enabled = true
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:26+'
+    compile 'com.android.support:design:26+'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha7'
+    testCompile 'junit:junit:4.12'
+    //图片加载框架 picasso
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    //图片加载框架glide
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    //下拉刷新上拉加载
+    compile 'com.github.Aspsine:SwipeToLoadLayout:v1.0.4'
+    //拼音转换
+    compile 'com.belerweb:pinyin4j:2.5.0'
+    //图片选择器
+    compile 'com.jaikydota.imagespickers:imagespickers:1.0.6'
+
+    compile 'com.android.support:multidex:1.0.1'
+
+    //请求框架
+    compile 'com.alibaba:fastjson:1.1.64.android'
+    compile 'io.reactivex:rxjava:1.3.3'
+    compile 'io.reactivex:rxandroid:1.2.1'
+    compile 'com.squareup.okhttp:okhttp:2.7.5'
+    compile 'com.squareup.okio:okio:1.13.0'
+}
