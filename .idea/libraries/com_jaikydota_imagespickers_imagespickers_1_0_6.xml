@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="com.jaikydota.imagespickers:imagespickers-1.0.6">
     <CLASSES>
-      <root url="file://$USER_HOME$/.gradle/wrapper/dists/gradle-3.3-all/caches/transforms-1/files-1.1/imagespickers-1.0.6.aar/7f5f94b04afc10c3c4cc0e4cb78e4e44/res" />
-      <root url="jar://$USER_HOME$/.gradle/wrapper/dists/gradle-3.3-all/caches/transforms-1/files-1.1/imagespickers-1.0.6.aar/7f5f94b04afc10c3c4cc0e4cb78e4e44/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/imagespickers-1.0.6.aar/d54f004280e9297f3e63d26030b8062c/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/imagespickers-1.0.6.aar/d54f004280e9297f3e63d26030b8062c/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

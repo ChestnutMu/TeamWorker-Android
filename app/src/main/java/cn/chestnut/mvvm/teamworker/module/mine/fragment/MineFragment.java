@@ -1,4 +1,4 @@
-package cn.chestnut.mvvm.teamworker.module.checkattendance.fragment;
+package cn.chestnut.mvvm.teamworker.module.mine.fragment;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -10,7 +10,10 @@ import android.widget.TextView;
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.FragmentMineBinding;
 import cn.chestnut.mvvm.teamworker.main.common.BaseFragment;
+import cn.chestnut.mvvm.teamworker.main.common.LoginActivity;
+import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
 import cn.chestnut.mvvm.teamworker.module.checkattendance.activity.CheckAttendanceActivity;
+import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -55,11 +58,19 @@ public class MineFragment extends BaseFragment {
      * 添加监听器
      */
     private void addListener() {
-        binding.btnCheckAttendance.setOnClickListener(new View.OnClickListener() {
+        binding.llCheckAttendance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), CheckAttendanceActivity.class);
-                getActivity().startActivity(intent);
+                getActivity().startActivity(new Intent(getActivity(), CheckAttendanceActivity.class));
+            }
+        });
+        binding.llLogOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey("userId");
+                PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey("account");
+                PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey("token");
+                getActivity().startActivity(new Intent(getActivity(), LoginActivity.class));
             }
         });
     }

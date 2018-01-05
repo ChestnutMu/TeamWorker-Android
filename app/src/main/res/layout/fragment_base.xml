@@ -58,14 +58,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
-                    android:src="@mipmap/search"
+                    android:src="@mipmap/icon_search"
                     android:visibility="gone" />
 
                 <ImageView
                     android:id="@+id/add"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@mipmap/meetint_add"
+                    android:src="@mipmap/icon_add"
                     android:visibility="gone" />
             </LinearLayout>
         </RelativeLayout>

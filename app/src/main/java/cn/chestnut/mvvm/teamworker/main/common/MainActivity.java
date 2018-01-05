@@ -1,11 +1,5 @@
 package cn.chestnut.mvvm.teamworker.main.common;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -18,19 +12,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-
-import java.util.List;
-
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.ActivityMainBinding;
-import cn.chestnut.mvvm.teamworker.module.checkattendance.fragment.MineFragment;
+import cn.chestnut.mvvm.teamworker.module.mine.fragment.MineFragment;
 import cn.chestnut.mvvm.teamworker.module.massage.fragment.MessageFragment;
-import cn.chestnut.mvvm.teamworker.service.DataManager;
-import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
 import cn.chestnut.mvvm.teamworker.utils.PermissionsUtil;
-import cn.chestnut.mvvm.teamworker.widget.MyViewPager;
 
 /**
  * Copyright (c) 2017, Chestnut All rights reserved

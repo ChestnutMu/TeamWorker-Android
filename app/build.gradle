@@ -6,7 +6,7 @@ android {
         config {
             keyAlias 'teamworker'
             keyPassword 'deskchair'
-            storeFile file('/Users/caichaomin/Desktop/teamworkerkeystore')
+            storeFile file('libs/teamworkerkeystore')
             storePassword 'deskchair'
         }
     }
