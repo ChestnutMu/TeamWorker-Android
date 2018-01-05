@@ -58,8 +58,7 @@ public abstract class ViewPagerBaseActivity
 
         //动态设置标题栏数目
         binding.tab.setupWithViewPager(binding.childContainerView);
-        binding.tab.setSelectedTabIndicatorColor(getResources().getColor(R.color.index_red));
-        binding.tab.setTabTextColors(getResources().getColor(R.color.black), getResources().getColor(R.color.index_red));
+        binding.tab.setTabTextColors(getResources().getColor(R.color.text_black), getResources().getColor(R.color.appTheme));
         initTabs(binding.tab);
     }
 

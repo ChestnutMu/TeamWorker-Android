@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Team Worker</string>
+
+    <string name="fragment_message">消息</string>
+    <string name="fragment_work">工作</string>
+    <string name="fragment_mine">我的</string>
+
 </resources>

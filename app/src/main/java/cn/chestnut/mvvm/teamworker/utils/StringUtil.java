@@ -133,7 +133,6 @@ public class StringUtil {
         return !(string == null || "".equalsIgnoreCase(string) || "null".contains(string));
     }
 
-
     /**
      * string 转int
      *

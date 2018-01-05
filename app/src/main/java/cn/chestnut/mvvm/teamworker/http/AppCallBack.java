@@ -9,7 +9,7 @@ package cn.chestnut.mvvm.teamworker.http;
  */
 
 public interface AppCallBack<T> {
-	void cb(T obj);
+	void next(T response);
 
 	void error(Throwable error);
 

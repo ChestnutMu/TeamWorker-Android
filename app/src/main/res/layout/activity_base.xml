@@ -6,24 +6,24 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-
         <RelativeLayout
+            android:id="@+id/layout_title_bar"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:background="@color/colorPrimary">
 
             <LinearLayout
-                android:id="@+id/ll_back"
                 android:layout_width="40dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:orientation="vertical">
 
                 <ImageView
-                    android:id="@+id/back_btn"
+                    android:id="@+id/btn_back"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@mipmap/back" />
+
             </LinearLayout>
 
 
@@ -42,18 +42,22 @@
             <LinearLayout
                 android:id="@+id/add_button_layout"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="10dp"
                 android:background="@null"
-                android:orientation="horizontal">
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp">
 
                 <TextView
                     android:id="@+id/edit"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="30dp"
                     android:text="编辑"
                     android:textColor="@color/white"
                     android:textSize="14sp"
@@ -62,8 +66,10 @@
                 <ImageView
                     android:id="@+id/search"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="30dp"
                     android:src="@mipmap/search"
                     android:visibility="gone" />
 
@@ -71,7 +77,10 @@
                 <ImageView
                     android:id="@+id/add"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="30dp"
                     android:src="@mipmap/meetint_add"
                     android:visibility="gone" />
             </LinearLayout>

@@ -14,20 +14,19 @@ import static android.content.Context.MODE_PRIVATE;
  */
 
 
-public class PreferenceUtil
-{
+public class PreferenceUtil {
     private static PreferenceUtil instance;
     public static String TOKEN;
 
     private Context mContext;
 
-    private PreferenceUtil(Context mContext){
-        this.mContext=mContext;
+    private PreferenceUtil(Context mContext) {
+        this.mContext = mContext;
     }
 
-    public static PreferenceUtil getInstances(Context context){
-        if(instance==null){
-            instance=new PreferenceUtil(context);
+    public static PreferenceUtil getInstances(Context context) {
+        if (instance == null) {
+            instance = new PreferenceUtil(context);
         }
         return instance;
     }

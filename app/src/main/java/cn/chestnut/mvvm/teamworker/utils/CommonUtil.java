@@ -37,10 +37,10 @@ public class CommonUtil {
         }
         if (toast != null) {
             toast.setText(msg);
-            toast.setDuration(Toast.LENGTH_LONG);
+            toast.setDuration(Toast.LENGTH_SHORT);
         } else {
-            toast = Toast.makeText(context, msg, Toast.LENGTH_LONG);
-            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast = Toast.makeText(context, msg, Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.BOTTOM, 0, 20);
         }
         toast.show();
     }

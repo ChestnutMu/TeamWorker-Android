@@ -13,9 +13,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import cn.chestnut.mvvm.teamworker.R;
+import cn.chestnut.mvvm.teamworker.core.OnHandlerSessionListener;
+import cn.chestnut.mvvm.teamworker.core.TeamWorkerMessageHandler;
 import cn.chestnut.mvvm.teamworker.databinding.ActivityBaseBinding;
 import cn.chestnut.mvvm.teamworker.service.DataManager;
+import cn.chestnut.mvvm.teamworker.socket.ReceiverProtocol;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
+import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.ProgressDialogShow;
 
 /**
@@ -26,22 +30,24 @@ import cn.chestnut.mvvm.teamworker.utils.ProgressDialogShow;
  * Email: xiaoting233zhang@126.com
  */
 
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity implements OnHandlerSessionListener {
 
-    ActivityBaseBinding binding;
-    /**
-     * 需加载的activity布局资源
-     */
-//    private LinearLayout btn_back;
+    private ActivityBaseBinding binding;
 
-    LayoutInflater inflater;
+    private LayoutInflater inflater;
+
+    private TeamWorkerMessageHandler mHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mHandler = MyApplication.getWuYuMessageHandler();
+        mHandler.addOnTWHandlerSessionListener(this);
+
         inflater = getLayoutInflater();
         CommonUtil.setBarTheme(BaseActivity.this);//设置状态栏
-        binding= DataBindingUtil.setContentView(this, R.layout.activity_base);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_base);
         setBaseTitle(binding.baseTitleTv);
         initViews();
 
@@ -54,15 +60,19 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     protected void initViews() {
 
-        binding.backBtn.setOnClickListener(new BackOnClickListener());
+        binding.btnBack.setOnClickListener(new BackOnClickListener());
         addContainerView(binding.baseContainerLayout, inflater);
-//        edit = (TextView) findViewById(R.id.edit);
-//        add = (ImageView) findViewById(R.id.add);
-//        search = (ImageView) findViewById(R.id.search);
         setButton(binding.edit, binding.add, binding.search);
 
     }
 
+    /**
+     * 设置是否显示标题栏
+     */
+
+    public void setTitleBarVisible(boolean isVisible) {
+        binding.layoutTitleBar.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+    }
 
     /**
      * 显示右上角按钮，由子activity根据具体情况重写
@@ -113,8 +123,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     /**
      * 显示进度条对话框
-     *
-     *
      */
 
     public void showProgressDialog(BaseActivity baseActivity) {
@@ -131,16 +139,74 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public void showToast(String stringRes) {
         try {
-            CommonUtil.showToast(stringRes,BaseActivity.this);
+            CommonUtil.showToast(stringRes, BaseActivity.this);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
+
+    /**
+     * 发送请求长连接服务器
+     */
+    synchronized public void executeRequest(int msgId, String obj) {
+
+        if (CommonUtil.checkNetState(this)) {
+            if (mHandler != null)
+                mHandler.send(msgId, obj);
+        } else {
+            CommonUtil.showToast("网络不太好哦", this);
+        }
+
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         DataManager.clearActivity();
+        mHandler.removeTWHandlerSessionListener(this);
+    }
+
+    /**
+     * 长连接登陆
+     */
+    public void userLogin() {
+        mHandler.userLogin();
+    }
+
+    @Override
+    public void onSessionMessage(int msgId, Object object) {
+
+        switch (msgId) {
+            case ReceiverProtocol.USER_MESSAGE:
+
+                break;
+
+            default:
+                break;
+        }
+
+    }
+
+    @Override
+    public void onSessionMessageException(int msgId, Exception exception) {
+        Log.d(exception == null ? "exception is null !" : "" + exception.getMessage());
+
+    }
+
+    @Override
+    public void onSessionClosed() {
+
+    }
+
+    @Override
+    public void onSessionConnect() {
+
+    }
+
+    @Override
+    public void onSessionTimeout() {
+
     }
 
 }

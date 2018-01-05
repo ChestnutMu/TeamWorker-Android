@@ -1,13 +1,36 @@
 package cn.chestnut.mvvm.teamworker.main.common;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.databinding.DataBindingUtil;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
+import java.util.List;
+
 import cn.chestnut.mvvm.teamworker.R;
+import cn.chestnut.mvvm.teamworker.databinding.ActivityMainBinding;
+import cn.chestnut.mvvm.teamworker.module.checkattendance.fragment.MineFragment;
+import cn.chestnut.mvvm.teamworker.module.massage.fragment.MessageFragment;
 import cn.chestnut.mvvm.teamworker.service.DataManager;
+import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
 import cn.chestnut.mvvm.teamworker.utils.PermissionsUtil;
+import cn.chestnut.mvvm.teamworker.widget.MyViewPager;
 
 /**
  * Copyright (c) 2017, Chestnut All rights reserved
@@ -19,33 +42,103 @@ import cn.chestnut.mvvm.teamworker.utils.PermissionsUtil;
 
 public class MainActivity extends BaseActivity {
 
-    private View view;
+    private ActivityMainBinding binding;
+    //Tab 文字
+    private final int[] TAB_TITLES = new int[]{R.string.fragment_message, R.string.fragment_work, R.string.fragment_mine};
+    //Tab 图片
+    private final int[] TAB_IMGS = new int[]{R.drawable.tab_message_selector, R.drawable.tab_work_selector, R.drawable.tab_mine_selector};
+    //Fragment 数组
+    private final Fragment[] TAB_FRAGMENTS = new Fragment[]{new MessageFragment(), new MessageFragment(), new MineFragment()};
+    //Tab 数目
+    private final int COUNT = TAB_TITLES.length;
+    private MyViewPagerAdapter mAdapter;
+
     @Override
     protected void setBaseTitle(TextView titleView) {
-        titleView.setText("Team Worker");
+        titleView.setText("首页");
     }
 
     @Override
     protected void addContainerView(ViewGroup viewGroup, LayoutInflater inflater) {
-        view = inflater.inflate(R.layout.activity_main, null);
-        initData();
+        binding = DataBindingUtil.inflate(inflater,R.layout.activity_main,viewGroup,true);
         initView();
-        viewGroup.addView(view);
+        initData();
     }
+
+
 
     private void initData() {
         PermissionsUtil.checkAndRequestPermissions(MainActivity.this);
     }
 
     private void initView() {
+        setTitleBarVisible(false);//设置BaseActivity定义的标题栏不可见
+        setTabs(binding.tabLayout, this.getLayoutInflater(), TAB_TITLES, TAB_IMGS);
+        mAdapter = new MyViewPagerAdapter(getSupportFragmentManager());
+        binding.viewPager.setOffscreenPageLimit(3);
+        binding.viewPager.setOnTouchListener(new View.OnTouchListener() {//禁止滑动
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return true;
+            }
+        });
+        binding.viewPager.setAdapter(mAdapter);
+        binding.viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(binding.tabLayout));
+        binding.tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                binding.viewPager.setCurrentItem(tab.getPosition());
+            }
 
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 
     /**
-     * 获取apk更新信息
+     * @description: 设置添加Tab
      */
-    private void getUpdateInfo(String url) {
-        DataManager.getInstance(MainActivity.this).getUpdateInfo(url);
+    private void setTabs(TabLayout tabLayout, LayoutInflater inflater, int[] tabTitlees, int[] tabImgs) {
+        for (int i = 0; i < tabImgs.length; i++) {
+            TabLayout.Tab tab = tabLayout.newTab();
+            View view = inflater.inflate(R.layout.tab_custom, null);
+            tab.setCustomView(view);
+
+            TextView tvTitle = view.findViewById(R.id.tv_tab);
+            tvTitle.setText(tabTitlees[i]);
+            ImageView imgTab = view.findViewById(R.id.img_tab);
+            imgTab.setImageResource(tabImgs[i]);
+            tabLayout.addTab(tab);
+
+        }
     }
+
+    /**
+     * @description: ViewPager 适配器
+     */
+    private class MyViewPagerAdapter extends FragmentPagerAdapter {
+        public MyViewPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return TAB_FRAGMENTS[position];
+        }
+
+        @Override
+        public int getCount() {
+            return COUNT;
+        }
+    }
+
+
 
 }

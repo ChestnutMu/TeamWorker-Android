@@ -41,7 +41,7 @@ public class ProgressDialogShow {
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT));// 设置布局
         loadingDialog.show();
-        ImageView spaceshipImage = v.findViewById(R.id.img);
+        ImageView spaceshipImage = v.findViewById(R.id.iv_loading);
         spaceshipImage.setImageResource(R.drawable.loading_animation);
         animationDrawable = (AnimationDrawable) spaceshipImage.getDrawable();
         animationDrawable.start();

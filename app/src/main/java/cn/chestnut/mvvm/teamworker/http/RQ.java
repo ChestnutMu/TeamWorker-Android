@@ -1,30 +1,26 @@
 package cn.chestnut.mvvm.teamworker.http;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.os.Environment;
-
 import com.alibaba.fastjson.JSONObject;
+
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
-import cn.chestnut.mvvm.teamworker.service.Constant;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
+
+import com.google.gson.Gson;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.MultipartBuilder;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.net.URLDecoder;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import cn.chestnut.mvvm.teamworker.utils.Log;
 import rx.Observable;
 import rx.Observable.OnSubscribe;
 import rx.Observer;
@@ -41,6 +37,7 @@ import rx.schedulers.Schedulers;
  */
 
 public class RQ {
+    private static Gson gson=new Gson();
     public static OkHttpClient CLIENT = null;
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
@@ -61,7 +58,7 @@ public class RQ {
                 JSONObject temp = new JSONObject();
                 temp.put("success", false);
                 temp.put("message", "无网络连接！");
-                app.cb(temp.toString());
+                app.next(temp.toString());
                 return;
             }
         } else {
@@ -142,7 +139,7 @@ public class RQ {
                         @Override
                         public void onNext(String result) {
                             if (app != null) {
-                                app.cb(result);
+                                app.next(result);
                             }
                         }
                     });
@@ -150,13 +147,13 @@ public class RQ {
     }
 
     public final static void post(final String url, List<String> params,
-                                  List<String> values, final AppCallBack<String> app) {
+                                  List<Object> values, final AppCallBack<String> app) {
         if (!CommonUtil.checkNetState(MyApplication.getInstance())) {
             if (app != null) {
                 JSONObject temp = new JSONObject();
                 temp.put("status", false);
                 temp.put("message", "无网络连接！");
-                app.cb(temp.toString());
+                app.next(temp.toString());
                 return;
             }
         } else {
@@ -164,8 +161,8 @@ public class RQ {
             FormEncodingBuilder builder = new FormEncodingBuilder();
             for (int i = 0; i < params.size(); i++) {
                 String p = params.get(i);
-                String v = values.get(i);
-                builder.add(p, v);
+                Object v = values.get(i);
+                builder.add(p, v.toString());
             }
             if (app != null) {
                 app.before();
@@ -236,7 +233,105 @@ public class RQ {
                         @Override
                         public void onNext(String result) {
                             if (app != null) {
-                                app.cb(result);
+                                app.next(result);
+                            }
+                        }
+                    });
+        }
+
+    }
+
+    public final static <T> void post(final String url, Map<String, Object> params, final AppCallBack<ApiResponse<T>> app) {
+        Log.d("params = "+params.toString());
+        if (!CommonUtil.checkNetState(MyApplication.getInstance())) {
+            if (app != null) {
+                ApiResponse<T> temp = new ApiResponse<>();
+                temp.setStatus(HttpResponseCodes.FAILED);
+                temp.setMessage("无网络连接！");
+                app.next(temp);
+                return;
+            }
+        } else {
+            getInstance();
+            FormEncodingBuilder builder = new FormEncodingBuilder();
+            for (Map.Entry<String, Object> entry : params.entrySet()) {
+                builder.add(entry.getKey(), entry.getValue().toString());
+            }
+            if (app != null) {
+                app.before();
+            }
+            final RequestBody body = builder.build();
+
+            Observable.create(new OnSubscribe<ApiResponse<T>>() {
+                @Override
+                public void call(Subscriber<? super ApiResponse<T>> subscriber) {
+                    try {
+                        Request request = new Request.Builder().url(url)
+                                .post(body).build();
+                        Response response = CLIENT.newCall(request)
+                                .execute();
+                        int code = response.code();
+                        if (code != 200) {
+
+                            ApiResponse<T> temp = new ApiResponse<>();
+                            temp.setStatus(HttpResponseCodes.FAILED);
+                            temp.setMessage("服务器请求失败！");
+                            subscriber.onNext(temp);
+                            subscriber.onCompleted();
+                            response.body().close();
+                        } else {
+                            String reslutTextOrg = response.body().string()
+                                    .trim();
+                            String reslut = "";
+                            try {
+                                reslut = URLDecoder.decode(reslutTextOrg,
+                                        "utf-8");
+                            } catch (IllegalArgumentException e) {
+                                reslut = reslutTextOrg;
+                            }
+                            Log.d("result = "+reslut);
+                            ParameterizedType type=(ParameterizedType)app.getClass().getGenericInterfaces()[0];
+                            Type typeOfT=type.getActualTypeArguments()[0];
+                            ApiResponse<T> temp = gson.fromJson(reslut,typeOfT);
+                            subscriber.onNext(temp);
+                            subscriber.onCompleted();
+                        }
+
+                    } catch (Exception e) {
+                        try {
+                            ApiResponse<T> temp = new ApiResponse<>();
+                            temp.setStatus(HttpResponseCodes.FAILED);
+                            temp.setMessage("网络断开！");
+                            subscriber.onNext(temp);
+                            subscriber.onError(e);
+                            subscriber.onCompleted();
+                        } catch (Exception e2) {
+                            e2.printStackTrace();
+                        }
+                    }
+                }
+            }).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<ApiResponse<T>>() {
+                        @Override
+                        public void onCompleted() {
+                            if (app != null) {
+                                app.complete();
+                            }
+                        }
+
+                        @Override
+                        public void onError(Throwable t) {
+                            t.printStackTrace();
+                            if (app != null) {
+                                app.error(t);
+                            }
+                        }
+
+                        @Override
+                        public void onNext(ApiResponse<T> result) {
+                            if (app != null) {
+                                app.next(result);
                             }
                         }
                     });
@@ -250,7 +345,7 @@ public class RQ {
                 JSONObject temp = new JSONObject();
                 temp.put("success", false);
                 temp.put("message", "无网络连接！");
-                app.cb(temp.toString());
+                app.next(temp.toString());
                 return;
             }
         } else {
@@ -321,7 +416,7 @@ public class RQ {
                         @Override
                         public void onNext(String result) {
                             if (app != null) {
-                                app.cb(result);
+                                app.next(result);
                             }
                         }
                     });
@@ -336,7 +431,7 @@ public class RQ {
                 JSONObject temp = new JSONObject();
                 temp.put("status", false);
                 temp.put("message", "无网络连接！");
-                app.cb(temp.toString());
+                app.next(temp.toString());
                 return;
             }
         } else {
@@ -417,7 +512,7 @@ public class RQ {
                         @Override
                         public void onNext(String result) {
                             if (app != null) {
-                                app.cb(result);
+                                app.next(result);
                             }
                         }
                     });
@@ -425,246 +520,5 @@ public class RQ {
 
     }
 
-    /**
-     * 上传文件
-     *
-     * @param url
-     * @param paramsMap
-     * @param app
-     * @throws Exception
-     */
 
-    public final static void uploadFile(final String url, final HashMap<String, Object> paramsMap, final RQCallBack app) throws Exception {
-        getInstance();
-        if (app != null) {
-            app.before();
-        }
-        Observable.create(new OnSubscribe<String>() {
-            @Override
-            public void call(Subscriber<? super String> subscriber) {
-                try {
-                    MultipartBuilder builder = new MultipartBuilder();
-                    builder.type(MultipartBuilder.FORM);
-                    //追加参数
-                    for (String key : paramsMap.keySet()) {
-                        Object object = paramsMap.get(key);
-                        if (!(object instanceof File)) {
-                            builder.addFormDataPart(key, object.toString());
-                        } else {
-                            File file = (File) object;
-                            builder.addFormDataPart(key, file.getName(), RequestBody.create(null, file));
-                        }
-                    }
-                    //创建RequestBody
-                    RequestBody requestBody = builder.build();
-                    final Request request = new Request.Builder()
-                            .url(url)
-                            .post(requestBody).build();
-                    Response response = CLIENT.newCall(request)
-                            .execute();
-                    if (!response.isSuccessful()) {
-                        JSONObject temp = new JSONObject();
-                        temp.put("status", false);
-                        temp.put("message", "请求服务器失败！");
-                        subscriber.onNext(temp.toJSONString());
-                        subscriber.onCompleted();
-                    } else {
-                        String reslut = response.body().string().trim();
-                        subscriber.onNext(reslut);
-                        subscriber.onCompleted();
-                    }
-
-                } catch (Exception e) {
-                    try {
-                        JSONObject temp = new JSONObject();
-                        temp.put("status", false);
-                        temp.put("message", "网络断开！");
-                        subscriber.onNext(temp.toJSONString());
-                        subscriber.onError(e);
-                        subscriber.onCompleted();
-                    } catch (Exception e2) {
-                        e2.printStackTrace();
-                    }
-                }
-            }
-        }).subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<String>() {
-                    @Override
-                    public void onCompleted() {
-                        if (app != null) {
-                            app.complete();
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-                        t.printStackTrace();
-                        if (app != null) {
-                            app.error(t);
-                        }
-                    }
-
-                    @Override
-                    public void onNext(String result) {
-                        if (app != null) {
-                            app.cb(result);
-                        }
-                    }
-                });
-    }
-
-
-    /**
-     * 下载apk
-     *
-     * @param downLoadUlr
-     * @param app
-     */
-    public final static void downLoadAPK(final Activity activity, String downLoadUlr, final ProgressDialog progressDialog, final RQCallBack app) {
-        if (!CommonUtil.checkNetState(MyApplication.getInstance())) {
-            if (app != null) {
-                JSONObject temp = new JSONObject();
-                temp.put("status", false);
-                temp.put("message", "无网络连接！");
-                app.cb(temp.toString());
-                return;
-            }
-        }
-        getInstance();
-        if (app != null) {
-            app.before();
-        }
-        final String url = downLoadUlr;
-        Observable
-                .create(new OnSubscribe<String>() {
-                    @Override
-                    public void call(Subscriber<? super String> subscriber) {
-                        try {
-                            Request request = new Request.Builder().url(url)
-                                    .build();
-                            Response response = CLIENT.newCall(request)
-                                    .execute();
-                            int code = response.code();
-                            if (code != 200) {
-                                response.body().close();
-                                JSONObject temp = new JSONObject();
-                                temp.put("status", false);
-                                temp.put("message", "请求服务器失败！");
-                                subscriber.onNext(temp.toJSONString());
-                                subscriber.onCompleted();
-
-                            } else {
-                                InputStream is = null;//输入流
-                                FileOutputStream fos = null;//输出流
-                                try {
-                                    is = response.body().byteStream();//获取输入流
-                                    final long total = response.body().contentLength();//获取文件大小
-                                    activity.runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            progressDialog.setMax((int) total);//为progressDialog设置大小
-                                        }
-                                    });
-
-                                    if (is != null) {
-                                        File file = new File(Environment.getExternalStorageDirectory(), Constant.PreferenceConstants.APK_NAME);// 设置路径
-                                        fos = new FileOutputStream(file);
-                                        byte[] buf = new byte[1024];
-                                        int ch = -1;
-                                        int process = 0;
-                                        while ((ch = is.read(buf)) != -1) {
-                                            fos.write(buf, 0, ch);
-                                            process += ch;
-                                            final int Process = process;
-                                            activity.runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    progressDialog.setProgress(Process); //实时更新进度
-                                                }
-                                            });
-                                        }
-
-                                    }
-                                    fos.flush();
-                                    // 下载完成
-                                    if (fos != null) {
-                                        fos.close();
-                                    }
-                                    JSONObject temp = new JSONObject();
-                                    temp.put("status", true);
-                                    temp.put("message", "下载成功！");
-                                    subscriber.onNext(temp.toJSONString());
-                                    subscriber.onCompleted();
-                                } catch (Exception e) {
-                                    if (app != null) {
-                                        JSONObject temp = new JSONObject();
-                                        temp.put("status", false);
-                                        temp.put("message", "下载失败");
-                                        app.cb(temp.toString());
-                                    }
-
-                                } finally {
-                                    try {
-                                        if (is != null)
-                                            is.close();
-                                    } catch (IOException e) {
-                                        if (app != null) {
-                                            JSONObject temp = new JSONObject();
-                                            temp.put("status", false);
-                                            temp.put("message", "下载失败");
-                                            app.cb(temp.toString());
-                                        }
-                                    }
-                                    try {
-                                        if (fos != null)
-                                            fos.close();
-                                    } catch (IOException e) {
-                                        if (app != null) {
-                                            JSONObject temp = new JSONObject();
-                                            temp.put("status", false);
-                                            temp.put("message", "下载失败");
-                                            app.cb(temp.toString());
-                                        }
-                                    }
-                                }
-                            }
-
-                        } catch (Exception e) {
-                            JSONObject temp = new JSONObject();
-                            temp.put("status", false);
-                            temp.put("message", "网络断开");
-                            subscriber.onNext(temp.toJSONString());
-                            subscriber.onError(e);
-                            subscriber.onCompleted();
-
-                        }
-                    }
-                }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<String>() {
-                    @Override
-                    public void onCompleted() {
-                        if (app != null) {
-                            app.complete();
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-                        t.printStackTrace();
-                        if (app != null) {
-                            app.error(t);
-                        }
-                    }
-
-                    @Override
-                    public void onNext(String result) {
-                        if (app != null) {
-                            app.cb(result);
-                        }
-                    }
-                });
-
-    }
 }
