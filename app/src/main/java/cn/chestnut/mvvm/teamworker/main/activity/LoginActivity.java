@@ -1,14 +1,15 @@
-package cn.chestnut.mvvm.teamworker.main.common;
+package cn.chestnut.mvvm.teamworker.main.activity;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,18 +18,14 @@ import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.ActivityLoginBinding;
 import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
-import cn.chestnut.mvvm.teamworker.http.HttpResponseCodes;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
-import cn.chestnut.mvvm.teamworker.http.RQCallBack;
 import cn.chestnut.mvvm.teamworker.main.bean.User;
-import cn.chestnut.mvvm.teamworker.module.massage.activity.ChatPersonalActivity;
-import cn.chestnut.mvvm.teamworker.service.DataManager;
+import cn.chestnut.mvvm.teamworker.http.RequestManager;
+import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
+import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
-import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 import cn.chestnut.mvvm.teamworker.utils.StringUtil;
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Copyright (c) 2017, Chestnut All rights reserved
@@ -51,61 +48,21 @@ public class LoginActivity extends BaseActivity {
     protected void addContainerView(ViewGroup viewGroup, LayoutInflater inflater) {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login);
         initView();
-        initData();
         addListener();
     }
 
-    private void initData() {
-    }
-
     private void initView() {
-        checkRememberLogin();
-    }
-
-    private void checkRememberLogin() {
-        String userId = PreferenceUtil.getInstances(this).getPreferenceString("userId");
-        String token = PreferenceUtil.getInstances(this).getPreferenceString("token");
-        Map<String, Object> params = new HashMap<>();
-        params.put("userId", userId);
-        params.put("token", token);
-        DataManager.getInstance(this).executeRequest(HttpUrls.REMEMBER_ME, params, new AppCallBack<ApiResponse<User>>() {
-
-            @Override
-            public void next(ApiResponse<User> response) {
-                if (response.isSuccess()) {
-                    PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("userId", response.getData().getUserId());
-                    PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("account", response.getData().getAccount());
-                    PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("token", response.getData().getToken());
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                    userLogin();
-                }
-                hideProgressDialog();
-
-            }
-
-            @Override
-            public void error(Throwable error) {
-
-                hideProgressDialog();
-            }
-
-            @Override
-            public void complete() {
-
-                hideProgressDialog();
-            }
-
-            @Override
-            public void before() {
-                showProgressDialog(LoginActivity.this);
-            }
-        });
+        setTranslucentStatus(true);
+        if (PreferenceUtil.getInstances(MyApplication.getInstance()).getPreferenceBoolean("isShowLoginConflict")) {
+            showDoubleLoginDialog();
+            PreferenceUtil.getInstances(MyApplication.getInstance()).savePreferenceBoolean("isShowLoginConflict", false);
+        } else {
+            checkRememberLogin();
+        }
     }
 
     private void addListener() {
-        binding.ivLogin.setOnClickListener(new View.OnClickListener() {
+        binding.tvLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String account = binding.etAccount.getText().toString();
@@ -117,16 +74,88 @@ public class LoginActivity extends BaseActivity {
                 }
             }
         });
+
+        binding.tvRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+            }
+        });
+
+        //点击输入框外则隐藏软键盘
+        binding.flParentLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InputMethodManager imm = (InputMethodManager)
+                        getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+            }
+        });
+    }
+
+    private void showDoubleLoginDialog() {
+        new AlertDialog.Builder(LoginActivity.this)
+                .setTitle("下线通知")
+                .setMessage("已在其他设备登录")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .create()
+                .show();
     }
 
     /**
-     * 登陆
+     * token验证登录
+     */
+    private void checkRememberLogin() {
+        String userId = PreferenceUtil.getInstances(this).getPreferenceString("userId");
+        String token = PreferenceUtil.getInstances(this).getPreferenceString("token");
+        if (StringUtil.isEmpty(userId) || StringUtil.isEmpty(token)) {
+            return;
+        }
+        Map<String, Object> params = new HashMap<>();
+        params.put("userId", userId);
+        params.put("token", token);
+        showProgressDialog(this);
+        RequestManager.getInstance(this).executeRequest(HttpUrls.REMEMBER_ME, params, new AppCallBack<ApiResponse<User>>() {
+            @Override
+            public void next(ApiResponse<User> response) {
+                if (response.isSuccess()) {
+                    PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("userId", response.getData().getUserId());
+                    PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("account", response.getData().getAccount());
+                    PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("token", response.getData().getToken());
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                    userLogin();
+                } else {
+                    showToast(response.getMessage());
+                }
+            }
+
+            @Override
+            public void error(Throwable error) {
+                hideProgressDialog();
+            }
+
+            @Override
+            public void complete() {
+                hideProgressDialog();
+            }
+        });
+    }
+
+    /**
+     * 账号密码登陆
      */
     private void login(String account, String password) {
         Map<String, Object> params = new HashMap<>();
         params.put("account", account);
         params.put("password", password);
-        DataManager.getInstance(this).executeRequest(HttpUrls.LOGIN, params, new AppCallBack<ApiResponse<User>>() {
+        showProgressDialog(this);
+        RequestManager.getInstance(this).executeRequest(HttpUrls.LOGIN, params, new AppCallBack<ApiResponse<User>>() {
 
             @Override
             public void next(ApiResponse<User> response) {
@@ -141,27 +170,18 @@ public class LoginActivity extends BaseActivity {
                 } else {
                     showToast(response.getMessage());
                 }
-                hideProgressDialog();
             }
 
             @Override
             public void error(Throwable error) {
-
                 hideProgressDialog();
             }
 
             @Override
             public void complete() {
-
                 hideProgressDialog();
-            }
-
-            @Override
-            public void before() {
-                showProgressDialog(LoginActivity.this);
             }
         });
 
     }
-
 }

@@ -23,7 +23,7 @@ public class MyApplication extends android.app.Application {
     private static TeamWorkerMessageHandler mHandler;
 
 
-    public static TeamWorkerMessageHandler getWuYuMessageHandler() {
+    public static TeamWorkerMessageHandler getTeamWorkerMessageHandler() {
         if (mHandler == null) {
             mHandler = TeamWorkerMessageHandler.getInstance();
         }

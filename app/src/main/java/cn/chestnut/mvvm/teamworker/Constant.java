@@ -1,10 +1,10 @@
-package cn.chestnut.mvvm.teamworker.service;
+package cn.chestnut.mvvm.teamworker;
 
 /**
  * Copyright (c) 2017, Chestnut All rights reserved
  * Author: Chestnut
  * CreateTime：at 2017/12/10 20:49:36
- * Description：初始化常量
+ * Description：常量
  * Email: xiaoting233zhang@126.com
  */
 
@@ -15,6 +15,9 @@ public class Constant {
 
         public static final String ACTION_GET_UPDATE_INFO_SUCCESS = "action_get_update_info_success";//获取更新信息成功
         public static final String ACTION_GET_UPDATE_INFO_FAILE = "action_get_update_info_fail";//获取更新信息失败
+
+        public static final String ACTION_GET_NEW_MESSAGE = "action_get_new_message";//收到一条新消息
+
     }
 
     //传值常量类
@@ -27,7 +30,6 @@ public class Constant {
     public class PreferenceConstants {
         public static final String APK_NAME = "TeamWorker.apk";
     }
-
 
 
 }

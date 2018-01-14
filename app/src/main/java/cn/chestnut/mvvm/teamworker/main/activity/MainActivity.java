@@ -1,4 +1,4 @@
-package cn.chestnut.mvvm.teamworker.main.common;
+package cn.chestnut.mvvm.teamworker.main.activity;
 
 import android.databinding.DataBindingUtil;
 import android.support.design.widget.TabLayout;
@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -14,8 +13,12 @@ import android.widget.TextView;
 
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.ActivityMainBinding;
+import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.module.mine.fragment.MineFragment;
 import cn.chestnut.mvvm.teamworker.module.massage.fragment.MessageFragment;
+import cn.chestnut.mvvm.teamworker.module.work.fragment.WorkFragment;
+import cn.chestnut.mvvm.teamworker.socket.ReceiverProtocol;
+import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PermissionsUtil;
 
 /**
@@ -34,7 +37,7 @@ public class MainActivity extends BaseActivity {
     //Tab 图片
     private final int[] TAB_IMGS = new int[]{R.drawable.tab_message_selector, R.drawable.tab_work_selector, R.drawable.tab_mine_selector};
     //Fragment 数组
-    private final Fragment[] TAB_FRAGMENTS = new Fragment[]{new MessageFragment(), new MessageFragment(), new MineFragment()};
+    private final Fragment[] TAB_FRAGMENTS = new Fragment[]{new MessageFragment(), new WorkFragment(), new MineFragment()};
     //Tab 数目
     private final int COUNT = TAB_TITLES.length;
     private MyViewPagerAdapter mAdapter;
@@ -51,7 +54,19 @@ public class MainActivity extends BaseActivity {
         initData();
     }
 
+    @Override
+    public void onSessionMessage(int msgId, Object object) {
 
+        switch (msgId) {
+            case ReceiverProtocol.RECEIVE_NEW_MESSAGE:
+
+                break;
+
+            default:
+                break;
+        }
+
+    }
 
     private void initData() {
         PermissionsUtil.checkAndRequestPermissions(MainActivity.this);
@@ -62,12 +77,6 @@ public class MainActivity extends BaseActivity {
         setTabs(binding.tabLayout, this.getLayoutInflater(), TAB_TITLES, TAB_IMGS);
         mAdapter = new MyViewPagerAdapter(getSupportFragmentManager());
         binding.viewPager.setOffscreenPageLimit(3);
-        binding.viewPager.setOnTouchListener(new View.OnTouchListener() {//禁止滑动
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                return true;
-            }
-        });
         binding.viewPager.setAdapter(mAdapter);
         binding.viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(binding.tabLayout));
         binding.tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {

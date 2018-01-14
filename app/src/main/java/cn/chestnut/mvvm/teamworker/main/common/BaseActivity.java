@@ -1,8 +1,11 @@
 package cn.chestnut.mvvm.teamworker.main.common;
 
 import android.annotation.TargetApi;
+import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,11 +15,15 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.Serializable;
+
+import cn.chestnut.mvvm.teamworker.Constant;
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.core.OnHandlerSessionListener;
 import cn.chestnut.mvvm.teamworker.core.TeamWorkerMessageHandler;
 import cn.chestnut.mvvm.teamworker.databinding.ActivityBaseBinding;
-import cn.chestnut.mvvm.teamworker.service.DataManager;
+import cn.chestnut.mvvm.teamworker.http.RequestManager;
+import cn.chestnut.mvvm.teamworker.module.massage.bean.Message;
 import cn.chestnut.mvvm.teamworker.socket.ReceiverProtocol;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
 import cn.chestnut.mvvm.teamworker.utils.Log;
@@ -42,7 +49,7 @@ public abstract class BaseActivity extends AppCompatActivity implements OnHandle
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mHandler = MyApplication.getWuYuMessageHandler();
+        mHandler = MyApplication.getTeamWorkerMessageHandler();
         mHandler.addOnTWHandlerSessionListener(this);
 
         inflater = getLayoutInflater();
@@ -92,7 +99,7 @@ public abstract class BaseActivity extends AppCompatActivity implements OnHandle
      * @param on
      */
     @TargetApi(19)
-    private void setTranslucentStatus(boolean on) {
+    public void setTranslucentStatus(boolean on) {
         Window win = getWindow();
         WindowManager.LayoutParams winParams = win.getAttributes();
         final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
@@ -125,8 +132,8 @@ public abstract class BaseActivity extends AppCompatActivity implements OnHandle
      * 显示进度条对话框
      */
 
-    public void showProgressDialog(BaseActivity baseActivity) {
-        ProgressDialogShow.showProgress(baseActivity);
+    public void showProgressDialog(Context context) {
+        ProgressDialogShow.showProgress(context);
 
     }
 
@@ -163,7 +170,7 @@ public abstract class BaseActivity extends AppCompatActivity implements OnHandle
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        DataManager.clearActivity();
+        RequestManager.clearActivity();
         mHandler.removeTWHandlerSessionListener(this);
     }
 
@@ -178,8 +185,7 @@ public abstract class BaseActivity extends AppCompatActivity implements OnHandle
     public void onSessionMessage(int msgId, Object object) {
 
         switch (msgId) {
-            case ReceiverProtocol.USER_MESSAGE:
-
+            case ReceiverProtocol.RECEIVE_NEW_MESSAGE:
                 break;
 
             default:

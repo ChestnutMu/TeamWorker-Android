@@ -48,7 +48,6 @@ public class ProcessPhotoUtils {
 
     /**
      * @desc 点击添加图片按钮时调用，弹出对话框供用户选择照片的获取方式
-     * @Create Date 2013-8-1 上午9:59:02
      */
     public void startPhoto() {
         AlertDialog dialog = new AlertDialog.Builder(mContext).setTitle("插入图片")
@@ -74,11 +73,8 @@ public class ProcessPhotoUtils {
         dialog.show();
     }
 
-
-
     /**
      * @desc 选择相册上传方式时调用，打开相册管理
-     * @Create Date 2013-8-1 上午9:59:52
      */
     private void uploadPhoto() {
 
@@ -93,7 +89,6 @@ public class ProcessPhotoUtils {
 
     /**
      * @desc 选择照相方式时调用，打开自带照相机功能
-     * @Create Date 2013-8-1 上午10:18:01
      */
     private void shootPhoto() {
         // 相机拍摄上传
@@ -115,7 +110,6 @@ public class ProcessPhotoUtils {
      * @param strPath
      * @return
      * @desc 传入路径，返回压缩文件
-     * @Create Date 2013年8月27日 下午12:35:20
      */
     public static File compressBitmap(Context context, String strPath) {
         try {
@@ -144,7 +138,6 @@ public class ProcessPhotoUtils {
      * @param image
      * @return
      * @desc 质量压缩方法
-     * @Create Date 2013年8月27日 上午9:57:03
      */
     public static byte[] compressImage(Bitmap image) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -163,7 +156,6 @@ public class ProcessPhotoUtils {
      * @param srcPath
      * @return
      * @desc 图片按比例大小压缩方法（根据路径获取图片并压缩）
-     * @Create Date 2013年8月27日 上午9:55:56
      */
     public static byte[] getimage(String srcPath) {
         BitmapFactory.Options newOpts = new BitmapFactory.Options();

@@ -14,7 +14,7 @@ android {
     buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "cn.chestnut.mvvm.teamworker"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 26
         versionCode 1
         versionName "1.0.1"
@@ -80,7 +80,11 @@ dependencies {
     }
     //GreenDao
     compile 'org.greenrobot:greendao:3.2.2'
+    compile 'net.zetetic:android-database-sqlcipher:3.5.2'
     //Gson
     compile 'com.google.code.gson:gson:2.8.1'
+    //时间选择器
+    compile 'com.wdullaer:materialdatetimepicker:3.5.0'
+    //高德地图定位
     implementation files('libs/AMap_Location_V3.7.0_20171218.jar')
 }

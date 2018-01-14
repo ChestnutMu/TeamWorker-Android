@@ -12,15 +12,10 @@ import android.os.Environment;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 
-import com.alibaba.fastjson.JSONObject;
-
 import java.io.File;
 
-import cn.chestnut.mvvm.teamworker.http.RQ;
-import cn.chestnut.mvvm.teamworker.http.RQCallBack;
-import cn.chestnut.mvvm.teamworker.service.Constant;
+import cn.chestnut.mvvm.teamworker.Constant;
 import cn.chestnut.mvvm.teamworker.module.update.bean.UpdateInfo;
-import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
 
 /**
  * Copyright (c) 2017, Chestnut All rights reserved

@@ -1,12 +1,12 @@
 package cn.chestnut.mvvm.teamworker.module.massage.bean;
 
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.NotNull;
-import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Unique;
 
-import java.util.Date;
+import java.io.Serializable;
 
 import cn.chestnut.mvvm.teamworker.BR;
 import cn.chestnut.mvvm.teamworker.R;
@@ -22,7 +22,7 @@ import cn.chestnut.mvvm.teamworker.utils.FormatDateUtil;
  */
 
 @Entity
-public class Message extends BindingItem {
+public class Message extends BindingItem implements Serializable{
 
     @Id(autoincrement = true)
     private Long id;
@@ -47,10 +47,12 @@ public class Message extends BindingItem {
 
     private String senderName;
 
+    private static final long serialVersionUID = 42L;
+
     @Generated(hash = 1089162060)
     public Message(Long id, String messageId, @NotNull String senderId,
-            @NotNull String receiverId, @NotNull String title,
-            @NotNull String content, @NotNull Long time, String senderName) {
+                   @NotNull String receiverId, @NotNull String title,
+                   @NotNull String content, @NotNull Long time, String senderName) {
         this.id = id;
         this.messageId = messageId;
         this.senderId = senderId;
@@ -74,7 +76,7 @@ public class Message extends BindingItem {
     }
 
     public String showTime() {
-        return FormatDateUtil.getTimeRange(System.currentTimeMillis(), time);
+        return FormatDateUtil.getMessageTime(System.currentTimeMillis(), time);
     }
 
     public String getMessageId() {

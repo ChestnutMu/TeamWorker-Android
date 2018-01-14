@@ -24,6 +24,8 @@ public class FormatDateUtil {
 
     private static final int seconds_of_1day = 24 * 60 * 60;
 
+    private static final int seconds_of_2day = 24 * 2 * 60 * 60;
+
     private static final int seconds_of_15days = seconds_of_1day * 15;
 
     private static final int seconds_of_30days = seconds_of_1day * 30;
@@ -32,14 +34,16 @@ public class FormatDateUtil {
 
     private static final int seconds_of_1year = seconds_of_30days * 12;
 
-    //分秒
-    private static SimpleDateFormat msFormat = new SimpleDateFormat("mm:ss");
+    private static final long millis_of_one_day = seconds_of_1day * 1000;
+
+    //时分
+    private static SimpleDateFormat hsFormat = new SimpleDateFormat("HH:mm");
 
     //详细时间格式
     private static SimpleDateFormat yMdmsFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     //生日时间格式
-    private static SimpleDateFormat yMdFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private static SimpleDateFormat yMdFormat = new SimpleDateFormat("yyyy年MM月dd日");
 
     /**
      * 格式化时间
@@ -90,49 +94,6 @@ public class FormatDateUtil {
     }
 
     /**
-     * MS turn every minute
-     *
-     * @param duration Millisecond
-     * @return Every minute
-     */
-    public static String timeParse(long duration) {
-        String time = "";
-        if (duration > 1000) {
-            time = timeParseMinute(duration);
-        } else {
-            long minute = duration / 60000;
-            long seconds = duration % 60000;
-            long second = Math.round((float) seconds / 1000);
-            if (minute < 10) {
-                time += "0";
-            }
-            time += minute + ":";
-            if (second < 10) {
-                time += "0";
-            }
-            time += second;
-        }
-        return time;
-    }
-
-    /**
-     * MS turn every minute
-     *
-     * @param duration Millisecond
-     * @return Every minute
-     */
-    public static String timeParseMinute(long duration) {
-        try {
-            return msFormat.format(duration);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "0:00";
-        }
-    }
-
-
-
-    /**
      * 转换long为时间格式
      *
      * @param time Millisecond
@@ -162,37 +123,87 @@ public class FormatDateUtil {
         }
     }
 
+    public static String getMessageTime(long currentTime, long mTime) {
+        SimpleDateFormat yFormat = new SimpleDateFormat("yyyy");
+        SimpleDateFormat mDFormat = new SimpleDateFormat("MM月dd日");
 
-    public static String getImageTime(long time) {
+        if (isSameDay(currentTime, mTime)) {
+            return hsFormat.format(mTime);
+        } else if (isYesterday(mTime)) {
+            return "昨天";
+        } else if (yFormat.format(currentTime).equals(yFormat.format(mTime))) {
+            return mDFormat.format(mTime);
+        } else return timeParseNormal(mTime);
+    }
+
+    public static boolean isSameDay(long date1, long Date2) {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        Calendar imageTime = Calendar.getInstance();
-        imageTime.setTimeInMillis(time);
-        if (sameDay(calendar, imageTime)) {
-            return "今天";
-        } else if (sameWeek(calendar, imageTime)) {
-            return "本周";
-        } else if (sameMonth(calendar, imageTime)) {
-            return "本月";
-        } else {
-            Date date = new Date(time);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM");
-            return sdf.format(date);
+        calendar.setTimeInMillis(date1);
+        int year1 = calendar.get(Calendar.YEAR);
+        int day1 = calendar.get(Calendar.DAY_OF_YEAR);
+
+        calendar.setTimeInMillis(Date2);
+        int year2 = calendar.get(Calendar.YEAR);
+        int day2 = calendar.get(Calendar.DAY_OF_YEAR);
+
+        if ((year1 == year2) && (day1 == day2)) {
+            return true;
         }
+        return false;
     }
 
-    public static boolean sameDay(Calendar calendar1, Calendar calendar2) {
-        return calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR)
-                && calendar1.get(Calendar.DAY_OF_YEAR) == calendar2.get(Calendar.DAY_OF_YEAR);
+    /**
+     * 获取昨天时间的最小值
+     *
+     * @return
+     */
+    public static long getYesterdayMinTimeMillis() {
+        Calendar mCalendar = Calendar.getInstance();
+        long currTime = System.currentTimeMillis();
+        mCalendar.setTime(new Date(currTime));
+
+        int year = mCalendar.get(Calendar.YEAR);
+        int month = mCalendar.get(Calendar.MONTH);
+        int day = mCalendar.get(Calendar.DAY_OF_MONTH);
+
+        mCalendar.set(year, month, day, 0, 0, 0);
+        long minToday = mCalendar.getTimeInMillis() - millis_of_one_day;
+
+        return minToday;
     }
 
-    public static boolean sameWeek(Calendar calendar1, Calendar calendar2) {
-        return calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR)
-                && calendar1.get(Calendar.WEEK_OF_YEAR) == calendar2.get(Calendar.WEEK_OF_YEAR);
+    /**
+     * 获取昨天时间的最大值
+     *
+     * @return
+     */
+    public static long getYesterdayMaxTimeMillis() {
+        Calendar mCalendar = Calendar.getInstance();
+        long currTime = System.currentTimeMillis();
+        mCalendar.setTime(new Date(currTime));
+
+        int year = mCalendar.get(Calendar.YEAR);
+        int month = mCalendar.get(Calendar.MONTH);
+        int day = mCalendar.get(Calendar.DAY_OF_MONTH);
+
+        mCalendar.set(year, month, day, 23, 59, 59);
+        long minToday = mCalendar.getTimeInMillis() - millis_of_one_day;
+
+        return minToday;
     }
 
-    public static boolean sameMonth(Calendar calendar1, Calendar calendar2) {
-        return calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR)
-                && calendar1.get(Calendar.MONTH) == calendar2.get(Calendar.MONTH);
+    /**
+     * 判断某个时间是否是昨天
+     *
+     * @param time
+     * @return
+     */
+    public static boolean isYesterday(long time) {
+        if (time >= getYesterdayMinTimeMillis() &&
+                time <= getYesterdayMaxTimeMillis()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

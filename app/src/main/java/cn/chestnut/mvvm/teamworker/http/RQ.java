@@ -1,10 +1,6 @@
 package cn.chestnut.mvvm.teamworker.http;
 
 import com.alibaba.fastjson.JSONObject;
-
-import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
-import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
-
 import com.google.gson.Gson;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.MediaType;
@@ -15,11 +11,15 @@ import com.squareup.okhttp.Response;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
 import java.net.URLDecoder;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.DataFormatException;
 
+import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
+import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import rx.Observable;
 import rx.Observable.OnSubscribe;
@@ -37,7 +37,7 @@ import rx.schedulers.Schedulers;
  */
 
 public class RQ {
-    private static Gson gson=new Gson();
+    private static Gson gson = new Gson();
     public static OkHttpClient CLIENT = null;
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
@@ -73,9 +73,6 @@ public class RQ {
                 } else {
                     urlTo += "&" + p + "=" + v;
                 }
-            }
-            if (app != null) {
-                app.before();
             }
             final String url = urlTo;
             final RequestBody body = builder.build();
@@ -164,9 +161,6 @@ public class RQ {
                 Object v = values.get(i);
                 builder.add(p, v.toString());
             }
-            if (app != null) {
-                app.before();
-            }
             final RequestBody body = builder.build();
 
             Observable.create(new OnSubscribe<String>() {
@@ -241,8 +235,8 @@ public class RQ {
 
     }
 
-    public final static <T> void post(final String url, Map<String, Object> params, final AppCallBack<ApiResponse<T>> app) {
-        Log.d("params = "+params.toString());
+    public final static <T> void post(final String url, String params, final AppCallBack<ApiResponse<T>> app) {
+        Log.d("url = " + url + "      params = " + params);
         if (!CommonUtil.checkNetState(MyApplication.getInstance())) {
             if (app != null) {
                 ApiResponse<T> temp = new ApiResponse<>();
@@ -253,14 +247,7 @@ public class RQ {
             }
         } else {
             getInstance();
-            FormEncodingBuilder builder = new FormEncodingBuilder();
-            for (Map.Entry<String, Object> entry : params.entrySet()) {
-                builder.add(entry.getKey(), entry.getValue().toString());
-            }
-            if (app != null) {
-                app.before();
-            }
-            final RequestBody body = builder.build();
+            final RequestBody body = RequestBody.create(JSON, params);
 
             Observable.create(new OnSubscribe<ApiResponse<T>>() {
                 @Override
@@ -289,21 +276,32 @@ public class RQ {
                             } catch (IllegalArgumentException e) {
                                 reslut = reslutTextOrg;
                             }
-                            Log.d("result = "+reslut);
-                            ParameterizedType type=(ParameterizedType)app.getClass().getGenericInterfaces()[0];
-                            Type typeOfT=type.getActualTypeArguments()[0];
-                            ApiResponse<T> temp = gson.fromJson(reslut,typeOfT);
+                            Log.d("result = " + reslut);
+                            ParameterizedType type = (ParameterizedType) app.getClass().getGenericInterfaces()[0];
+                            Type typeOfT = type.getActualTypeArguments()[0];
+                            ApiResponse<T> temp = gson.fromJson(reslut, typeOfT);
                             subscriber.onNext(temp);
                             subscriber.onCompleted();
                         }
 
-                    } catch (Exception e) {
+                    } catch (Exception error) {
                         try {
+                            String errorMessage = null;
+                            if (error != null) {
+                                if (error instanceof ConnectException) {
+                                    errorMessage = "服务器连接失败！";
+                                } else if (error instanceof SocketTimeoutException) {
+                                    errorMessage = "连接超时!";
+                                } else if (error instanceof DataFormatException) {
+                                    errorMessage = "数据格式异常!";
+                                } else {
+                                    errorMessage = "请求异常!";
+                                }
+                            }
                             ApiResponse<T> temp = new ApiResponse<>();
                             temp.setStatus(HttpResponseCodes.FAILED);
-                            temp.setMessage("网络断开！");
+                            temp.setMessage(errorMessage);
                             subscriber.onNext(temp);
-                            subscriber.onError(e);
                             subscriber.onCompleted();
                         } catch (Exception e2) {
                             e2.printStackTrace();
@@ -338,187 +336,5 @@ public class RQ {
         }
 
     }
-
-    public final static void post(final String url, String json, final AppCallBack<String> app) {
-        if (!CommonUtil.checkNetState(MyApplication.getInstance())) {
-            if (app != null) {
-                JSONObject temp = new JSONObject();
-                temp.put("success", false);
-                temp.put("message", "无网络连接！");
-                app.next(temp.toString());
-                return;
-            }
-        } else {
-            getInstance();
-            final RequestBody body = RequestBody.create(JSON, json);
-            Observable.create(new OnSubscribe<String>() {
-                @Override
-                public void call(Subscriber<? super String> subscriber) {
-                    try {
-
-                        Request request = new Request.Builder().url(url)
-                                .post(body).build();
-                        Response response = CLIENT.newCall(request)
-                                .execute();
-                        int code = response.code();
-                        if (code != 200) {
-                            JSONObject temp = new JSONObject();
-                            temp.put("success", false);
-                            temp.put("message", "请求服务器失败！");
-                            subscriber.onNext(temp.toJSONString());
-                            subscriber.onCompleted();
-                            response.body().close();
-                        } else {
-                            String reslutTextOrg = response.body().string()
-                                    .trim();
-                            String reslut = "";
-                            try {
-                                reslut = URLDecoder.decode(reslutTextOrg,
-                                        "utf-8");
-                            } catch (IllegalArgumentException e) {
-                                reslut = reslutTextOrg;
-                            }
-                            subscriber.onNext(reslut);
-                            subscriber.onCompleted();
-                        }
-
-                    } catch (Exception e) {
-                        try {
-                            JSONObject temp = new JSONObject();
-                            temp.put("status", false);
-                            temp.put("message", "网络断开！");
-                            subscriber.onNext(temp.toJSONString());
-                            subscriber.onError(e);
-                            subscriber.onCompleted();
-                        } catch (Exception e2) {
-                            e2.printStackTrace();
-                        }
-                    }
-                }
-            }).subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<String>() {
-                        @Override
-                        public void onCompleted() {
-                            if (app != null) {
-                                app.complete();
-                            }
-                        }
-
-                        @Override
-                        public void onError(Throwable t) {
-                            t.printStackTrace();
-                            if (app != null) {
-                                app.error(t);
-                            }
-                        }
-
-                        @Override
-                        public void onNext(String result) {
-                            if (app != null) {
-                                app.next(result);
-                            }
-                        }
-                    });
-        }
-
-    }
-
-    public final static void delete(final String url, List<String> params,
-                                    List<String> values, final AppCallBack<String> app) {
-        if (!CommonUtil.checkNetState(MyApplication.getInstance())) {
-            if (app != null) {
-                JSONObject temp = new JSONObject();
-                temp.put("status", false);
-                temp.put("message", "无网络连接！");
-                app.next(temp.toString());
-                return;
-            }
-        } else {
-
-            getInstance();
-            FormEncodingBuilder builder = new FormEncodingBuilder();
-            for (int i = 0; i < params.size(); i++) {
-                String p = params.get(i);
-                String v = values.get(i);
-                builder.add(p, v);
-            }
-            if (app != null) {
-                app.before();
-            }
-            final RequestBody body = builder.build();
-
-            Observable.create(new OnSubscribe<String>() {
-                @Override
-                public void call(Subscriber<? super String> subscriber) {
-                    try {
-                        Request request = new Request.Builder().url(url)
-                                .delete(body).build();
-                        Response response = CLIENT.newCall(request)
-                                .execute();
-                        int code = response.code();
-                        if (code != 200) {
-                            JSONObject temp = new JSONObject();
-                            temp.put("status", false);
-                            temp.put("message", "请求服务器失败！");
-                            subscriber.onNext(temp.toJSONString());
-                            subscriber.onCompleted();
-                            response.body().close();
-                        } else {
-                            String reslutTextOrg = response.body().string()
-                                    .trim();
-                            String reslut = "";
-                            try {
-                                reslut = URLDecoder.decode(reslutTextOrg,
-                                        "utf-8");
-                            } catch (IllegalArgumentException e) {
-                                reslut = reslutTextOrg;
-                            }
-                            subscriber.onNext(reslut);
-                            subscriber.onCompleted();
-                        }
-
-                    } catch (Exception e) {
-                        try {
-                            JSONObject temp = new JSONObject();
-                            temp.put("status", false);
-                            temp.put("message", "网络断开！");
-                            subscriber.onNext(temp.toJSONString());
-                            subscriber.onError(e);
-                            subscriber.onCompleted();
-                        } catch (Exception e2) {
-                            e2.printStackTrace();
-                        }
-                    }
-                }
-            }).subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<String>() {
-                        @Override
-                        public void onCompleted() {
-                            if (app != null) {
-                                app.complete();
-                            }
-                        }
-
-                        @Override
-                        public void onError(Throwable t) {
-                            t.printStackTrace();
-                            if (app != null) {
-                                app.error(t);
-                            }
-                        }
-
-                        @Override
-                        public void onNext(String result) {
-                            if (app != null) {
-                                app.next(result);
-                            }
-                        }
-                    });
-        }
-
-    }
-
 
 }

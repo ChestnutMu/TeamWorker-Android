@@ -4,12 +4,14 @@
     <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:background="@color/appTheme"
         android:orientation="vertical">
 
         <RelativeLayout
             android:id="@+id/layout_title_bar"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
+            android:layout_height="50dp"
             android:background="@color/colorPrimary">
 
             <LinearLayout
@@ -89,6 +91,7 @@
         <FrameLayout
             android:id="@+id/base_container_layout"
             android:layout_width="match_parent"
+            android:background="@color/translucent_grey"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
     </LinearLayout>

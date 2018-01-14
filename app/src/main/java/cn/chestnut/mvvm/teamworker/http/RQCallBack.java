@@ -41,13 +41,6 @@ public abstract class RQCallBack<T>
         }
     }
 
-    @Override
-    public void before() {
-        if (baseActivity != null) {
-            baseActivity.showProgressDialog(baseActivity);
-        }
-    }
-
     public abstract void success(T response);
 
     public abstract void fail(T response);

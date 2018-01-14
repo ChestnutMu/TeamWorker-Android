@@ -20,6 +20,7 @@ import cn.chestnut.mvvm.teamworker.databinding.ActivityChatPersonalBinding;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.module.massage.adapter.MessageAdapter;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.Message;
+import cn.chestnut.mvvm.teamworker.socket.SendProtocol;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
 import cn.chestnut.mvvm.teamworker.utils.StringUtil;
 
@@ -37,7 +38,7 @@ public class ChatPersonalActivity extends BaseActivity {
     private MessageAdapter messageAdapter;
     private List<Message> messageList;
 
-    private Gson gson=new Gson();
+    private Gson gson = new Gson();
 
     @Override
     protected void setBaseTitle(TextView titleView) {
@@ -48,21 +49,20 @@ public class ChatPersonalActivity extends BaseActivity {
     protected void addContainerView(ViewGroup viewGroup, LayoutInflater inflater) {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_chat_personal);
         initData();
-        initView();
         addListener();
     }
 
     @Override
     public void onSessionMessage(int msgId, Object object) {
-        switch (msgId){
-            case 1:
-            {
-                CommonUtil.showToast("新消息",this);
-                Message message=gson.fromJson(object.toString(),new TypeToken<Message>(){}.getType());
+        switch (msgId) {
+            case 1: {
+                CommonUtil.showToast("新消息", this);
+                Message message = gson.fromJson(object.toString(), new TypeToken<Message>() {
+                }.getType());
                 messageList.add(message);
                 messageAdapter.notifyDataSetChanged();
 
-                executeRequest(1003,message.getMessageId());
+                executeRequest(SendProtocol.MSG_ISREAD_MESSAGE, message.getMessageId());
             }
             break;
         }
@@ -77,17 +77,14 @@ public class ChatPersonalActivity extends BaseActivity {
         });
     }
 
-    private void initView() {
-    }
-
     /**
      * 初始化数据
      */
     private void initData() {
         messageList = new ArrayList<>();
-        messageAdapter=new MessageAdapter(messageList);
+        messageAdapter = new MessageAdapter(messageList);
         binding.rcRecord.setAdapter(messageAdapter);
-        LinearLayoutManager manager=new LinearLayoutManager(this);
+        LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         binding.rcRecord.setLayoutManager(manager);
         binding.rcRecord.setNestedScrollingEnabled(false);
@@ -95,18 +92,18 @@ public class ChatPersonalActivity extends BaseActivity {
     }
 
     private void sendMessage() {
-        String content=binding.etInput.getText().toString();
-        if (StringUtil.isEmpty(content)){
-            CommonUtil.showToast("不能为空",this);
+        String content = binding.etInput.getText().toString();
+        if (StringUtil.isEmpty(content)) {
+            CommonUtil.showToast("不能为空", this);
             return;
         }
-        Map<String, String> params=new HashMap<>();
-        params.put("title","");
-        params.put("content",content);
-        List<String> uidList=new ArrayList<>();
+        Map<String, String> params = new HashMap<>();
+        params.put("title", "");
+        params.put("content", content);
+        List<String> uidList = new ArrayList<>();
         uidList.add("1512983546736hBFqyp");
         uidList.add("1512970786104UpglD0");
-        params.put("uids",gson.toJson(uidList));
-        executeRequest(1002, gson.toJson(params));
+        params.put("uids", gson.toJson(uidList));
+        executeRequest(SendProtocol.MSG_SEND_MESSAGE, gson.toJson(params));
     }
 }

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,14 +25,9 @@ import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.module.massage.adapter.DepartmentAdapter;
-import cn.chestnut.mvvm.teamworker.module.massage.adapter.MessageAdapter;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.Department;
-import cn.chestnut.mvvm.teamworker.module.massage.bean.Message;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.User;
-import cn.chestnut.mvvm.teamworker.service.DataManager;
-import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
-import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
-import cn.chestnut.mvvm.teamworker.utils.StringUtil;
+import cn.chestnut.mvvm.teamworker.http.RequestManager;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -61,10 +55,23 @@ public class SelectDepartmentActivity extends BaseActivity {
 
     @Override
     protected void addContainerView(ViewGroup viewGroup, LayoutInflater inflater) {
-        binding = DataBindingUtil.inflate(inflater, R.layout.activity_select_receiver,viewGroup,true);
+        binding = DataBindingUtil.inflate(inflater, R.layout.activity_select_receiver, viewGroup, true);
         initData();
         initView();
         addListener();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == request_code_select_person && resultCode == Activity.RESULT_OK) {
+            User user = (User) data.getExtras().getSerializable("user");
+            if (user != null) {
+                Intent intent = new Intent();
+                intent.putExtra("user", user);
+                setResult(Activity.RESULT_OK, intent);
+                finish();
+            }
+        }
     }
 
     /**
@@ -75,7 +82,6 @@ public class SelectDepartmentActivity extends BaseActivity {
     }
 
     private void initView() {
-        setTitleBarVisible(true);
         departmentAdapter = new DepartmentAdapter(departmentList);
         binding.swipeTarget.setAdapter(departmentAdapter);
         LinearLayoutManager manager = new LinearLayoutManager(this);
@@ -125,7 +131,8 @@ public class SelectDepartmentActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("pageNum", pageNum);
         params.put("pageSize", pageSize);
-        DataManager.getInstance(this).executeRequest(HttpUrls.GET_ALL_DEPARTMENTS, params, new AppCallBack<ApiResponse<List<Department>>>() {
+        showProgressDialog(this);
+        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_ALL_DEPARTMENTS, params, new AppCallBack<ApiResponse<List<Department>>>() {
 
             @Override
             public void next(ApiResponse<List<Department>> response) {
@@ -139,31 +146,14 @@ public class SelectDepartmentActivity extends BaseActivity {
 
             @Override
             public void error(Throwable error) {
-
+                hideProgressDialog();
             }
 
             @Override
             public void complete() {
-
-            }
-
-            @Override
-            public void before() {
+                hideProgressDialog();
             }
         });
 
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode==request_code_select_person&&resultCode== Activity.RESULT_OK){
-            User user= (User) data.getExtras().getSerializable("user");
-            if (user!=null){
-                Intent intent = new Intent();
-                intent.putExtra("user",user);
-                setResult(Activity.RESULT_OK,intent);
-                finish();
-            }
-        }
     }
 }

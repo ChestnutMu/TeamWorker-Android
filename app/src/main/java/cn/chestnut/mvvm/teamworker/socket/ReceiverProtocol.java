@@ -8,24 +8,14 @@ package cn.chestnut.mvvm.teamworker.socket;
  * Email: xiaoting233zhang@126.com
  */
 public class ReceiverProtocol {
-    /**
-     * 重复登录
-     */
-    public static final int DUPLICATE_LOGIN = 1001;//连接
 
     /**
-     * 发送消息
+     * 账号在其他设备登录，强制下线
      */
-    public static final int MSG_SEND_MESSAGE = 1002;//发消息
+    public static final int DUPLICATE_LOGIN = 1004;
 
     /**
-     * 设置消息已读
+     * 接收新消息
      */
-    public static final int MSG_ISREAD_MESSAGE = 1003;//已读
-
-
-    /**
-     * 消息通知
-     */
-    public static final int USER_MESSAGE = 1234;
+    public static final int RECEIVE_NEW_MESSAGE = 1005;
 }

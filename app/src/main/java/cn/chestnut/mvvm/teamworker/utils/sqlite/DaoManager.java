@@ -17,8 +17,7 @@ import cn.chestnut.mvvm.teamworker.db.DaoSession;
  */
 
 public class DaoManager {
-    private static final String TAG = DaoManager.class.getSimpleName();
-    private static final String DB_NAME = "teamworker";
+    private static final String DB_NAME = "teamworker2018";
 
     private Context context;
 

@@ -10,6 +10,7 @@ package cn.chestnut.mvvm.teamworker.http;
 
 public class HttpUrls {
     //---------域名------------
+//    public static final String HTTPHOST = "http://172.18.210.71";
     public static final String HTTPHOST = "http://192.168.199.241";
     //---------端口------------
     public static final String PORT = "8090";
@@ -27,8 +28,17 @@ public class HttpUrls {
     //token登陆
     public static final String REMEMBER_ME = "/user/rememberMe";
 
-    //获取用户消息列表
-    public static final String GET_MESSAGES_BY_USERID = "/Message/getMessagesByUserId";
+    //注册
+    public static final String ADD_USER = "/user/addUser";
+
+    //获取用户个人信息
+    public static final String GET_MY_INFORMATION = "/user/getMyInformation";
+
+    //修改用户个人信息
+    public static final String UPDATE_MY_INFORMATION = "/user/updateMyInformation";
+
+    //获取用户还未接收的消息列表
+    public static final String GET_NOT_SEND_MESSAGES_BY_USER_ID = "/Message/getNotSendMessagesByUserId";
 
     //获取所有部门
     public static final String GET_ALL_DEPARTMENTS = "/Department/getDepartments";
@@ -44,7 +54,6 @@ public class HttpUrls {
 
     //添加下班打卡记录
     public static final String PUNCH_OUT = "/Attendance/punchOut";
-
 
 
 }

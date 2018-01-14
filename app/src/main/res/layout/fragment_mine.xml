@@ -7,16 +7,48 @@
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/ll_my_information"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:background="@color/white"
+            android:padding="10dp">
+
+            <ImageView
+                android:id="@+id/iv_avatar"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:src="@mipmap/ic_launcher" />
+
+            <TextView
+                android:id="@+id/tv_nickname"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="Team Worker"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_big" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/icon_arrow_right"/>
+
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/ll_check_attendance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:background="@color/white"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingBottom="20dp"
+            android:paddingBottom="12dp"
             android:paddingLeft="20dp"
             android:paddingRight="8dp"
-            android:paddingTop="20dp">
+            android:paddingTop="12dp">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -29,8 +61,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_weight="1"
                 android:text="账号与安全"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_size_big" />
+                android:textColor="@color/black" />
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -41,7 +72,6 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginLeft="64dp"
             android:background="@color/backgroundgray" />
 
         <LinearLayout
@@ -51,10 +81,10 @@
             android:background="@color/white"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingBottom="20dp"
+            android:paddingBottom="12dp"
             android:paddingLeft="20dp"
             android:paddingRight="8dp"
-            android:paddingTop="20dp">
+            android:paddingTop="12dp">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -67,8 +97,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_weight="1"
                 android:text="帮助与反馈"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_size_big" />
+                android:textColor="@color/black" />
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -80,19 +109,19 @@
             android:id="@+id/ll_about_teamworker"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:background="@color/white"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingBottom="20dp"
+            android:paddingBottom="12dp"
             android:paddingLeft="20dp"
-            android:layout_marginTop="32dp"
             android:paddingRight="8dp"
-            android:paddingTop="20dp">
+            android:paddingTop="12dp">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/icon_about_teamworker" />
+                android:src="@mipmap/icon_about" />
 
             <TextView
                 android:layout_width="0dp"
@@ -100,8 +129,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_weight="1"
                 android:text="关于Team Worker"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_size_big" />
+                android:textColor="@color/black" />
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -112,7 +140,6 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginLeft="64dp"
             android:background="@color/backgroundgray" />
 
 
@@ -123,8 +150,8 @@
             android:layout_marginTop="56dp"
             android:background="@color/white"
             android:gravity="center"
-            android:paddingBottom="20dp"
-            android:paddingTop="20dp">
+            android:paddingBottom="16dp"
+            android:paddingTop="16dp">
 
             <TextView
                 android:layout_width="wrap_content"

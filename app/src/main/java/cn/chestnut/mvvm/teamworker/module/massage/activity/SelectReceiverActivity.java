@@ -24,11 +24,9 @@ import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
-import cn.chestnut.mvvm.teamworker.module.massage.adapter.DepartmentAdapter;
 import cn.chestnut.mvvm.teamworker.module.massage.adapter.UserAdapter;
-import cn.chestnut.mvvm.teamworker.module.massage.bean.Department;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.User;
-import cn.chestnut.mvvm.teamworker.service.DataManager;
+import cn.chestnut.mvvm.teamworker.http.RequestManager;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -54,7 +52,7 @@ public class SelectReceiverActivity extends BaseActivity {
 
     @Override
     protected void addContainerView(ViewGroup viewGroup, LayoutInflater inflater) {
-        binding = DataBindingUtil.inflate(inflater, R.layout.activity_select_receiver,viewGroup,true);
+        binding = DataBindingUtil.inflate(inflater, R.layout.activity_select_receiver, viewGroup, true);
         initData();
         initView();
         addListener();
@@ -65,7 +63,7 @@ public class SelectReceiverActivity extends BaseActivity {
      */
     private void initData() {
         departmentId = getIntent().getStringExtra("departmentId");
-        getUserByDepartment(departmentId,pageNum, pageSize);
+        getUserByDepartment(departmentId, pageNum, pageSize);
     }
 
     private void initView() {
@@ -84,7 +82,7 @@ public class SelectReceiverActivity extends BaseActivity {
                 if (userList != null) {
                     userList.clear();
                     pageNum = 1;
-                    getUserByDepartment(departmentId,pageNum, pageSize);
+                    getUserByDepartment(departmentId, pageNum, pageSize);
                 }
                 binding.swipeToLoadLayout.setRefreshing(false);
             }
@@ -95,7 +93,7 @@ public class SelectReceiverActivity extends BaseActivity {
 
                 if (userList != null) {
                     pageNum++;
-                    getUserByDepartment(departmentId,pageNum, pageSize);
+                    getUserByDepartment(departmentId, pageNum, pageSize);
                 }
                 binding.swipeToLoadLayout.setLoadingMore(false);
             }
@@ -104,8 +102,8 @@ public class SelectReceiverActivity extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent();
-                intent.putExtra("user",userList.get(position));
-                setResult(Activity.RESULT_OK,intent);
+                intent.putExtra("user", userList.get(position));
+                setResult(Activity.RESULT_OK, intent);
                 finish();
             }
         });
@@ -115,12 +113,13 @@ public class SelectReceiverActivity extends BaseActivity {
     /**
      * 获取所有部门
      */
-    private void getUserByDepartment(String departmentId,int pageNum, int pageSize) {
+    private void getUserByDepartment(String departmentId, int pageNum, int pageSize) {
         Map<String, Object> params = new HashMap<>();
         params.put("departmentId", departmentId);
         params.put("pageNum", pageNum);
         params.put("pageSize", pageSize);
-        DataManager.getInstance(this).executeRequest(HttpUrls.GET_USER_BY_DEPARTMENT, params, new AppCallBack<ApiResponse<List<User>>>() {
+        showProgressDialog(this);
+        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_USER_BY_DEPARTMENT, params, new AppCallBack<ApiResponse<List<User>>>() {
 
             @Override
             public void next(ApiResponse<List<User>> response) {
@@ -134,17 +133,14 @@ public class SelectReceiverActivity extends BaseActivity {
 
             @Override
             public void error(Throwable error) {
-
+hideProgressDialog();
             }
 
             @Override
             public void complete() {
-
+hideProgressDialog();
             }
 
-            @Override
-            public void before() {
-            }
         });
 
     }

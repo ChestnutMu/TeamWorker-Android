@@ -19,13 +19,6 @@
         <item name="android:windowContentOverlay">@null</item>//是否有遮盖
     </style>
 
-    <!--
-    1.tabIndicatorColor：TabLayout指示器的颜色
-    2.tabTextColor: tab默认字体的颜色
-    3.tabSelectedTextColor：当前选择的tab的字体颜色
-    4.tabBackground：背景
-    5.tabIndicatorHeight：TabLayout指示器高度
-    -->
     <style name="loading_dialog" parent="android:style/Theme.Dialog">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowNoTitle">true</item>
@@ -33,4 +26,5 @@
         <item name="android:windowIsFloating">true</item>
         <item name="android:windowContentOverlay">@null</item>
     </style>
+
 </resources>

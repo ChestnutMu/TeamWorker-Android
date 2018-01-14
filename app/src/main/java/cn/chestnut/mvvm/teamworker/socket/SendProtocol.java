@@ -16,4 +16,19 @@ public class SendProtocol {
      * token 认证标识
      */
     public static final int CONNECTION_AUTHENTICATION = 1001;
+
+    /**
+     * 发送消息
+     */
+    public static final int MSG_SEND_MESSAGE = 1002;
+
+    /**
+     * 设置消息已读
+     */
+    public static final int MSG_ISREAD_MESSAGE = 1003;
+
+    /**
+     * 设置消息已接收
+     */
+    public static final int MSG_ISSEND_MESSAGE = 1006;
 }

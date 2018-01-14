@@ -12,7 +12,8 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:orientation="horizontal"
-        android:padding="12dp">
+        android:gravity="center_vertical"
+        android:padding="8dp">
 
         <ImageView
             android:id="@+id/iv_avatar"
@@ -30,7 +31,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:orientation="horizontal">
 
                 <TextView
@@ -39,11 +39,12 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@{message.senderName}"
-                    android:textColor="@color/text_black"
-                    android:textSize="@dimen/text_size_big" />
+                    android:textColor="@color/text_black" />
 
                 <TextView
                     android:id="@+id/tv_time"
+                    android:textColor="@color/text_gray"
+                    android:textSize="@dimen/text_size_small"
                     android:text="@{message.showTime()}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -53,9 +54,11 @@
                 android:id="@+id/tv_content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="3dp"
                 android:ellipsize="end"
+                android:textColor="@color/text_gray"
                 android:maxLines="1"
+                android:textSize="@dimen/text_size_small"
                 android:text="@{message.content}" />
         </LinearLayout>
     </LinearLayout>

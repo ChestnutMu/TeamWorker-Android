@@ -22,7 +22,7 @@ import cn.chestnut.mvvm.teamworker.http.HttpUrls;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
 import cn.chestnut.mvvm.teamworker.module.checkattendance.bean.Attendance;
-import cn.chestnut.mvvm.teamworker.service.DataManager;
+import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 
@@ -144,13 +144,14 @@ public class CheckAttendanceActivity extends BaseActivity {
     private void getAttendance() {
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
-        DataManager.getInstance(this).executeRequest(HttpUrls.GET_ATTENDANCE, params, new AppCallBack<ApiResponse<Attendance>>() {
+        showProgressDialog(this);
+        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_ATTENDANCE, params, new AppCallBack<ApiResponse<Attendance>>() {
             @Override
             public void next(ApiResponse<Attendance> response) {
                 if (response.isSuccess()) {
                     binding.setAttendance(response.getData());
                 }
-                hideProgressDialog();
+                showToast(response.getMessage());
             }
 
             @Override
@@ -163,10 +164,6 @@ public class CheckAttendanceActivity extends BaseActivity {
                 hideProgressDialog();
             }
 
-            @Override
-            public void before() {
-                showProgressDialog(CheckAttendanceActivity.this);
-            }
         });
     }
 
@@ -176,14 +173,14 @@ public class CheckAttendanceActivity extends BaseActivity {
         params.put("altitude", altitude);
         params.put("latitude", latitude);
         params.put("detailAddress", detailAddress);
-        DataManager.getInstance(this).executeRequest(HttpUrls.PUNCH_IN, params, new AppCallBack<ApiResponse<Attendance>>() {
+        showProgressDialog(this);
+        RequestManager.getInstance(this).executeRequest(HttpUrls.PUNCH_IN, params, new AppCallBack<ApiResponse<Attendance>>() {
             @Override
             public void next(ApiResponse<Attendance> response) {
                 if (response.isSuccess()) {
                     binding.setAttendance(response.getData());
                 }
                 showToast(response.getMessage());
-                hideProgressDialog();
             }
 
             @Override
@@ -196,10 +193,6 @@ public class CheckAttendanceActivity extends BaseActivity {
                 hideProgressDialog();
             }
 
-            @Override
-            public void before() {
-                showProgressDialog(CheckAttendanceActivity.this);
-            }
         });
     }
 
@@ -209,7 +202,8 @@ public class CheckAttendanceActivity extends BaseActivity {
         params.put("altitude", altitude);
         params.put("latitude", latitude);
         params.put("detailAddress", detailAddress);
-        DataManager.getInstance(this).executeRequest(HttpUrls.PUNCH_OUT, params, new AppCallBack<ApiResponse<Attendance>>() {
+        showProgressDialog(this);
+        RequestManager.getInstance(this).executeRequest(HttpUrls.PUNCH_OUT, params, new AppCallBack<ApiResponse<Attendance>>() {
             @Override
             public void next(ApiResponse<Attendance> response) {
                 if (response.isSuccess()) {
@@ -229,10 +223,6 @@ public class CheckAttendanceActivity extends BaseActivity {
                 hideProgressDialog();
             }
 
-            @Override
-            public void before() {
-                showProgressDialog(CheckAttendanceActivity.this);
-            }
         });
     }
 

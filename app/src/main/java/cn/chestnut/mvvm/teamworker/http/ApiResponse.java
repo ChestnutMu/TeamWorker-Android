@@ -8,13 +8,13 @@ package cn.chestnut.mvvm.teamworker.http;
  * Email: xiaoting233zhang@126.com
  */
 
-public class ApiResponse<T>{
-    private int status; 		// 返回码，0为成功，其他为失败
-    private String message; 	// 返回信息
-    private T data; 			// 返回数据
+public class ApiResponse<T> {
+    private int status;        // 返回码，0为成功，其他为失败
+    private String message;    // 返回信息
+    private T data;            // 返回数据
 
-    public boolean isSuccess(){
-        return status==HttpResponseCodes.SUCCESS;
+    public boolean isSuccess() {
+        return status == HttpResponseCodes.SUCCESS;
     }
 
     public int getStatus() {

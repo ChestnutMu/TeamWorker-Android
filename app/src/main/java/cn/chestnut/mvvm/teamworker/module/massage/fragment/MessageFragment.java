@@ -1,35 +1,40 @@
 package cn.chestnut.mvvm.teamworker.module.massage.fragment;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.databinding.DataBindingUtil;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.aspsine.swipetoloadlayout.OnLoadMoreListener;
-import com.aspsine.swipetoloadlayout.OnRefreshListener;
-
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import cn.chestnut.mvvm.teamworker.Constant;
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.FragmentMessageBinding;
 import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
+import cn.chestnut.mvvm.teamworker.http.RequestManager;
+import cn.chestnut.mvvm.teamworker.main.activity.MainActivity;
 import cn.chestnut.mvvm.teamworker.main.common.BaseFragment;
+import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
 import cn.chestnut.mvvm.teamworker.module.massage.activity.SendNotificationActivity;
 import cn.chestnut.mvvm.teamworker.module.massage.adapter.MessageAdapter;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.Message;
-import cn.chestnut.mvvm.teamworker.service.DataManager;
+import cn.chestnut.mvvm.teamworker.socket.SendProtocol;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
+import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 
 /**
@@ -44,10 +49,9 @@ public class MessageFragment extends BaseFragment {
 
     private FragmentMessageBinding binding;
     private MessageAdapter messageAdapter;
-    private ArrayList<Message> messageList = new ArrayList<>();
+    private LinkedList<Message> messageList = new LinkedList<>();
     private String userId;
-    private int pageNum = 1;
-    private int pageSize = 15;
+    private MessageDaoUtils messageDaoUtils;
 
     @Override
     protected void setBaseTitle(TextView titleView) {
@@ -59,6 +63,7 @@ public class MessageFragment extends BaseFragment {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_message, viewGroup, true);
         initData();
         initView();
+        addListener();
     }
 
     @Override
@@ -72,61 +77,72 @@ public class MessageFragment extends BaseFragment {
                 getActivity().startActivity(intent);
             }
         });
+        search.setVisibility(View.VISIBLE);
     }
 
-    /**
-     * 初始化数据
-     */
     private void initData() {
+        BroadcastReceiver receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Message newMessage = (Message) intent.getSerializableExtra("newMessage");
+                Log.d("MessageFragment收到一条新消息" + newMessage.toString());
+                messageDaoUtils.insertMessage(newMessage);
+                boolean listHasSender = false;//消息列表中是否已经有该发送者item
+                for (int i = 0; i < messageList.size(); i++) {
+                    if (messageList.get(i).getSenderId().equals(newMessage.getSenderId()) && i != 0) {
+                        messageList.add(newMessage);
+                        messageAdapter.notifyItemMoved(i, 0);
+                        listHasSender = true;
+                        break;
+                    }
+                }
+                if (!listHasSender) {
+                    messageAdapter.notifyItemInserted(0);
+                }
+            }
+        };
+
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, new IntentFilter(Constant.ActionConstant.ACTION_GET_NEW_MESSAGE));
+        messageDaoUtils = new MessageDaoUtils(getActivity());
         userId = PreferenceUtil.getInstances(getActivity()).getPreferenceString("userId");
-        getMessagesByUserId(userId, pageNum, pageSize);
+
+
+        messageList.addAll(messageDaoUtils.queryTopMessageByUserId(userId));
+        getNotSendMessagesByUserId();
     }
 
     private void initView() {
         messageAdapter = new MessageAdapter(messageList);
-        binding.swipeTarget.setAdapter(messageAdapter);
+        binding.recyclerView.setAdapter(messageAdapter);
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         manager.setOrientation(LinearLayoutManager.VERTICAL);
-        binding.swipeTarget.setLayoutManager(manager);
-        binding.swipeToLoadLayout.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                if (messageList != null) {
-                    messageList.clear();
-                    pageNum = 1;
-                    getMessagesByUserId(userId, pageNum, pageSize);
-                }
-                binding.swipeToLoadLayout.setRefreshing(false);
-            }
-        });
-        binding.swipeToLoadLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore() {
+        binding.recyclerView.setLayoutManager(manager);
+        binding.recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
 
-                if (messageList != null) {
-                    pageNum++;
-                    getMessagesByUserId(userId, pageNum, pageSize);
-                }
-                binding.swipeToLoadLayout.setLoadingMore(false);
-            }
-        });
+    }
+
+    private void addListener() {
     }
 
     /**
-     * 获取消息列表
+     * 获取未获取消息列表
      */
-    private void getMessagesByUserId(String userId, int pageNum, int pageSize) {
+    private void getNotSendMessagesByUserId() {
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
-        params.put("pageNum", pageNum);
-        params.put("pageSize", pageSize);
-        DataManager.getInstance(getActivity()).executeRequest(HttpUrls.GET_MESSAGES_BY_USERID, params, new AppCallBack<ApiResponse<List<Message>>>() {
+        RequestManager.getInstance(getActivity()).executeRequest(HttpUrls.GET_NOT_SEND_MESSAGES_BY_USER_ID, params, new AppCallBack<ApiResponse<List<Message>>>() {
 
             @Override
             public void next(ApiResponse<List<Message>> response) {
                 if (response.isSuccess()) {
-                    messageList.addAll(response.getData());
+                    messageDaoUtils.insertMultMessage(response.getData());
+                    messageList.clear();
+                    messageList.addAll(messageDaoUtils.queryTopMessageByUserId(userId));
                     messageAdapter.notifyDataSetChanged();
+                    for (int i = 0; i < response.getData().size(); i++) {
+                        ((MainActivity) getActivity()).executeRequest(SendProtocol.MSG_ISSEND_MESSAGE,
+                                response.getData().get(i).getMessageId());
+                    }
                 } else {
                     CommonUtil.showToast(response.getMessage(), getActivity());
                 }
@@ -134,7 +150,6 @@ public class MessageFragment extends BaseFragment {
 
             @Override
             public void error(Throwable error) {
-
             }
 
             @Override
@@ -142,10 +157,11 @@ public class MessageFragment extends BaseFragment {
 
             }
 
-            @Override
-            public void before() {
-            }
         });
+
+    }
+
+    private void updateView() {
 
     }
 }

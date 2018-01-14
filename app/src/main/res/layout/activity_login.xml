@@ -2,12 +2,15 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <FrameLayout
+        android:id="@+id/fl_parent_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:clickable="true">
+
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#000000"/>
+            android:background="#000000" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -22,11 +25,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginBottom="40dp"
                 android:text="欢迎使用Team Worker"
                 android:textColor="@color/white"
-                android:textSize="22sp"
-                android:layout_gravity="left"
-                android:layout_marginBottom="40dp"/>
+                android:textSize="22sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -37,18 +40,19 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:tint="@color/white"
-                    android:src="@mipmap/icon_uesrname" />
+                    android:src="@mipmap/icon_uesrname"
+                    android:tint="@color/white" />
 
                 <EditText
-                    android:layout_width="0dp"
                     android:id="@+id/et_account"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
-                    android:maxLines="1"
-                    android:hint="请输入用户名"
                     android:layout_weight="1"
-                    android:textColor="@color/white" />
+                    android:hint="请输入用户名"
+                    android:maxLength="10"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/text_gray" />
             </LinearLayout>
 
             <LinearLayout
@@ -61,22 +65,39 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:tint="@color/white"
-                    android:src="@mipmap/icon_password" />
+                    android:src="@mipmap/icon_password"
+                    android:tint="@color/white" />
 
                 <EditText
+                    android:id="@+id/et_password"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/et_password"
-                    android:maxLines="1"
-                    android:hint="请输入密码"
                     android:layout_marginLeft="5dp"
                     android:layout_weight="1"
+                    android:hint="请输入密码"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/text_gray" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_register"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_gravity="right"
+                    android:text="新用户注册"
                     android:textColor="@color/white" />
             </LinearLayout>
 
             <TextView
-                android:id="@+id/iv_login"
+                android:id="@+id/tv_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="64dp"

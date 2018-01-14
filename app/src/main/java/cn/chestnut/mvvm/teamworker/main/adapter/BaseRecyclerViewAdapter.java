@@ -38,7 +38,6 @@ public class BaseRecyclerViewAdapter<T extends BindingItem, TD extends ViewDataB
         return viewHolder;
     }
 
-
     @Override
     public void onBindViewHolder(final SimpleViewHolder<TD> holder, final int position) {
         holder.getBinding().setVariable(mItems.get(position).getViewVariableId(), mItems.get(position));

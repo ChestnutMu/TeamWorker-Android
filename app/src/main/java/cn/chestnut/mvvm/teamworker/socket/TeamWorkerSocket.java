@@ -61,6 +61,7 @@ public class TeamWorkerSocket {
             }
         }
     };
+
     private Emitter.Listener onReceiverMessage = new Emitter.Listener() {
         @Override
         public void call(Object... args) {

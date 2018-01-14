@@ -1,7 +1,5 @@
 package cn.chestnut.mvvm.teamworker.socket;
 
-import android.app.Application;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -83,7 +81,7 @@ public class TeamWorkerClient {
 
                 }
             });
-            socket.start(MyApplication.getWuYuMessageHandler(), serverAddress, serverPort);
+            socket.start(MyApplication.getTeamWorkerMessageHandler(), serverAddress, serverPort);
             Log.d("synchronized.ClientSocket.start()!");
         }
     }
@@ -134,7 +132,7 @@ public class TeamWorkerClient {
     public void userLogin() {
         String userId = PreferenceUtil.getInstances(MyApplication.getInstance()).getPreferenceString("userId");
         String token = PreferenceUtil.getInstances(MyApplication.getInstance()).getPreferenceString("token");
-        Log.d("开始登录,向服务器发送数据..." + "uid:123456 token:1234 msgId:1001 obj:null" );
+        Log.d("开始登录,向服务器发送数据..." + "uerId:"+userId+" token:"+token+" msgId:1001 obj:null" );
         send(userId, token, SendProtocol.CONNECTION_AUTHENTICATION, null);
     }
 }
