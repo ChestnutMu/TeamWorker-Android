@@ -20,6 +20,7 @@ import cn.chestnut.mvvm.teamworker.databinding.ActivityChatPersonalBinding;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.module.massage.adapter.MessageAdapter;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.Message;
+import cn.chestnut.mvvm.teamworker.module.massage.bean.MessageVo;
 import cn.chestnut.mvvm.teamworker.socket.SendProtocol;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
 import cn.chestnut.mvvm.teamworker.utils.StringUtil;
@@ -36,7 +37,7 @@ public class ChatPersonalActivity extends BaseActivity {
 
     private ActivityChatPersonalBinding binding;
     private MessageAdapter messageAdapter;
-    private List<Message> messageList;
+    private List<MessageVo> messageList;
 
     private Gson gson = new Gson();
 
@@ -59,7 +60,9 @@ public class ChatPersonalActivity extends BaseActivity {
                 CommonUtil.showToast("新消息", this);
                 Message message = gson.fromJson(object.toString(), new TypeToken<Message>() {
                 }.getType());
-                messageList.add(message);
+                MessageVo messageVo = new MessageVo();
+                messageVo.setMessage(message);
+                messageList.add(messageVo);
                 messageAdapter.notifyDataSetChanged();
 
                 executeRequest(SendProtocol.MSG_ISREAD_MESSAGE, message.getMessageId());
@@ -82,7 +85,7 @@ public class ChatPersonalActivity extends BaseActivity {
      */
     private void initData() {
         messageList = new ArrayList<>();
-        messageAdapter = new MessageAdapter(messageList);
+        messageAdapter = new MessageAdapter(messageList, this);
         binding.rcRecord.setAdapter(messageAdapter);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setOrientation(LinearLayoutManager.VERTICAL);

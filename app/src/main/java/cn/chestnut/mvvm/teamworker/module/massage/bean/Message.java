@@ -22,7 +22,7 @@ import cn.chestnut.mvvm.teamworker.utils.FormatDateUtil;
  */
 
 @Entity
-public class Message extends BindingItem implements Serializable{
+public class Message implements Serializable{
 
     @Id(autoincrement = true)
     private Long id;
@@ -45,14 +45,13 @@ public class Message extends BindingItem implements Serializable{
     @NotNull
     private Long time;
 
-    private String senderName;
 
     private static final long serialVersionUID = 42L;
 
-    @Generated(hash = 1089162060)
+    @Generated(hash = 419132679)
     public Message(Long id, String messageId, @NotNull String senderId,
-                   @NotNull String receiverId, @NotNull String title,
-                   @NotNull String content, @NotNull Long time, String senderName) {
+            @NotNull String receiverId, @NotNull String title,
+            @NotNull String content, @NotNull Long time) {
         this.id = id;
         this.messageId = messageId;
         this.senderId = senderId;
@@ -60,23 +59,10 @@ public class Message extends BindingItem implements Serializable{
         this.title = title;
         this.content = content;
         this.time = time;
-        this.senderName = senderName;
     }
 
     @Generated(hash = 637306882)
     public Message() {
-    }
-
-    public String getSenderName() {
-        return senderName;
-    }
-
-    public void setSenderName(String senderName) {
-        this.senderName = senderName;
-    }
-
-    public String showTime() {
-        return FormatDateUtil.getMessageTime(System.currentTimeMillis(), time);
     }
 
     public String getMessageId() {
@@ -136,13 +122,4 @@ public class Message extends BindingItem implements Serializable{
         this.id = id;
     }
 
-    @Override
-    public int getViewType() {
-        return R.layout.item_message;
-    }
-
-    @Override
-    public int getViewVariableId() {
-        return BR.message;
-    }
 }

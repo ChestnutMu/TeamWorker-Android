@@ -2,9 +2,10 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
+
         <variable
             name="message"
-            type="cn.chestnut.mvvm.teamworker.module.massage.bean.Message" />
+            type="cn.chestnut.mvvm.teamworker.module.massage.bean.MessageVo" />
     </data>
 
     <LinearLayout
@@ -38,15 +39,15 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@{message.senderName}"
+                    android:text="@{message.showSenderName()}"
                     android:textColor="@color/text_black"
                     android:textSize="@dimen/text_size_big" />
 
                 <TextView
                     android:id="@+id/tv_time"
-                    android:text="@{message.showTime()}"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:text="@{message.showTime()}" />
             </LinearLayout>
 
             <TextView
@@ -56,7 +57,7 @@
                 android:layout_marginTop="5dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="@{message.content}" />
+                android:text="@{message.message.content}" />
         </LinearLayout>
     </LinearLayout>
 

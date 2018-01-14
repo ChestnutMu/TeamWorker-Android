@@ -11,7 +11,8 @@ package cn.chestnut.mvvm.teamworker.http;
 public class HttpUrls {
     //---------域名------------
 //    public static final String HTTPHOST = "http://172.18.210.71";
-    public static final String HTTPHOST = "http://192.168.199.241";
+//    public static final String HTTPHOST = "http://192.168.199.241";
+    public static final String HTTPHOST = "http://172.18.92.153";
     //---------端口------------
     public static final String PORT = "8090";
 
@@ -54,6 +55,9 @@ public class HttpUrls {
 
     //添加下班打卡记录
     public static final String PUNCH_OUT = "/Attendance/punchOut";
+
+    //获取消息中用户的信息
+    public static final String GET_USER_INFO = "/user/getUserInfo";
 
 
 }

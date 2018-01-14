@@ -22,7 +22,7 @@ public class TeamWorkerClient {
     private static TeamWorkerSocket socket;
     private static List<IORequest> requests = new CopyOnWriteArrayList<IORequest>();
     private String serverAddress = HttpUrls.HTTPHOST;
-    private int serverPort = 8091;
+    private int serverPort = 8092;
 
     private TeamWorkerClient() {
         super();

@@ -7,10 +7,13 @@ import org.greenrobot.greendao.query.Query;
 import org.greenrobot.greendao.query.QueryBuilder;
 import org.greenrobot.greendao.query.WhereCondition;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import cn.chestnut.mvvm.teamworker.db.MessageDao;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.Message;
+import cn.chestnut.mvvm.teamworker.module.massage.bean.MessageUser;
+import cn.chestnut.mvvm.teamworker.module.massage.bean.MessageVo;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.sqlite.DaoManager;
 
@@ -163,8 +166,40 @@ public class MessageDaoUtils {
         Query query = mManager.getDaoSession().getMessageDao().queryBuilder().where(
                 new WhereCondition.StringCondition(
                         "RECEIVER_ID = '" + userId +
-                                "' GROUP BY SENDER_ID ORDER BY TIME ASC")).build();
+                                "' GROUP BY SENDER_ID ORDER BY TIME DESC")).build();
         return query.list();
+    }
 
+    public List<MessageVo> transferMessageVo(List<Message> messages) {
+        List<MessageVo> result = new LinkedList<>();
+        for (Message message : messages) {
+            MessageVo messageVo = new MessageVo();
+            messageVo.setMessage(message);
+            result.add(messageVo);
+        }
+        return result;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public List<MessageUser> queryMessageUserByUserId(String userId) {
+        Query query = mManager.getDaoSession().getMessageUserDao().queryBuilder().where(
+                new WhereCondition.StringCondition(
+                        "USER_ID = '" + userId + "'")).build();
+        return query.list();
+    }
+
+    /**
+     *
+     * @param messageUser
+     * @return
+     */
+    public boolean insertMessageUser(MessageUser messageUser) {
+        boolean flag = false;
+        flag = mManager.getDaoSession().getMessageUserDao().insert(messageUser) == -1 ? false : true;
+        Log.i("insert messageUser :" + flag + "-->" + messageUser.toString());
+        return flag;
     }
 }

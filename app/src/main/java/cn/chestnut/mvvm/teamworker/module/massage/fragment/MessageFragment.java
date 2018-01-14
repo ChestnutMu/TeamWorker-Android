@@ -32,6 +32,8 @@ import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
 import cn.chestnut.mvvm.teamworker.module.massage.activity.SendNotificationActivity;
 import cn.chestnut.mvvm.teamworker.module.massage.adapter.MessageAdapter;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.Message;
+import cn.chestnut.mvvm.teamworker.module.massage.bean.MessageUser;
+import cn.chestnut.mvvm.teamworker.module.massage.bean.MessageVo;
 import cn.chestnut.mvvm.teamworker.socket.SendProtocol;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
 import cn.chestnut.mvvm.teamworker.utils.Log;
@@ -49,7 +51,7 @@ public class MessageFragment extends BaseFragment {
 
     private FragmentMessageBinding binding;
     private MessageAdapter messageAdapter;
-    private LinkedList<Message> messageList = new LinkedList<>();
+    private LinkedList<MessageVo> messageList = new LinkedList<>();
     private String userId;
     private MessageDaoUtils messageDaoUtils;
 
@@ -89,15 +91,22 @@ public class MessageFragment extends BaseFragment {
                 messageDaoUtils.insertMessage(newMessage);
                 boolean listHasSender = false;//消息列表中是否已经有该发送者item
                 for (int i = 0; i < messageList.size(); i++) {
-                    if (messageList.get(i).getSenderId().equals(newMessage.getSenderId()) && i != 0) {
-                        messageList.add(newMessage);
-                        messageAdapter.notifyItemMoved(i, 0);
+                    if (messageList.get(i).getMessage().getSenderId().equals(newMessage.getSenderId())) {
+                        messageList.remove(i);
+                        MessageVo messageVo = new MessageVo();
+                        messageVo.setMessage(newMessage);
+                        messageList.add(0, messageVo);
+                        messageAdapter.notifyDataSetChanged();
                         listHasSender = true;
                         break;
                     }
                 }
                 if (!listHasSender) {
+                    MessageVo messageVo = new MessageVo();
+                    messageVo.setMessage(newMessage);
+                    messageList.add(0, messageVo);
                     messageAdapter.notifyItemInserted(0);
+                    messageAdapter.notifyDataSetChanged();
                 }
             }
         };
@@ -107,12 +116,12 @@ public class MessageFragment extends BaseFragment {
         userId = PreferenceUtil.getInstances(getActivity()).getPreferenceString("userId");
 
 
-        messageList.addAll(messageDaoUtils.queryTopMessageByUserId(userId));
+        messageList.addAll(messageDaoUtils.transferMessageVo(messageDaoUtils.queryTopMessageByUserId(userId)));
         getNotSendMessagesByUserId();
     }
 
     private void initView() {
-        messageAdapter = new MessageAdapter(messageList);
+        messageAdapter = new MessageAdapter(messageList, getActivity());
         binding.recyclerView.setAdapter(messageAdapter);
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         manager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -122,6 +131,35 @@ public class MessageFragment extends BaseFragment {
     }
 
     private void addListener() {
+        messageAdapter.setOnUpdateMessageLayoutListener(new MessageAdapter.OnUpdateMessageLayoutListener() {
+            @Override
+            public void onUpdate(final MessageAdapter messageAdapter, MessageVo obj) {
+                Map<String, Object> params = new HashMap<>();
+                params.put("userId", obj.getMessage().getSenderId());
+                RequestManager.getInstance(getActivity()).executeRequest(HttpUrls.GET_USER_INFO, params, new AppCallBack<ApiResponse<MessageUser>>() {
+
+                    @Override
+                    public void next(ApiResponse<MessageUser> response) {
+                        if (response.isSuccess()) {
+                            messageDaoUtils.insertMessageUser(response.getData());
+                            messageAdapter.notifyDataSetChanged();
+                        } else {
+                            CommonUtil.showToast(response.getMessage(), getActivity());
+                        }
+                    }
+
+                    @Override
+                    public void error(Throwable error) {
+                    }
+
+                    @Override
+                    public void complete() {
+
+                    }
+
+                });
+            }
+        });
     }
 
     /**
@@ -137,7 +175,7 @@ public class MessageFragment extends BaseFragment {
                 if (response.isSuccess()) {
                     messageDaoUtils.insertMultMessage(response.getData());
                     messageList.clear();
-                    messageList.addAll(messageDaoUtils.queryTopMessageByUserId(userId));
+                    messageList.addAll(messageDaoUtils.transferMessageVo(messageDaoUtils.queryTopMessageByUserId(userId)));
                     messageAdapter.notifyDataSetChanged();
                     for (int i = 0; i < response.getData().size(); i++) {
                         ((MainActivity) getActivity()).executeRequest(SendProtocol.MSG_ISSEND_MESSAGE,
