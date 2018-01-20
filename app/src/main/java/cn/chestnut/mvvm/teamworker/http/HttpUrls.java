@@ -11,8 +11,8 @@ package cn.chestnut.mvvm.teamworker.http;
 public class HttpUrls {
     //---------域名------------
 //    public static final String HTTPHOST = "http://172.18.210.71";
-//    public static final String HTTPHOST = "http://192.168.199.241";
-    public static final String HTTPHOST = "http://172.18.92.153";
+    public static final String HTTPHOST = "http://192.168.199.241";
+//    public static final String HTTPHOST = "http://172.18.92.153";
     //---------端口------------
     public static final String PORT = "8090";
 

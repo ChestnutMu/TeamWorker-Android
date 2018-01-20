@@ -3,16 +3,23 @@ package cn.chestnut.mvvm.teamworker.module.massage.bean;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Unique;
 
 /**
- * Created by king on 2018/1/14.
+ * Copyright (c) 2017, Chestnut All rights reserved
+ * Author: Chestnut
+ * CreateTime：at 2017/12/29 14:43:32
+ * Description：消息列表中的用户信息
+ * Email: xiaoting233zhang@126.com
  */
+
 @Entity
 public class MessageUser {
 
     @Id(autoincrement = true)
     private Long id;
 
+    @Unique
     private String userId;
 
     private String nickname;

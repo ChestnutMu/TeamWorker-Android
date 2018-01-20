@@ -38,38 +38,6 @@ public class PreferenceUtil {
     public static final String userinfo = "userinfo_pref";
 
     /**
-     * 提交字符串
-     *
-     * @param key
-     * @param value
-     */
-    public void savePreferenceString(String key, String value) {
-        SharedPreferences preferences = mContext.getSharedPreferences(userinfo,
-                MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(key, value);
-        editor.commit();
-    }
-
-    /**
-     * 删除某一个提交的偏好值
-     *
-     * @param key
-     */
-    public void deleteKey(String key) {
-        try {
-            SharedPreferences preferences = mContext.getSharedPreferences(userinfo,
-                    MODE_PRIVATE);
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.remove(key);
-            editor.commit();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    /**
      * 提交boolean类型的值
      *
      * @param key
@@ -96,6 +64,32 @@ public class PreferenceUtil {
     }
 
     /**
+     * 提交字符串
+     *
+     * @param key
+     * @param value
+     */
+    public void savePreferenceString(String key, String value) {
+        SharedPreferences preferences = mContext.getSharedPreferences(userinfo,
+                MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(key, value);
+        editor.commit();
+    }
+
+    /**
+     * 获取String类型的值
+     *
+     * @param key
+     * @return
+     */
+    public String getPreferenceString(String key) {
+        SharedPreferences preferences = mContext.getSharedPreferences(userinfo,
+                MODE_PRIVATE);
+        return preferences.getString(key, "");
+    }
+
+    /**
      * 提交long类型的值
      *
      * @param key
@@ -110,19 +104,7 @@ public class PreferenceUtil {
     }
 
     /**
-     * 获取偏好中的字符串
-     *
-     * @param key
-     * @return
-     */
-    public String getPreferenceString(String key) {
-        SharedPreferences preferences = mContext.getSharedPreferences(userinfo,
-                MODE_PRIVATE);
-        return preferences.getString(key, "");
-    }
-
-    /**
-     * 获取偏好中的long类型的值
+     * 获取long类型的值
      *
      * @param key
      * @return
@@ -130,6 +112,24 @@ public class PreferenceUtil {
     public long getPreferenceLong(String key) {
         SharedPreferences preferences = mContext.getSharedPreferences(userinfo,
                 MODE_PRIVATE);
-        return preferences.getLong(key, 0);
+        return preferences.getLong(key,0);
+    }
+
+    /**
+     * 删除某一个提交的偏好值
+     *
+     * @param key
+     */
+    public void deleteKey(String key) {
+        try {
+            SharedPreferences preferences = mContext.getSharedPreferences(userinfo,
+                    MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.remove(key);
+            editor.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }

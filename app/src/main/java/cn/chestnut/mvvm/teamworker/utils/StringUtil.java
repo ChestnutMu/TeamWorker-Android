@@ -1,5 +1,9 @@
 package cn.chestnut.mvvm.teamworker.utils;
 
+import android.content.ClipData;
+import android.content.Context;
+import android.os.Build;
+
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
@@ -14,7 +18,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * Copyright (c) 2017, Chestnut All rights reserved
@@ -255,6 +261,22 @@ public class StringUtil {
     }
 
     /**
+     * 大陆手机号码11位数，匹配格式：前三位固定格式+后8位任意数
+     * 此方法中前三位格式有：
+     * 13+任意数
+     * 15+除4的任意数
+     * 18+除1和4的任意数
+     * 17+除9的任意数
+     * 147
+     */
+    public static boolean isChinaPhoneLegal(String str) throws PatternSyntaxException {
+        String regExp = "^((13[0-9])|(15[^4])|(18[0,2,3,5-9])|(17[0-8])|(147))\\d{8}$";
+        Pattern p = Pattern.compile(regExp);
+        Matcher m = p.matcher(str);
+        return m.matches();
+    }
+
+    /**
      * @Description:把list转换为一个用逗号分隔的字符串
      */
     public static String listToString(List list) {
@@ -307,5 +329,20 @@ public class StringUtil {
             }
         }
         return pinyinStr;
+    }
+
+    /**
+     * 实现文本复制功能
+     *
+     * @param text
+     */
+    public static void copyText(Context context, String text) {
+        // 得到剪贴板管理器
+        android.content.ClipboardManager cmb = (android.content.ClipboardManager) context
+                .getSystemService(Context.CLIPBOARD_SERVICE);
+        if (cmb != null) {
+            cmb.setPrimaryClip(ClipData.newPlainText(null, text.trim()));
+        }
+
     }
 }

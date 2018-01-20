@@ -39,7 +39,8 @@
                     android:layout_marginLeft="8dp"
                     android:layout_weight="1"
                     android:hint="请输入用户名"
-                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:maxLength="10"
                     android:textColorHint="@color/text_gray" />
             </LinearLayout>
 
@@ -62,8 +63,9 @@
                     android:layout_marginLeft="5dp"
                     android:layout_weight="1"
                     android:hint="请输入密码"
+                    android:maxLength="10"
+                    android:singleLine="true"
                     android:inputType="textPassword"
-                    android:maxLines="1"
                     android:textColorHint="@color/text_gray" />
             </LinearLayout>
 
@@ -87,7 +89,8 @@
                     android:layout_weight="1"
                     android:hint="请再次确定密码"
                     android:inputType="textPassword"
-                    android:maxLines="1"
+                    android:maxLength="10"
+                    android:singleLine="true"
                     android:textColorHint="@color/text_gray" />
             </LinearLayout>
 

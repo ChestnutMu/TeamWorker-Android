@@ -50,7 +50,7 @@ public class ProcessPhotoUtils {
      * @desc 点击添加图片按钮时调用，弹出对话框供用户选择照片的获取方式
      */
     public void startPhoto() {
-        AlertDialog dialog = new AlertDialog.Builder(mContext).setTitle("插入图片")
+        AlertDialog dialog = new AlertDialog.Builder(mContext).setTitle("选择图片")
                 .setItems(new String[]{"相机拍摄", "相册上传"}, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

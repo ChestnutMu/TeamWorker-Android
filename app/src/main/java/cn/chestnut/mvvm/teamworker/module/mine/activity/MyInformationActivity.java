@@ -21,12 +21,13 @@ import cn.chestnut.mvvm.teamworker.databinding.ActivityMyInformationBinding;
 import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
+import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.User;
-import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
+import cn.chestnut.mvvm.teamworker.utils.StringUtil;
 import cn.chestnut.mvvm.teamworker.utils.photo.ProcessPhotoUtils;
 
 /**
@@ -117,8 +118,8 @@ public class MyInformationActivity extends BaseActivity {
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                if (editText.getText().toString().length() != 11) {
-                                    CommonUtil.showToast("该手机号码格式不正确哦", MyInformationActivity.this);
+                                if (!StringUtil.isChinaPhoneLegal(editText.getText().toString())) {
+                                    CommonUtil.showToast("该号码格式不正确哦", MyInformationActivity.this);
                                 } else {
                                     User user = new User();
                                     user.setTelephone(editText.getText().toString());

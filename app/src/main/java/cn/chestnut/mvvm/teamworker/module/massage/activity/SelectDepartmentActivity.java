@@ -3,6 +3,7 @@ package cn.chestnut.mvvm.teamworker.module.massage.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,11 +24,11 @@ import cn.chestnut.mvvm.teamworker.databinding.ActivitySelectReceiverBinding;
 import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
+import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.module.massage.adapter.DepartmentAdapter;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.Department;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.User;
-import cn.chestnut.mvvm.teamworker.http.RequestManager;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -39,9 +40,9 @@ import cn.chestnut.mvvm.teamworker.http.RequestManager;
 
 public class SelectDepartmentActivity extends BaseActivity {
 
-    ActivitySelectReceiverBinding binding;
+    private ActivitySelectReceiverBinding binding;
     private DepartmentAdapter departmentAdapter;
-    private ArrayList<Department> departmentList = new ArrayList<>();
+    private ArrayList<Department> departmentList;
     private int pageNum = 1;
     private int pageSize = 15;
 
@@ -78,6 +79,7 @@ public class SelectDepartmentActivity extends BaseActivity {
      * 初始化数据
      */
     private void initData() {
+        departmentList = new ArrayList<>();
         getAllDepartments(pageNum, pageSize);
     }
 
@@ -87,7 +89,7 @@ public class SelectDepartmentActivity extends BaseActivity {
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         binding.swipeTarget.setLayoutManager(manager);
-
+        binding.swipeTarget.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
     }
 
     private void addListener() {

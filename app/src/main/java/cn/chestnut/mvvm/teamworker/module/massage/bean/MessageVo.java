@@ -6,8 +6,13 @@ import cn.chestnut.mvvm.teamworker.main.adapter.BindingItem;
 import cn.chestnut.mvvm.teamworker.utils.FormatDateUtil;
 
 /**
- * Created by king on 2018/1/14.
+ * Copyright (c) 2017, Chestnut All rights reserved
+ * Author: Chestnut
+ * CreateTime：at 2017/12/29 14:43:32
+ * Description：
+ * Email: xiaoting233zhang@126.com
  */
+
 public class MessageVo extends BindingItem {
 
     private Message message;
@@ -40,6 +45,10 @@ public class MessageVo extends BindingItem {
 
     public void setMessageUser(MessageUser messageUser) {
         this.messageUser = messageUser;
+    }
+
+    public int getChatPersonalViewType() {
+        return R.layout.item_chat_personal;
     }
 
     @Override

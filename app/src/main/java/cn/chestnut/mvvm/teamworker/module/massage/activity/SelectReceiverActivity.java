@@ -3,6 +3,7 @@ package cn.chestnut.mvvm.teamworker.module.massage.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,10 +24,10 @@ import cn.chestnut.mvvm.teamworker.databinding.ActivitySelectReceiverBinding;
 import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
+import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.module.massage.adapter.UserAdapter;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.User;
-import cn.chestnut.mvvm.teamworker.http.RequestManager;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -38,9 +39,9 @@ import cn.chestnut.mvvm.teamworker.http.RequestManager;
 
 public class SelectReceiverActivity extends BaseActivity {
 
-    ActivitySelectReceiverBinding binding;
+    private ActivitySelectReceiverBinding binding;
     private UserAdapter userAdapter;
-    private ArrayList<User> userList = new ArrayList<>();
+    private ArrayList<User> userList;
     private String departmentId;
     private int pageNum = 1;
     private int pageSize = 15;
@@ -62,6 +63,7 @@ public class SelectReceiverActivity extends BaseActivity {
      * 初始化数据
      */
     private void initData() {
+        userList =new ArrayList<>();
         departmentId = getIntent().getStringExtra("departmentId");
         getUserByDepartment(departmentId, pageNum, pageSize);
     }
@@ -72,7 +74,7 @@ public class SelectReceiverActivity extends BaseActivity {
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         binding.swipeTarget.setLayoutManager(manager);
-
+        binding.swipeTarget.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
     }
 
     private void addListener() {
@@ -133,12 +135,12 @@ public class SelectReceiverActivity extends BaseActivity {
 
             @Override
             public void error(Throwable error) {
-hideProgressDialog();
+                hideProgressDialog();
             }
 
             @Override
             public void complete() {
-hideProgressDialog();
+                hideProgressDialog();
             }
 
         });

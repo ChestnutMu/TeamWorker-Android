@@ -185,8 +185,6 @@ public abstract class BaseActivity extends AppCompatActivity implements OnHandle
     public void onSessionMessage(int msgId, Object object) {
 
         switch (msgId) {
-            case ReceiverProtocol.RECEIVE_NEW_MESSAGE:
-                break;
 
             default:
                 break;

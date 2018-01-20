@@ -18,11 +18,16 @@ import java.util.Map;
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.ActivitySendNotificationBinding;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
+import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
+import cn.chestnut.mvvm.teamworker.module.massage.bean.Message;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.User;
 import cn.chestnut.mvvm.teamworker.socket.ReceiverProtocol;
 import cn.chestnut.mvvm.teamworker.socket.SendProtocol;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
+import cn.chestnut.mvvm.teamworker.utils.EntityUtil;
+import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 import cn.chestnut.mvvm.teamworker.utils.StringUtil;
+import cn.chestnut.mvvm.teamworker.utils.TimeManager;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -37,6 +42,7 @@ public class SendNotificationActivity extends BaseActivity {
     private ActivitySendNotificationBinding binding;
     private Gson gson = new Gson();
     private List<String> uidList;
+    private List<Message> messageList;
 
     private final int request_code_select_person = 1001;
 
@@ -79,6 +85,9 @@ public class SendNotificationActivity extends BaseActivity {
                     binding.tvReceivers.setText(binding.tvReceivers.getText() + "," + user.getAccount());
                 }
                 uidList.add(user.getUserId());
+//                Message message = new Message();
+//                message.setId();
+
             }
         }
     }
@@ -88,6 +97,7 @@ public class SendNotificationActivity extends BaseActivity {
      */
     private void initData() {
         uidList = new ArrayList<>();
+        messageList = new ArrayList<>();
     }
 
     /**
@@ -129,11 +139,23 @@ public class SendNotificationActivity extends BaseActivity {
             CommonUtil.showToast("主题或通知内容不能为空", this);
             return;
         }
+        String chatId = EntityUtil.getIdByTimeStampAndRandom();
         Map<String, String> params = new HashMap<>();
         params.put("title", title);
+        params.put("chatId", chatId);
         params.put("content", content);
         params.put("uids", gson.toJson(uidList));
         executeRequest(SendProtocol.MSG_SEND_MESSAGE, gson.toJson(params));
+
+        Message message = new Message();
+        message.setMessageId(EntityUtil.getIdByTimeStampAndRandom());
+        message.setSenderId(PreferenceUtil.getInstances(this).getPreferenceString("userId"));
+        message.setContent(content);
+        message.setChatId(chatId);
+        message.setTitle("");
+        MessageDaoUtils messageDaoUtils = new MessageDaoUtils(this);
+        message.setTime(TimeManager.getInstance().getServiceTime());
+        messageDaoUtils.insertMessage(message);
     }
 
 }

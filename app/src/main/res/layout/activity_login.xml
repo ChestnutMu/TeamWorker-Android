@@ -51,6 +51,7 @@
                     android:layout_weight="1"
                     android:hint="请输入用户名"
                     android:maxLength="10"
+                    android:singleLine="true"
                     android:textColor="@color/white"
                     android:textColorHint="@color/text_gray" />
             </LinearLayout>
@@ -76,7 +77,8 @@
                     android:layout_weight="1"
                     android:hint="请输入密码"
                     android:inputType="textPassword"
-                    android:maxLines="1"
+                    android:maxLength="10"
+                    android:singleLine="true"
                     android:textColor="@color/white"
                     android:textColorHint="@color/text_gray" />
             </LinearLayout>
@@ -90,8 +92,8 @@
                     android:id="@+id/tv_register"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
                     android:layout_gravity="right"
+                    android:layout_marginTop="5dp"
                     android:text="新用户注册"
                     android:textColor="@color/white" />
             </LinearLayout>

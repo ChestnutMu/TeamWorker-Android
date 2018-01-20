@@ -11,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,6 +30,7 @@ import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.activity.MainActivity;
 import cn.chestnut.mvvm.teamworker.main.common.BaseFragment;
 import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
+import cn.chestnut.mvvm.teamworker.module.massage.activity.ChatPersonalActivity;
 import cn.chestnut.mvvm.teamworker.module.massage.activity.SendNotificationActivity;
 import cn.chestnut.mvvm.teamworker.module.massage.adapter.MessageAdapter;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.Message;
@@ -51,9 +53,11 @@ public class MessageFragment extends BaseFragment {
 
     private FragmentMessageBinding binding;
     private MessageAdapter messageAdapter;
-    private LinkedList<MessageVo> messageList = new LinkedList<>();
+    private LinkedList<MessageVo> messageList;
     private String userId;
     private MessageDaoUtils messageDaoUtils;
+
+    private static final long MILLISECOND_OF_TWO_HOUR = 60 * 60 * 1000;
 
     @Override
     protected void setBaseTitle(TextView titleView) {
@@ -88,7 +92,9 @@ public class MessageFragment extends BaseFragment {
             public void onReceive(Context context, Intent intent) {
                 Message newMessage = (Message) intent.getSerializableExtra("newMessage");
                 Log.d("MessageFragment收到一条新消息" + newMessage.toString());
-                messageDaoUtils.insertMessage(newMessage);
+                if (!newMessage.getSenderId().equals(userId)) {
+                    messageDaoUtils.insertMessage(newMessage);
+                }
                 boolean listHasSender = false;//消息列表中是否已经有该发送者item
                 for (int i = 0; i < messageList.size(); i++) {
                     if (messageList.get(i).getMessage().getSenderId().equals(newMessage.getSenderId())) {
@@ -115,7 +121,7 @@ public class MessageFragment extends BaseFragment {
         messageDaoUtils = new MessageDaoUtils(getActivity());
         userId = PreferenceUtil.getInstances(getActivity()).getPreferenceString("userId");
 
-
+        messageList = new LinkedList<>();
         messageList.addAll(messageDaoUtils.transferMessageVo(messageDaoUtils.queryTopMessageByUserId(userId)));
         getNotSendMessagesByUserId();
     }
@@ -127,13 +133,13 @@ public class MessageFragment extends BaseFragment {
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         binding.recyclerView.setLayoutManager(manager);
         binding.recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
-
     }
 
     private void addListener() {
         messageAdapter.setOnUpdateMessageLayoutListener(new MessageAdapter.OnUpdateMessageLayoutListener() {
             @Override
-            public void onUpdate(final MessageAdapter messageAdapter, MessageVo obj) {
+            public void onUpdate(final MessageAdapter messageAdapter, MessageVo obj, final boolean isUpdate) {
+
                 Map<String, Object> params = new HashMap<>();
                 params.put("userId", obj.getMessage().getSenderId());
                 RequestManager.getInstance(getActivity()).executeRequest(HttpUrls.GET_USER_INFO, params, new AppCallBack<ApiResponse<MessageUser>>() {
@@ -141,7 +147,15 @@ public class MessageFragment extends BaseFragment {
                     @Override
                     public void next(ApiResponse<MessageUser> response) {
                         if (response.isSuccess()) {
-                            messageDaoUtils.insertMessageUser(response.getData());
+                            if (isUpdate) {
+                                //本地更新数据
+                                messageDaoUtils.updateMessageUser(response.getData());
+                            } else {
+                                //本地插入数据
+                                messageDaoUtils.insertMessageUser(response.getData());
+                            }
+                            //保存下一次需要更新的时间
+                            PreferenceUtil.getInstances(getActivity()).savePreferenceLong("updateTime", MILLISECOND_OF_TWO_HOUR + System.currentTimeMillis());
                             messageAdapter.notifyDataSetChanged();
                         } else {
                             CommonUtil.showToast(response.getMessage(), getActivity());
@@ -158,6 +172,15 @@ public class MessageFragment extends BaseFragment {
                     }
 
                 });
+            }
+
+        });
+        messageAdapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getActivity(), ChatPersonalActivity.class);
+                intent.putExtra("chatId", messageList.get(position).getMessage().getChatId());
+                getActivity().startActivity(intent);
             }
         });
     }
@@ -199,7 +222,4 @@ public class MessageFragment extends BaseFragment {
 
     }
 
-    private void updateView() {
-
-    }
 }

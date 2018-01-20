@@ -1,7 +1,6 @@
 package cn.chestnut.mvvm.teamworker.module.massage;
 
 import android.content.Context;
-import android.database.Cursor;
 
 import org.greenrobot.greendao.query.Query;
 import org.greenrobot.greendao.query.QueryBuilder;
@@ -59,6 +58,30 @@ public class MessageDaoUtils {
                 public void run() {
                     for (Message message : messageList) {
                         mManager.getDaoSession().insertOrReplace(message);
+                    }
+                }
+            });
+            flag = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return flag;
+    }
+
+    /**
+     * 插入多条数据，在子线程操作
+     *
+     * @param messageUserList
+     * @return
+     */
+    public boolean insertMultMessageUser(final List<MessageUser> messageUserList) {
+        boolean flag = false;
+        try {
+            mManager.getDaoSession().runInTx(new Runnable() {
+                @Override
+                public void run() {
+                    for (MessageUser messageUser : messageUserList) {
+                        mManager.getDaoSession().insertOrReplace(messageUser);
                     }
                 }
             });
@@ -165,8 +188,25 @@ public class MessageDaoUtils {
     public List<Message> queryTopMessageByUserId(String userId) {
         Query query = mManager.getDaoSession().getMessageDao().queryBuilder().where(
                 new WhereCondition.StringCondition(
+                        "RECEIVER_ID = '" + userId +"' OR SENDER_ID = '" + userId +
+                                "' GROUP BY CHAT_ID ORDER BY TIME DESC")).build();
+        return query.list();
+    }
+
+
+    /**
+     * 根据userId和senderId查询接收到的消息列表
+     *
+     * @return
+     */
+    public List<Message> queryMessageByUserIdAndSenderId(String userId, String senderId) {
+        Query query = mManager.getDaoSession().getMessageDao().queryBuilder().where(
+                new WhereCondition.StringCondition(
                         "RECEIVER_ID = '" + userId +
-                                "' GROUP BY SENDER_ID ORDER BY TIME DESC")).build();
+                                "' AND SENDER_ID = '" + senderId +
+                                "' OR RECEIVER_ID = '" + senderId +
+                                "' AND SENDER_ID = '" + userId +
+                                "' ORDER BY TIME ASC")).build();
         return query.list();
     }
 
@@ -181,25 +221,87 @@ public class MessageDaoUtils {
     }
 
     /**
+     * 查找用户信息添加到message
      *
+     * @param messages
+     * @param userId
      * @return
      */
-    public List<MessageUser> queryMessageUserByUserId(String userId) {
-        Query query = mManager.getDaoSession().getMessageUserDao().queryBuilder().where(
-                new WhereCondition.StringCondition(
-                        "USER_ID = '" + userId + "'")).build();
-        return query.list();
+    public List<MessageVo> transferMessageVoByUserId(List<Message> messages, String userId) {
+        List<MessageVo> result = new LinkedList<>();
+        for (Message message : messages) {
+            MessageVo messageVo = new MessageVo();
+            messageVo.setMessage(message);
+            messageVo.setMessageUser(queryMessageUserByUserId(userId));
+            result.add(messageVo);
+        }
+        return result;
     }
 
     /**
-     *
+     * @param messages
+     * @param messageUser
+     * @return
+     */
+    public List<MessageVo> transferMessageVoByMessageUser(List<Message> messages, MessageUser messageUser) {
+        List<MessageVo> result = new LinkedList<>();
+        for (Message message : messages) {
+            MessageVo messageVo = new MessageVo();
+            messageVo.setMessage(message);
+            messageVo.setMessageUser(messageUser);
+            result.add(messageVo);
+        }
+        return result;
+    }
+
+    /**
+     * @return
+     */
+    public MessageUser queryMessageUserByUserId(String userId) {
+        Query query = mManager.getDaoSession().getMessageUserDao().queryBuilder().where(
+                new WhereCondition.StringCondition(
+                        "USER_ID = '" + userId + "'")).build();
+        return (MessageUser) query.unique();
+    }
+
+    /**
      * @param messageUser
      * @return
      */
     public boolean insertMessageUser(MessageUser messageUser) {
-        boolean flag = false;
+        boolean flag;
         flag = mManager.getDaoSession().getMessageUserDao().insert(messageUser) == -1 ? false : true;
         Log.i("insert messageUser :" + flag + "-->" + messageUser.toString());
         return flag;
+    }
+
+    /**
+     * @param messageUser
+     * @return
+     */
+    public boolean updateMessageUser(MessageUser messageUser) {
+        boolean flag = false;
+        try {
+            mManager.getDaoSession().update(messageUser);
+            flag = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return flag;
+    }
+
+    public List<Message> queryMessageByChatId(String chatId) {
+        Query query = mManager.getDaoSession().getMessageDao().queryBuilder().where(
+                new WhereCondition.StringCondition(
+                        "CHAT_ID = '" + chatId +"' ORDER BY TIME ASC")).build();
+        return query.list();
+    }
+
+    public List<String> queryMessageUserIdByChatId(String chatId){
+        Query query=mManager.getDaoSession().getMessageDao().queryBuilder().where(
+                new WhereCondition.StringCondition("_ID IN " +
+                        "(SELECT SENDER_ID FROM MESSAGE WHERE CHAT_ID = '"+chatId+"' GROUP BY SENDER_ID )")
+        ).build();
+        return query.list();
     }
 }

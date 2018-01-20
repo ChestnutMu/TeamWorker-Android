@@ -77,7 +77,8 @@
         <activity
             android:name=".main.activity.MainActivity"
             android:launchMode="singleTask" />
-        <activity android:name=".module.massage.activity.ChatPersonalActivity" />
+        <activity android:name=".module.massage.activity.ChatPersonalActivity"
+            android:windowSoftInputMode="stateHidden"/>
         <activity android:name=".module.massage.activity.SelectDepartmentActivity" />
         <activity android:name=".module.massage.activity.SelectReceiverActivity" />
         <activity android:name=".module.massage.activity.SendNotificationActivity" />
