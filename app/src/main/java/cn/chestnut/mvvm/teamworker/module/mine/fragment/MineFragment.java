@@ -1,22 +1,39 @@
 package cn.chestnut.mvvm.teamworker.module.mine.fragment;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.databinding.DataBindingUtil;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
+
+import cn.chestnut.mvvm.teamworker.Constant;
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.FragmentMineBinding;
+import cn.chestnut.mvvm.teamworker.http.ApiResponse;
+import cn.chestnut.mvvm.teamworker.http.AppCallBack;
+import cn.chestnut.mvvm.teamworker.http.HttpUrls;
+import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.BaseFragment;
 import cn.chestnut.mvvm.teamworker.main.activity.LoginActivity;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
 import cn.chestnut.mvvm.teamworker.module.checkattendance.activity.CheckAttendanceActivity;
+import cn.chestnut.mvvm.teamworker.module.massage.bean.User;
 import cn.chestnut.mvvm.teamworker.module.mine.activity.MyInformationActivity;
 import cn.chestnut.mvvm.teamworker.socket.TeamWorkerClient;
+import cn.chestnut.mvvm.teamworker.utils.EmojiUtil;
+import cn.chestnut.mvvm.teamworker.utils.Log;
+import cn.chestnut.mvvm.teamworker.utils.PermissionsUtil;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 
 /**
@@ -39,7 +56,19 @@ public class MineFragment extends BaseFragment {
     @Override
     protected void addContainerView(ViewGroup viewGroup, LayoutInflater inflater) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_mine, viewGroup, true);
+        initView();
         addListener();
+    }
+
+    private void initView() {
+        BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                binding.tvNickname.setText(intent.getStringExtra("nickname"));
+            }
+        };
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter(Constant.ActionConstant.ACTION_GET_NEW_MESSAGE));
+        getMyInfomation();
     }
 
     /**
@@ -110,5 +139,39 @@ public class MineFragment extends BaseFragment {
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         MyApplication.getInstance().startActivity(i);
         android.os.Process.killProcess(android.os.Process.myPid());
+    }
+
+    /**
+     * 获取个人信息
+     */
+    private void getMyInfomation() {
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("token", PreferenceUtil.getInstances(getActivity()).getPreferenceString("token"));
+        params.put("userId", PreferenceUtil.getInstances(getActivity()).getPreferenceString("userId"));
+        RequestManager.getInstance(getActivity()).executeRequest(HttpUrls.GET_MY_INFORMATION, params, new AppCallBack<ApiResponse<User>>() {
+
+            @Override
+            public void next(ApiResponse<User> response) {
+                if (response.isSuccess()) {
+                    try {
+                        binding.tvNickname.setText(EmojiUtil.emojiRecovery(response.getData().getNickname()));
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void error(Throwable error) {
+                Log.e(error.toString());
+            }
+
+            @Override
+            public void complete() {
+            }
+
+        });
+
     }
 }

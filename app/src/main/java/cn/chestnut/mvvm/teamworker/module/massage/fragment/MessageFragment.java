@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,7 +31,7 @@ import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.activity.MainActivity;
 import cn.chestnut.mvvm.teamworker.main.common.BaseFragment;
 import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
-import cn.chestnut.mvvm.teamworker.module.massage.activity.ChatPersonalActivity;
+import cn.chestnut.mvvm.teamworker.module.massage.activity.ChatActivity;
 import cn.chestnut.mvvm.teamworker.module.massage.activity.SendNotificationActivity;
 import cn.chestnut.mvvm.teamworker.module.massage.adapter.MessageAdapter;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.Message;
@@ -38,8 +39,10 @@ import cn.chestnut.mvvm.teamworker.module.massage.bean.MessageUser;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.MessageVo;
 import cn.chestnut.mvvm.teamworker.socket.SendProtocol;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
+import cn.chestnut.mvvm.teamworker.utils.EmojiUtil;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
+import cn.chestnut.mvvm.teamworker.utils.StringUtil;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -93,11 +96,18 @@ public class MessageFragment extends BaseFragment {
                 Message newMessage = (Message) intent.getSerializableExtra("newMessage");
                 Log.d("MessageFragment收到一条新消息" + newMessage.toString());
                 if (!newMessage.getSenderId().equals(userId)) {
+                    try {
+                        newMessage.setTitle(EmojiUtil.emojiRecovery(newMessage.getTitle()));
+                        newMessage.setContent(EmojiUtil.emojiRecovery(newMessage.getContent()));
+                        newMessage.setChatName(EmojiUtil.emojiRecovery(newMessage.getChatName()));
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
                     messageDaoUtils.insertMessage(newMessage);
                 }
                 boolean listHasSender = false;//消息列表中是否已经有该发送者item
                 for (int i = 0; i < messageList.size(); i++) {
-                    if (messageList.get(i).getMessage().getSenderId().equals(newMessage.getSenderId())) {
+                    if (messageList.get(i).getMessage().getChatId().equals(newMessage.getChatId())) {
                         messageList.remove(i);
                         MessageVo messageVo = new MessageVo();
                         messageVo.setMessage(newMessage);
@@ -117,7 +127,7 @@ public class MessageFragment extends BaseFragment {
             }
         };
 
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, new IntentFilter(Constant.ActionConstant.ACTION_GET_NEW_MESSAGE));
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, new IntentFilter(Constant.ActionConstant.ACTION_UPDATE_NICKNAME));
         messageDaoUtils = new MessageDaoUtils(getActivity());
         userId = PreferenceUtil.getInstances(getActivity()).getPreferenceString("userId");
 
@@ -139,14 +149,22 @@ public class MessageFragment extends BaseFragment {
         messageAdapter.setOnUpdateMessageLayoutListener(new MessageAdapter.OnUpdateMessageLayoutListener() {
             @Override
             public void onUpdate(final MessageAdapter messageAdapter, MessageVo obj, final boolean isUpdate) {
-
+                String chatUserId = obj.getMessage().getSenderId();
+                if (chatUserId.equals(userId)) {
+                    chatUserId = obj.getMessage().getReceiverId();
+                }
                 Map<String, Object> params = new HashMap<>();
-                params.put("userId", obj.getMessage().getSenderId());
+                params.put("userId", chatUserId);
                 RequestManager.getInstance(getActivity()).executeRequest(HttpUrls.GET_USER_INFO, params, new AppCallBack<ApiResponse<MessageUser>>() {
 
                     @Override
                     public void next(ApiResponse<MessageUser> response) {
                         if (response.isSuccess()) {
+                            try {
+                                response.getData().setNickname(EmojiUtil.emojiRecovery(response.getData().getNickname()));
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
                             if (isUpdate) {
                                 //本地更新数据
                                 messageDaoUtils.updateMessageUser(response.getData());
@@ -178,8 +196,14 @@ public class MessageFragment extends BaseFragment {
         messageAdapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(), ChatPersonalActivity.class);
+                Intent intent = new Intent(getActivity(), ChatActivity.class);
                 intent.putExtra("chatId", messageList.get(position).getMessage().getChatId());
+                String chatName = messageList.get(position).getMessage().getChatName();
+                if (StringUtil.isStringNotNull(chatName)) {
+                    intent.putExtra("chatName", chatName);
+                } else {
+                    intent.putExtra("title", messageList.get(position).getMessage().getChatName());
+                }
                 getActivity().startActivity(intent);
             }
         });
@@ -196,14 +220,21 @@ public class MessageFragment extends BaseFragment {
             @Override
             public void next(ApiResponse<List<Message>> response) {
                 if (response.isSuccess()) {
+                    for (int i = 0; i < response.getData().size(); i++) {
+                        try {
+                            response.getData().get(i).setTitle(EmojiUtil.emojiConvert(response.getData().get(i).getTitle()));
+                            response.getData().get(i).setContent(EmojiUtil.emojiConvert(response.getData().get(i).getContent()));
+                            response.getData().get(i).setChatName(EmojiUtil.emojiConvert(response.getData().get(i).getChatName()));
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        ((MainActivity) getActivity()).executeRequest(SendProtocol.MSG_ISSEND_MESSAGE,
+                                response.getData().get(i).getMessageId());
+                    }
                     messageDaoUtils.insertMultMessage(response.getData());
                     messageList.clear();
                     messageList.addAll(messageDaoUtils.transferMessageVo(messageDaoUtils.queryTopMessageByUserId(userId)));
                     messageAdapter.notifyDataSetChanged();
-                    for (int i = 0; i < response.getData().size(); i++) {
-                        ((MainActivity) getActivity()).executeRequest(SendProtocol.MSG_ISSEND_MESSAGE,
-                                response.getData().get(i).getMessageId());
-                    }
                 } else {
                     CommonUtil.showToast(response.getMessage(), getActivity());
                 }

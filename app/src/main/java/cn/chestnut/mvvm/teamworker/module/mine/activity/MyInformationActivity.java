@@ -3,7 +3,9 @@ package cn.chestnut.mvvm.teamworker.module.mine.activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,10 +14,12 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.chestnut.mvvm.teamworker.Constant;
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.ActivityMyInformationBinding;
 import cn.chestnut.mvvm.teamworker.http.ApiResponse;
@@ -25,6 +29,7 @@ import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.User;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
+import cn.chestnut.mvvm.teamworker.utils.EmojiUtil;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 import cn.chestnut.mvvm.teamworker.utils.StringUtil;
@@ -91,7 +96,11 @@ public class MyInformationActivity extends BaseActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 User user = new User();
-                                user.setNickname(editText.getText().toString());
+                                try {
+                                    user.setNickname(EmojiUtil.emojiConvert(editText.getText().toString()));
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
                                 updateMyinformation(user);
                             }
                         })
@@ -197,7 +206,11 @@ public class MyInformationActivity extends BaseActivity {
             @Override
             public void next(ApiResponse<User> response) {
                 if (response.isSuccess()) {
-                    binding.tvNickname.setText(response.getData().getNickname());
+                    try {
+                        binding.tvNickname.setText(EmojiUtil.emojiRecovery(response.getData().getNickname()));
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
                     binding.tvTelephone.setText(response.getData().getTelephone());
                     binding.tvSex.setText(response.getData().getSex());
                     binding.tvBirthday.setText(response.getData().getBirthday());
@@ -228,7 +241,18 @@ public class MyInformationActivity extends BaseActivity {
             @Override
             public void next(ApiResponse<User> response) {
                 if (response.isSuccess()) {
-                    binding.tvNickname.setText(response.getData().getNickname());
+                    if (StringUtil.isStringNotNull(response.getData().getNickname())) {
+                        String nickName = null;
+                        try {
+                            nickName = EmojiUtil.emojiRecovery(response.getData().getNickname());
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        binding.tvNickname.setText(nickName);
+                        Intent intent = new Intent(Constant.ActionConstant.ACTION_UPDATE_NICKNAME);
+                        intent.putExtra("nickname", response.getData().getNickname());
+                        LocalBroadcastManager.getInstance(MyInformationActivity.this).sendBroadcast(intent);
+                    }
                     binding.tvTelephone.setText(response.getData().getTelephone());
                     binding.tvSex.setText(response.getData().getSex());
                     binding.tvBirthday.setText(response.getData().getBirthday());

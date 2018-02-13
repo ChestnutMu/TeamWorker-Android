@@ -7,9 +7,11 @@ import java.util.List;
 import cn.chestnut.mvvm.teamworker.databinding.ItemMessageBinding;
 import cn.chestnut.mvvm.teamworker.main.adapter.BaseRecyclerViewAdapter;
 import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
+import cn.chestnut.mvvm.teamworker.module.massage.bean.Message;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.MessageUser;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.MessageVo;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
+import cn.chestnut.mvvm.teamworker.utils.StringUtil;
 
 /**
  * Copyright (c) 2017, Chestnut All rights reserved
@@ -35,19 +37,31 @@ public class MessageAdapter extends BaseRecyclerViewAdapter<MessageVo, ItemMessa
 
     @Override
     protected void handleViewHolder(ItemMessageBinding binding, MessageVo obj, int position) {
-        if (obj.getMessageUser() == null) {
-            long updateTime = PreferenceUtil.getInstances(mContext).getPreferenceLong("updateTime");
-            //本地获取
-            MessageUser messageUser = messageDaoUtils.queryMessageUserByUserId(obj.getMessage().getSenderId());
-            //本地SQLite没有记录，则从服务器拿并插入本地
-            if (messageUser == null) {
-                updateMessageUser(this, obj, false);
-            }
-            //本地有记录，再判断是否到更新时间，是则从服务器拿并更新本地
-            else if (updateTime != 0 || updateTime < System.currentTimeMillis()) {
-                obj.setMessageUser(messageUser);
-            } else updateMessageUser(this, obj, true);
+        Message newMessage=messageDaoUtils.queryTopMessageByChatId(obj.getMessage().getChatId());
+        obj.setMessage(newMessage);
+        binding.tvContent.setText(obj.getMessage().getContent());
+        if (StringUtil.isEmpty(obj.getMessage().getChatName())){
+            if (obj.getMessageUser() == null) {
+                long updateTime = PreferenceUtil.getInstances(mContext).getPreferenceLong("updateTime");
+                String chatUserId=obj.getMessage().getSenderId();
+                String userId=PreferenceUtil.getInstances(mContext).getPreferenceString("userId");
+                if (chatUserId.equals(userId)){
+                    chatUserId=obj.getMessage().getReceiverId();
+                }
+                //本地获取
+                MessageUser messageUser = messageDaoUtils.queryMessageUserByUserId(chatUserId);
+                //本地SQLite没有记录，则从服务器拿并插入本地
+                if (messageUser == null) {
+                    updateMessageUser(this, obj, false);
+                }
+                //本地有记录，再判断是否到更新时间，是则从服务器拿并更新本地
+                else if (updateTime != 0 || updateTime < System.currentTimeMillis()) {
+                    obj.setMessageUser(messageUser);
+                } else updateMessageUser(this, obj, true);
 
+            }
+        }else {
+            binding.tvTitle.setText(obj.getMessage().getChatName());
         }
     }
 

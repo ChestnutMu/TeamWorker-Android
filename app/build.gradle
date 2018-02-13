@@ -43,7 +43,7 @@ android {
 }
 
 greendao {
-    schemaVersion 2
+    schemaVersion 3
     daoPackage 'cn.chestnut.mvvm.teamworker.db'
     targetGenDir 'src/main/java'
 }
@@ -86,5 +86,5 @@ dependencies {
     //时间选择器
     compile 'com.wdullaer:materialdatetimepicker:3.5.0'
     //高德地图定位
-    compileOnly files('libs/AMap_Location_V3.7.0_20171218.jar')
+    compile files('libs/AMap_Location_V3.7.0_20171218.jar')
 }

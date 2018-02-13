@@ -6,6 +6,7 @@ import org.greenrobot.greendao.query.Query;
 import org.greenrobot.greendao.query.QueryBuilder;
 import org.greenrobot.greendao.query.WhereCondition;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class MessageDaoUtils {
      * @return
      */
     public boolean insertMessage(Message message) {
-        boolean flag = false;
+        boolean flag;
         flag = mManager.getDaoSession().getMessageDao().insert(message) == -1 ? false : true;
         Log.i("insert Message :" + flag + "-->" + message.toString());
         return flag;
@@ -93,6 +94,19 @@ public class MessageDaoUtils {
     }
 
     /**
+     * 插入一条用户信息
+     *
+     * @param messageUser
+     * @return
+     */
+    public boolean insertMessageUser(MessageUser messageUser) {
+        boolean flag;
+        flag = mManager.getDaoSession().getMessageUserDao().insert(messageUser) == -1 ? false : true;
+        Log.i("insert messageUser :" + flag + "-->" + messageUser.toString());
+        return flag;
+    }
+
+    /**
      * 修改一条数据
      *
      * @param message
@@ -102,6 +116,23 @@ public class MessageDaoUtils {
         boolean flag = false;
         try {
             mManager.getDaoSession().update(message);
+            flag = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return flag;
+    }
+
+    /**
+     * 修改一条用户信息
+     *
+     * @param messageUser
+     * @return
+     */
+    public boolean updateMessageUser(MessageUser messageUser) {
+        boolean flag = false;
+        try {
+            mManager.getDaoSession().update(messageUser);
             flag = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -188,9 +219,22 @@ public class MessageDaoUtils {
     public List<Message> queryTopMessageByUserId(String userId) {
         Query query = mManager.getDaoSession().getMessageDao().queryBuilder().where(
                 new WhereCondition.StringCondition(
-                        "RECEIVER_ID = '" + userId +"' OR SENDER_ID = '" + userId +
-                                "' GROUP BY CHAT_ID ORDER BY TIME DESC")).build();
+                        "RECEIVER_ID = '" + userId + "' OR SENDER_ID = '" + userId +
+                                "' GROUP BY CHAT_ID")).build();
         return query.list();
+    }
+
+    /**
+     * 根据userId查询接收到的消息列表
+     *
+     * @return
+     */
+    public Message queryTopMessageByChatId(String chatId) {
+        Query query = mManager.getDaoSession().getMessageDao().queryBuilder().where(
+                new WhereCondition.StringCondition(
+                        "CHAT_ID = '" + chatId +
+                                "' ORDER BY TIME DESC")).offset(0).limit(1).build();
+        return (Message) query.unique();
     }
 
 
@@ -210,6 +254,57 @@ public class MessageDaoUtils {
         return query.list();
     }
 
+    /**
+     * 根据userId查询用户名和头像
+     *
+     * @return
+     */
+    public MessageUser queryMessageUserByUserId(String userId) {
+        Query query = mManager.getDaoSession().getMessageUserDao().queryBuilder().where(
+                new WhereCondition.StringCondition(
+                        "USER_ID = '" + userId + "'")).build();
+        return (MessageUser) query.unique();
+    }
+
+    /**
+     * 根据chatId查询MessageList
+     *
+     * @param chatId
+     * @return
+     */
+    public List<Message> queryMessageByChatId(String chatId) {
+        Query query = mManager.getDaoSession().getMessageDao().queryBuilder().where(
+                new WhereCondition.StringCondition(
+                        "CHAT_ID = '" + chatId + "' ORDER BY TIME ASC")).build();
+        return query.list();
+    }
+
+    /**
+     * 根据chatId和userId查询MessageUser
+     *
+     * @param chatId
+     * @param userId
+     * @return
+     */
+    public List<String> queryMessageUserIdByChatId(String chatId, String userId) {
+        Query<Message> query = mManager.getDaoSession().getMessageDao().queryBuilder().where(
+                new WhereCondition.StringCondition("CHAT_ID = '" + chatId + "' GROUP BY SENDER_ID ")
+        ).build();
+        List<Message> messageList = query.list();
+        List<String> senderIdList = new ArrayList<>();
+        for (Message message : messageList) {
+            if (!userId.equals(message.getSenderId()))
+                senderIdList.add(message.getSenderId());
+        }
+        return senderIdList;
+    }
+
+    /**
+     * 将Message转为MessageUser
+     *
+     * @param messages
+     * @return
+     */
     public List<MessageVo> transferMessageVo(List<Message> messages) {
         List<MessageVo> result = new LinkedList<>();
         for (Message message : messages) {
@@ -221,7 +316,7 @@ public class MessageDaoUtils {
     }
 
     /**
-     * 查找用户信息添加到message
+     * 根据userId查找用户信息添加到MessageVo
      *
      * @param messages
      * @param userId
@@ -239,6 +334,7 @@ public class MessageDaoUtils {
     }
 
     /**
+     *
      * @param messages
      * @param messageUser
      * @return
@@ -252,56 +348,5 @@ public class MessageDaoUtils {
             result.add(messageVo);
         }
         return result;
-    }
-
-    /**
-     * @return
-     */
-    public MessageUser queryMessageUserByUserId(String userId) {
-        Query query = mManager.getDaoSession().getMessageUserDao().queryBuilder().where(
-                new WhereCondition.StringCondition(
-                        "USER_ID = '" + userId + "'")).build();
-        return (MessageUser) query.unique();
-    }
-
-    /**
-     * @param messageUser
-     * @return
-     */
-    public boolean insertMessageUser(MessageUser messageUser) {
-        boolean flag;
-        flag = mManager.getDaoSession().getMessageUserDao().insert(messageUser) == -1 ? false : true;
-        Log.i("insert messageUser :" + flag + "-->" + messageUser.toString());
-        return flag;
-    }
-
-    /**
-     * @param messageUser
-     * @return
-     */
-    public boolean updateMessageUser(MessageUser messageUser) {
-        boolean flag = false;
-        try {
-            mManager.getDaoSession().update(messageUser);
-            flag = true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return flag;
-    }
-
-    public List<Message> queryMessageByChatId(String chatId) {
-        Query query = mManager.getDaoSession().getMessageDao().queryBuilder().where(
-                new WhereCondition.StringCondition(
-                        "CHAT_ID = '" + chatId +"' ORDER BY TIME ASC")).build();
-        return query.list();
-    }
-
-    public List<String> queryMessageUserIdByChatId(String chatId){
-        Query query=mManager.getDaoSession().getMessageDao().queryBuilder().where(
-                new WhereCondition.StringCondition("_ID IN " +
-                        "(SELECT SENDER_ID FROM MESSAGE WHERE CHAT_ID = '"+chatId+"' GROUP BY SENDER_ID )")
-        ).build();
-        return query.list();
     }
 }

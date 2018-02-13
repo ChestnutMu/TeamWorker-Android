@@ -4,8 +4,8 @@
     <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
         android:background="@color/appTheme"
+        android:fitsSystemWindows="true"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -22,12 +22,12 @@
 
                 <ImageView
                     android:id="@+id/btn_back"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="48dp"
+                    android:scaleType="centerInside"
+                    android:layout_height="match_parent"
                     android:src="@mipmap/back" />
 
             </LinearLayout>
-
 
             <TextView
                 android:id="@+id/base_title_tv"
@@ -49,17 +49,14 @@
                 android:layout_centerVertical="true"
                 android:background="@null"
                 android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp">
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/edit"
-                    android:layout_width="wrap_content"
+                    android:layout_width="48dp"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="30dp"
+                    android:layout_marginRight="12dp"
+                    android:gravity="center"
                     android:text="编辑"
                     android:textColor="@color/white"
                     android:textSize="14sp"
@@ -67,22 +64,21 @@
 
                 <ImageView
                     android:id="@+id/search"
-                    android:layout_width="wrap_content"
+                    android:layout_width="48dp"
                     android:layout_height="match_parent"
+                    android:background="@drawable/bg_add_search_selector"
                     android:gravity="center_vertical"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="30dp"
+                    android:scaleType="centerInside"
                     android:src="@mipmap/icon_search"
                     android:visibility="gone" />
 
-
                 <ImageView
                     android:id="@+id/add"
-                    android:layout_width="wrap_content"
+                    android:layout_width="48dp"
                     android:layout_height="match_parent"
+                    android:background="@drawable/bg_add_search_selector"
                     android:gravity="center_vertical"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="30dp"
+                    android:scaleType="centerInside"
                     android:src="@mipmap/icon_add"
                     android:visibility="gone" />
             </LinearLayout>
@@ -91,8 +87,8 @@
         <FrameLayout
             android:id="@+id/base_container_layout"
             android:layout_width="match_parent"
-            android:background="@color/translucent_grey"
             android:layout_height="match_parent"
+            android:background="@color/translucent_grey"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
     </LinearLayout>
 </layout>

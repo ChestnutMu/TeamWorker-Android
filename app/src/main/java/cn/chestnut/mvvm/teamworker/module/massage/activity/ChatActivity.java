@@ -6,17 +6,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.databinding.DataBindingUtil;
+import android.graphics.drawable.GradientDrawable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,19 +28,20 @@ import java.util.Map;
 
 import cn.chestnut.mvvm.teamworker.Constant;
 import cn.chestnut.mvvm.teamworker.R;
-import cn.chestnut.mvvm.teamworker.databinding.ActivityChatPersonalBinding;
+import cn.chestnut.mvvm.teamworker.databinding.ActivityChatBinding;
 import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
 import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
-import cn.chestnut.mvvm.teamworker.module.massage.adapter.ChatPersonalAdapter;
+import cn.chestnut.mvvm.teamworker.module.massage.adapter.ChatAdapter;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.Message;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.MessageUser;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.MessageVo;
 import cn.chestnut.mvvm.teamworker.socket.SendProtocol;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
+import cn.chestnut.mvvm.teamworker.utils.EmojiUtil;
 import cn.chestnut.mvvm.teamworker.utils.EntityUtil;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
@@ -47,14 +52,14 @@ import cn.chestnut.mvvm.teamworker.utils.TimeManager;
  * Copyright (c) 2017, Chestnut All rights reserved
  * Author: Chestnut
  * CreateTime：at 2017/12/31 10:22:42
- * Description：
+ * Description：聊天
  * Email: xiaoting233zhang@126.com
  */
 
-public class ChatPersonalActivity extends BaseActivity {
+public class ChatActivity extends BaseActivity {
 
-    private ActivityChatPersonalBinding binding;
-    private ChatPersonalAdapter chatPersonalAdapter;
+    private ActivityChatBinding binding;
+    private ChatAdapter chatAdapter;
     private List<MessageVo> messageVoList;
 
     private MessageDaoUtils messageDaoUtils;
@@ -68,12 +73,17 @@ public class ChatPersonalActivity extends BaseActivity {
 
     @Override
     protected void setBaseTitle(TextView titleView) {
-        titleView.setText("消息");
+        String chatName = getIntent().getStringExtra("chatName");
+        if (StringUtil.isStringNotNull(chatName)) {
+            titleView.setText(chatName);
+        } else {
+            titleView.setText(getIntent().getStringExtra("title"));
+        }
     }
 
     @Override
     protected void addContainerView(ViewGroup viewGroup, LayoutInflater inflater) {
-        binding = DataBindingUtil.inflate(inflater, R.layout.activity_chat_personal, viewGroup, true);
+        binding = DataBindingUtil.inflate(inflater, R.layout.activity_chat, viewGroup, true);
         initData();
         initView();
         addListener();
@@ -81,7 +91,7 @@ public class ChatPersonalActivity extends BaseActivity {
 
     @Override
     public void finish() {
-        hideSoftInput(ChatPersonalActivity.this, binding.etInput);
+        hideSoftInput(ChatActivity.this, binding.etInput);
         super.finish();
     }
 
@@ -96,49 +106,54 @@ public class ChatPersonalActivity extends BaseActivity {
         messageVoList.addAll(messageDaoUtils.transferMessageVo(
                 messageDaoUtils.queryMessageByChatId(chatId)));
         senderIdList = new ArrayList<>();
-        senderIdList.addAll(messageDaoUtils.queryMessageUserIdByChatId(chatId));
-        Log.d("senderIdList " + senderIdList);
+        senderIdList.addAll(messageDaoUtils.queryMessageUserIdByChatId(chatId, userId));
         long updateTime = PreferenceUtil.getInstances(this).getPreferenceLong("updateTime");
         if (updateTime != 0 && updateTime > System.currentTimeMillis()) {
+            // TODO: 2018/1/21 重写接口，参数改为一个List
 //            updateUerInfo(senderIdList);
         }
-        chatPersonalAdapter = new ChatPersonalAdapter(messageVoList, userId);
+        chatAdapter = new ChatAdapter(messageVoList, userId);
 
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Message newMessage = (Message) intent.getSerializableExtra("newMessage");
                 Log.d(("ChatPersonalActivity收到一条新消息") + newMessage.toString());
+                try {
+                    newMessage.setContent(EmojiUtil.emojiRecovery(newMessage.getContent()));
+                    newMessage.setChatName(EmojiUtil.emojiRecovery(newMessage.getChatName()));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
                 if (newMessage.getChatId().equals(chatId) && !newMessage.getSenderId().equals(userId)) {
-                    Log.d("come!");
                     MessageVo messageVo = new MessageVo();
                     messageVo.setMessage(newMessage);
                     messageVo.setMessageUser(messageDaoUtils.queryMessageUserByUserId(newMessage.getSenderId()));
                     messageVoList.add(messageVo);
-                    chatPersonalAdapter.notifyDataSetChanged();
+                    chatAdapter.notifyDataSetChanged();
                     executeRequest(SendProtocol.MSG_ISREAD_MESSAGE, newMessage.getMessageId());
                 }
             }
         };
 
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter(Constant.ActionConstant.ACTION_GET_NEW_MESSAGE));
-
     }
 
     private void initView() {
-        binding.rcRecord.setAdapter(chatPersonalAdapter);
+        binding.rcRecord.setAdapter(chatAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setStackFromEnd(true);
         binding.rcRecord.setLayoutManager(linearLayoutManager);
+        scrollToBottom();
     }
 
     private void addListener() {
-        binding.btnSend.setOnClickListener(new View.OnClickListener() {
+        binding.tvSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sendMessage();
             }
         });
+
         binding.etInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -146,13 +161,38 @@ public class ChatPersonalActivity extends BaseActivity {
             }
         });
 
-        chatPersonalAdapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        binding.rcRecord.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                hideSoftInput(ChatPersonalActivity.this, binding.etInput);
+            public boolean onTouch(View v, MotionEvent event) {
+                hideSoftInput(ChatActivity.this, binding.etInput);
+                return false;
             }
         });
 
+        binding.etInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (StringUtil.isStringNotNull(s.toString())) {
+                    GradientDrawable gradientDrawable = (GradientDrawable) binding.tvSend.getBackground();
+                    gradientDrawable.setColor(getResources().getColor(R.color.appTheme));
+                    binding.tvSend.setBackground(gradientDrawable);
+                    binding.tvSend.setClickable(true);
+                } else {
+                    GradientDrawable gradientDrawable = (GradientDrawable) binding.tvSend.getBackground();
+                    gradientDrawable.setColor(getResources().getColor(R.color.garyLight2));
+                    binding.tvSend.setBackground(gradientDrawable);
+                    binding.tvSend.setClickable(false);
+                }
+            }
+        });
     }
 
 
@@ -161,21 +201,18 @@ public class ChatPersonalActivity extends BaseActivity {
     }
 
     private void sendMessage() {
-        Log.d("sendMessage");
         String content = binding.etInput.getText().toString();
         if (StringUtil.isEmpty(content)) {
             CommonUtil.showToast("不能为空", this);
             return;
         }
-        Map<String, String> params = new HashMap<>();
-        params.put("chatId", chatId);
-        params.put("title", "");
-        params.put("content", content);
-        params.put("uids", gson.toJson(senderIdList));
-        executeRequest(SendProtocol.MSG_SEND_MESSAGE, gson.toJson(params));
+
         Message message = new Message();
         message.setMessageId(EntityUtil.getIdByTimeStampAndRandom());
         message.setSenderId(userId);
+        if (senderIdList.size() == 1) {
+            message.setReceiverId(senderIdList.get(0));
+        }
         message.setContent(content);
         message.setChatId(chatId);
         message.setTitle("");
@@ -185,10 +222,22 @@ public class ChatPersonalActivity extends BaseActivity {
         messageVo.setMessage(message);
         messageVo.setMessageUser(messageDaoUtils.queryMessageUserByUserId(userId));
         messageVoList.add(messageVo);
-        chatPersonalAdapter.notifyDataSetChanged();
+        chatAdapter.notifyDataSetChanged();
         scrollToBottom();
-
         binding.etInput.setText("");
+
+        try {
+            content = EmojiUtil.emojiConvert(content);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        Map<String, String> params = new HashMap<>();
+        params.put("chatId", chatId);
+        params.put("title", "");
+        params.put("content", content);
+        params.put("uids", gson.toJson(senderIdList));
+        executeRequest(SendProtocol.MSG_SEND_MESSAGE, gson.toJson(params));
     }
 
     android.os.Handler handler = new android.os.Handler() {
@@ -214,18 +263,27 @@ public class ChatPersonalActivity extends BaseActivity {
             @Override
             public void next(ApiResponse<List<MessageUser>> response) {
                 if (response.isSuccess()) {
+                    String nickName = null;
+                    for (int i = 0; i < response.getData().size(); i++) {
+                        try {
+                            nickName = EmojiUtil.emojiConvert(response.getData().get(i).getNickname());
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        response.getData().get(i).setNickname(nickName);
+                    }
                     //本地更新数据
                     messageDaoUtils.insertMultMessageUser(response.getData());
 
                     messageVoList.addAll(
                             messageDaoUtils.transferMessageVo(
                                     messageDaoUtils.queryMessageByChatId(userId)));
-                    chatPersonalAdapter.notifyDataSetChanged();
+                    chatAdapter.notifyDataSetChanged();
 
                     //保存下一次需要更新的时间
-                    PreferenceUtil.getInstances(ChatPersonalActivity.this).savePreferenceLong("updateTime", MILLISECOND_OF_TWO_HOUR + System.currentTimeMillis());
+                    PreferenceUtil.getInstances(ChatActivity.this).savePreferenceLong("updateTime", MILLISECOND_OF_TWO_HOUR + System.currentTimeMillis());
                 } else {
-                    CommonUtil.showToast(response.getMessage(), ChatPersonalActivity.this);
+                    CommonUtil.showToast(response.getMessage(), ChatActivity.this);
                 }
             }
 
@@ -240,11 +298,6 @@ public class ChatPersonalActivity extends BaseActivity {
 
         });
 
-    }
-
-    public void showSoftInput(Context context, View view) {
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(view, InputMethodManager.SHOW_FORCED);
     }
 
     public void hideSoftInput(Context context, View view) {

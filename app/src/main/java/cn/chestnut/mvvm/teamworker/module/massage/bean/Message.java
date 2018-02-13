@@ -32,12 +32,13 @@ public class Message implements Serializable{
 
     private String chatId;
 
+    private String chatName;
+
     @NotNull
     private String senderId;
     
     private String receiverId;
 
-    @NotNull
     private String title;
 
     @NotNull
@@ -49,13 +50,14 @@ public class Message implements Serializable{
 
     private static final long serialVersionUID = 42L;
 
-    @Generated(hash = 1493278814)
-    public Message(Long id, String messageId, String chatId,
-            @NotNull String senderId, String receiverId, @NotNull String title,
+    @Generated(hash = 876155601)
+    public Message(Long id, String messageId, String chatId, String chatName,
+            @NotNull String senderId, String receiverId, String title,
             @NotNull String content, @NotNull Long time) {
         this.id = id;
         this.messageId = messageId;
         this.chatId = chatId;
+        this.chatName = chatName;
         this.senderId = senderId;
         this.receiverId = receiverId;
         this.title = title;
@@ -65,6 +67,14 @@ public class Message implements Serializable{
 
     @Generated(hash = 637306882)
     public Message() {
+    }
+
+    public String getChatName() {
+        return chatName;
+    }
+
+    public void setChatName(String chatName) {
+        this.chatName = chatName;
     }
 
     public String getChatId() {

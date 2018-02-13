@@ -35,9 +35,9 @@
                 android:layout_marginRight="48dp"
                 android:layout_weight="1"
                 android:autoLink="all"
+                android:text="@{message.message.content}"
                 android:background="@drawable/chat_bubble_left"
                 android:gravity="center_vertical"
-                android:text="@{message.message.content}"
                 android:textColor="@color/text_black"
                 android:textSize="@dimen/text_size_small" />
 

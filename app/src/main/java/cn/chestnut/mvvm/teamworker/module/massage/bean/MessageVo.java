@@ -4,6 +4,7 @@ import cn.chestnut.mvvm.teamworker.BR;
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.main.adapter.BindingItem;
 import cn.chestnut.mvvm.teamworker.utils.FormatDateUtil;
+import cn.chestnut.mvvm.teamworker.utils.StringUtil;
 
 /**
  * Copyright (c) 2017, Chestnut All rights reserved
@@ -20,6 +21,8 @@ public class MessageVo extends BindingItem {
     private MessageUser messageUser;
 
     public String showSenderName() {
+        if (!StringUtil.isEmpty(message.getChatName()))
+            return message.getChatName();
         if (messageUser == null) {
             return "";
         } else {
@@ -48,7 +51,7 @@ public class MessageVo extends BindingItem {
     }
 
     public int getChatPersonalViewType() {
-        return R.layout.item_chat_personal;
+        return R.layout.item_chat;
     }
 
     @Override

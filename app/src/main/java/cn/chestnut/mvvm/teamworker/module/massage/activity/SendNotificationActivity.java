@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,9 +22,9 @@ import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.Message;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.User;
-import cn.chestnut.mvvm.teamworker.socket.ReceiverProtocol;
 import cn.chestnut.mvvm.teamworker.socket.SendProtocol;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
+import cn.chestnut.mvvm.teamworker.utils.EmojiUtil;
 import cn.chestnut.mvvm.teamworker.utils.EntityUtil;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 import cn.chestnut.mvvm.teamworker.utils.StringUtil;
@@ -85,9 +86,6 @@ public class SendNotificationActivity extends BaseActivity {
                     binding.tvReceivers.setText(binding.tvReceivers.getText() + "," + user.getAccount());
                 }
                 uidList.add(user.getUserId());
-//                Message message = new Message();
-//                message.setId();
-
             }
         }
     }
@@ -135,17 +133,7 @@ public class SendNotificationActivity extends BaseActivity {
         }
         String title = binding.etTitle.getText().toString();
         String content = binding.etContent.getText().toString();
-        if (StringUtil.isEmpty(content) || StringUtil.isEmpty(title)) {
-            CommonUtil.showToast("主题或通知内容不能为空", this);
-            return;
-        }
         String chatId = EntityUtil.getIdByTimeStampAndRandom();
-        Map<String, String> params = new HashMap<>();
-        params.put("title", title);
-        params.put("chatId", chatId);
-        params.put("content", content);
-        params.put("uids", gson.toJson(uidList));
-        executeRequest(SendProtocol.MSG_SEND_MESSAGE, gson.toJson(params));
 
         Message message = new Message();
         message.setMessageId(EntityUtil.getIdByTimeStampAndRandom());
@@ -156,6 +144,25 @@ public class SendNotificationActivity extends BaseActivity {
         MessageDaoUtils messageDaoUtils = new MessageDaoUtils(this);
         message.setTime(TimeManager.getInstance().getServiceTime());
         messageDaoUtils.insertMessage(message);
+
+        try {
+            title = EmojiUtil.emojiConvert(title);
+            content = EmojiUtil.emojiConvert(content);
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        if (StringUtil.isEmpty(content) || StringUtil.isEmpty(title)) {
+            CommonUtil.showToast("主题或通知内容不能为空", this);
+            return;
+        }
+        Map<String, String> params = new HashMap<>();
+        params.put("title", title);
+        params.put("chatId", chatId);
+        params.put("content", content);
+        params.put("uids", gson.toJson(uidList));
+        executeRequest(SendProtocol.MSG_SEND_MESSAGE, gson.toJson(params));
     }
 
 }
