@@ -27,9 +27,8 @@ import cn.chestnut.mvvm.teamworker.utils.sqlite.DaoManager;
 public class MessageDaoUtils {
     private DaoManager mManager;
 
-    public MessageDaoUtils(Context context) {
+    public MessageDaoUtils() {
         mManager = DaoManager.getInstance();
-        mManager.init(context);
     }
 
     /**

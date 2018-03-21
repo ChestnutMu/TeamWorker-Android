@@ -31,10 +31,14 @@ public class ProcessPhotoUtils {
 
     private File myPhotoFile;// 照片文件
     private File myPhotoDir;// 照片文件夹
-    private Bitmap photoBm; // 用于存储缩小后的图片
+
     private Bitmap photoBitmap; // 读取到的原始图片
+    private Bitmap photoBm; // 用于存储缩小后的图片
 
     private Context mContext;// 调用的activity类
+
+    public static int UPLOAD_PHOTO_REQUEST_CODE = 1;
+    public static int SHOOT_PHOTO_REQUEST_CODE = 2;
 
     /**
      * Creates a new instance of ProcessPhotoUtils
@@ -43,7 +47,6 @@ public class ProcessPhotoUtils {
      */
     public ProcessPhotoUtils(Context context) {
         this.mContext = context;
-        // bitmapUtil = BitmapUtil.create(context);
     }
 
     /**
@@ -78,13 +81,11 @@ public class ProcessPhotoUtils {
      */
     private void uploadPhoto() {
 
-        Intent intent = new Intent();
+        Intent intent = new Intent(Intent.ACTION_PICK);
         /* 开启Pictures画面Type设定为image */
-        intent.setType("image/*");
-        /* 使用Intent.ACTION_GET_CONTENT这个Action */
-        intent.setAction(Intent.ACTION_PICK);
+        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
 		/* 取得相片后返回本画面 */
-        ((Activity) mContext).startActivityForResult(intent, 1);
+        ((Activity) mContext).startActivityForResult(intent, UPLOAD_PHOTO_REQUEST_CODE);
     }
 
     /**
@@ -103,7 +104,11 @@ public class ProcessPhotoUtils {
         myPhotoFile = new File(myPhotoDir, fileName);
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(myPhotoFile));
-        ((Activity) mContext).startActivityForResult(intent, 2);
+        ((Activity) mContext).startActivityForResult(intent, SHOOT_PHOTO_REQUEST_CODE);
+    }
+
+    public File getMyPhotoFile() {
+        return myPhotoFile;
     }
 
     /**

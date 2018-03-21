@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.FragmentWorkBinding;
 import cn.chestnut.mvvm.teamworker.main.common.BaseFragment;
+import cn.chestnut.mvvm.teamworker.module.approval.ApprovalActivity;
 import cn.chestnut.mvvm.teamworker.module.checkattendance.activity.CheckAttendanceActivity;
 import cn.chestnut.mvvm.teamworker.module.work.adapter.GridViewAdapter;
 
@@ -81,7 +82,7 @@ public class WorkFragment extends BaseFragment {
                         startActivity(new Intent(getActivity(), CheckAttendanceActivity.class));
                         break;
                     case R.mipmap.icon_approval:
-                        startActivity(new Intent(getActivity(), CheckAttendanceActivity.class));
+                        startActivity(new Intent(getActivity(), ApprovalActivity.class));
                         break;
                 }
             }

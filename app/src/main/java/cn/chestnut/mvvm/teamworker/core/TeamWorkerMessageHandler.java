@@ -38,15 +38,15 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
     /**
      * 连接失败 或会话关闭或被服务器踢了
      **/
-    public final static int SESSION_CLOSE = -1;
+    private final static int SESSION_CLOSE = -1;
     /**
      * 连接并建立会话成功
      **/
-    public final static int SESSION_CONNECT = -2;
+    private final static int SESSION_CONNECT = -2;
     /**
      * 连接或访问超时
      **/
-    public final static int SESSION_TIMEOUT = -3;
+    private final static int SESSION_TIMEOUT = -3;
 
     private static TeamWorkerMessageHandler TeamWorkerMessageHandler;
 

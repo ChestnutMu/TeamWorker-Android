@@ -1,5 +1,6 @@
 package cn.chestnut.mvvm.teamworker.utils;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
@@ -9,7 +10,6 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
-import android.view.Gravity;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -29,20 +29,12 @@ import cn.chestnut.mvvm.teamworker.widget.SystemBarTintManager;
  * Email: xiaoting233zhang@126.com
  */
 public class CommonUtil {
-    private static Toast toast;
 
+    @SuppressLint("ShowToast")
     public static void showToast(String msg, Context context) {
-        if (context == null) {
-            return;
+        if (context != null && msg != null) {
+            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
         }
-        if (toast != null) {
-            toast.setText(msg);
-            toast.setDuration(Toast.LENGTH_SHORT);
-        } else {
-            toast = Toast.makeText(context, msg, Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.BOTTOM, 0, 20);
-        }
-        toast.show();
     }
 
     public static boolean enoughSpaceOnPhone(long updateSize) {
@@ -54,8 +46,7 @@ public class CommonUtil {
         StatFs stat = new StatFs(path.getPath());
         long blockSize = stat.getBlockSize();
         long availableBlocks = stat.getAvailableBlocks();
-        long realSize = blockSize * availableBlocks;
-        return realSize;
+        return blockSize * availableBlocks;
     }
 
     public static void setBarTheme(Activity mActivity) {

@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.FragmentBaseBinding;
+import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -55,6 +56,15 @@ public abstract class BaseFragment extends Fragment {
         edit.setVisibility(View.GONE);
         add.setVisibility(View.GONE);
         search.setVisibility(View.GONE);
+    }
+
+    public void showToast(String stringRes) {
+        try {
+            CommonUtil.showToast(stringRes, MyApplication.getInstance());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

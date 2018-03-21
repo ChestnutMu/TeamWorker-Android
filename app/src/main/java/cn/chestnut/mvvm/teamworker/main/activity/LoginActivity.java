@@ -19,11 +19,10 @@ import cn.chestnut.mvvm.teamworker.databinding.ActivityLoginBinding;
 import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
-import cn.chestnut.mvvm.teamworker.main.bean.User;
 import cn.chestnut.mvvm.teamworker.http.RequestManager;
+import cn.chestnut.mvvm.teamworker.main.bean.User;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
-import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 import cn.chestnut.mvvm.teamworker.utils.StringUtil;
 
@@ -70,7 +69,7 @@ public class LoginActivity extends BaseActivity {
                 if (StringUtil.isStringNotNull(account) && StringUtil.isStringNotNull(password)) {
                     login(account, password);
                 } else {
-                    CommonUtil.showToast("用户名和密码不能为空", LoginActivity.this);
+                    showToast("用户名和密码不能为空");
                 }
             }
         });

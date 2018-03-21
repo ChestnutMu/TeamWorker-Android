@@ -1,5 +1,6 @@
 package cn.chestnut.mvvm.teamworker.module.massage.activity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.Editable;
@@ -40,7 +42,6 @@ import cn.chestnut.mvvm.teamworker.module.massage.bean.Message;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.MessageUser;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.MessageVo;
 import cn.chestnut.mvvm.teamworker.socket.SendProtocol;
-import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
 import cn.chestnut.mvvm.teamworker.utils.EmojiUtil;
 import cn.chestnut.mvvm.teamworker.utils.EntityUtil;
 import cn.chestnut.mvvm.teamworker.utils.Log;
@@ -102,7 +103,7 @@ public class ChatActivity extends BaseActivity {
             chatId = EntityUtil.getIdByTimeStampAndRandom();
         }
         messageVoList = new ArrayList<>();
-        messageDaoUtils = new MessageDaoUtils(this);
+        messageDaoUtils = new MessageDaoUtils();
         messageVoList.addAll(messageDaoUtils.transferMessageVo(
                 messageDaoUtils.queryMessageByChatId(chatId)));
         senderIdList = new ArrayList<>();
@@ -157,7 +158,7 @@ public class ChatActivity extends BaseActivity {
         binding.etInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                handler.sendEmptyMessageDelayed(0, 250);
+                mHandler.sendEmptyMessageDelayed(0, 250);
             }
         });
 
@@ -203,7 +204,7 @@ public class ChatActivity extends BaseActivity {
     private void sendMessage() {
         String content = binding.etInput.getText().toString();
         if (StringUtil.isEmpty(content)) {
-            CommonUtil.showToast("不能为空", this);
+            showToast("不能为空");
             return;
         }
 
@@ -240,14 +241,13 @@ public class ChatActivity extends BaseActivity {
         executeRequest(SendProtocol.MSG_SEND_MESSAGE, gson.toJson(params));
     }
 
-    android.os.Handler handler = new android.os.Handler() {
+    @SuppressLint("HandlerLeak")
+    Handler mHandler = new Handler() {
         @Override
         public void handleMessage(android.os.Message msg) {
             super.handleMessage(msg);
-            switch (msg.what) {
-                case 0:
-                    scrollToBottom();
-                    break;
+            if (msg.what == 0) {
+                scrollToBottom();
             }
         }
     };
@@ -283,7 +283,7 @@ public class ChatActivity extends BaseActivity {
                     //保存下一次需要更新的时间
                     PreferenceUtil.getInstances(ChatActivity.this).savePreferenceLong("updateTime", MILLISECOND_OF_TWO_HOUR + System.currentTimeMillis());
                 } else {
-                    CommonUtil.showToast(response.getMessage(), ChatActivity.this);
+                    showToast(response.getMessage());
                 }
             }
 
@@ -302,6 +302,14 @@ public class ChatActivity extends BaseActivity {
 
     public void hideSoftInput(Context context, View view) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mHandler.removeCallbacksAndMessages(null);
     }
 }

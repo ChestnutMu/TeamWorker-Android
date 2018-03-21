@@ -31,7 +31,7 @@ public class MessageAdapter extends BaseRecyclerViewAdapter<MessageVo, ItemMessa
 
     public MessageAdapter(List<MessageVo> mItems, Context mContext) {
         super(mItems);
-        messageDaoUtils = new MessageDaoUtils(mContext);
+        messageDaoUtils = new MessageDaoUtils();
         this.mContext = mContext;
     }
 

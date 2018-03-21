@@ -23,7 +23,6 @@ import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.Message;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.User;
 import cn.chestnut.mvvm.teamworker.socket.SendProtocol;
-import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
 import cn.chestnut.mvvm.teamworker.utils.EmojiUtil;
 import cn.chestnut.mvvm.teamworker.utils.EntityUtil;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
@@ -128,7 +127,7 @@ public class SendNotificationActivity extends BaseActivity {
      */
     private void sendNotification() {
         if (uidList.isEmpty()) {
-            CommonUtil.showToast("至少有一位接受者", this);
+            showToast("至少有一位接受者");
             return;
         }
         String title = binding.etTitle.getText().toString();
@@ -141,7 +140,7 @@ public class SendNotificationActivity extends BaseActivity {
         message.setContent(content);
         message.setChatId(chatId);
         message.setTitle("");
-        MessageDaoUtils messageDaoUtils = new MessageDaoUtils(this);
+        MessageDaoUtils messageDaoUtils = new MessageDaoUtils();
         message.setTime(TimeManager.getInstance().getServiceTime());
         messageDaoUtils.insertMessage(message);
 
@@ -154,7 +153,7 @@ public class SendNotificationActivity extends BaseActivity {
         }
 
         if (StringUtil.isEmpty(content) || StringUtil.isEmpty(title)) {
-            CommonUtil.showToast("主题或通知内容不能为空", this);
+            showToast("主题或通知内容不能为空");
             return;
         }
         Map<String, String> params = new HashMap<>();

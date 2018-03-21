@@ -38,7 +38,6 @@ import cn.chestnut.mvvm.teamworker.module.massage.bean.Message;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.MessageUser;
 import cn.chestnut.mvvm.teamworker.module.massage.bean.MessageVo;
 import cn.chestnut.mvvm.teamworker.socket.SendProtocol;
-import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
 import cn.chestnut.mvvm.teamworker.utils.EmojiUtil;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
@@ -127,8 +126,7 @@ public class MessageFragment extends BaseFragment {
             }
         };
 
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, new IntentFilter(Constant.ActionConstant.ACTION_UPDATE_NICKNAME));
-        messageDaoUtils = new MessageDaoUtils(getActivity());
+        messageDaoUtils = new MessageDaoUtils();
         userId = PreferenceUtil.getInstances(getActivity()).getPreferenceString("userId");
 
         messageList = new LinkedList<>();
@@ -176,7 +174,7 @@ public class MessageFragment extends BaseFragment {
                             PreferenceUtil.getInstances(getActivity()).savePreferenceLong("updateTime", MILLISECOND_OF_TWO_HOUR + System.currentTimeMillis());
                             messageAdapter.notifyDataSetChanged();
                         } else {
-                            CommonUtil.showToast(response.getMessage(), getActivity());
+                            showToast(response.getMessage());
                         }
                     }
 
@@ -236,7 +234,7 @@ public class MessageFragment extends BaseFragment {
                     messageList.addAll(messageDaoUtils.transferMessageVo(messageDaoUtils.queryTopMessageByUserId(userId)));
                     messageAdapter.notifyDataSetChanged();
                 } else {
-                    CommonUtil.showToast(response.getMessage(), getActivity());
+                    showToast(response.getMessage());
                 }
             }
 

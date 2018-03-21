@@ -226,4 +226,14 @@ public class CheckAttendanceActivity extends BaseActivity {
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mLocationClient!=null) {
+            mLocationClient.stopLocation();
+            mLocationClient.onDestroy();
+            mLocationClient = null;
+
+        }
+    }
 }

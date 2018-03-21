@@ -16,8 +16,6 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <!-- 用于写入缓存数据到扩展存储卡 -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!--用于进行网络定位-->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <!--用于访问GPS定位-->
@@ -51,7 +49,8 @@
 
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="3e8842b08f13eda75a56385488e20a9d"></meta-data>
+            android:value="3e8842b08f13eda75a56385488e20a9d" />
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.android.cn.framework.fileprovider"
@@ -77,13 +76,16 @@
         <activity
             android:name=".main.activity.MainActivity"
             android:launchMode="singleTask" />
-        <activity android:name=".module.massage.activity.ChatActivity"
-            android:windowSoftInputMode="stateHidden"/>
+        <activity
+            android:name=".module.massage.activity.ChatActivity"
+            android:windowSoftInputMode="stateHidden" />
         <activity android:name=".module.massage.activity.SelectDepartmentActivity" />
         <activity android:name=".module.massage.activity.SelectReceiverActivity" />
         <activity android:name=".module.massage.activity.SendNotificationActivity" />
         <activity android:name=".module.checkattendance.activity.CheckAttendanceActivity" />
         <activity android:name=".module.mine.activity.MyInformationActivity" />
+        <activity android:name=".module.approval.ApprovalActivity"/>
+        <activity android:name=".module.approval.AskForWorkOffActivity"/>
     </application>
 
 </manifest>

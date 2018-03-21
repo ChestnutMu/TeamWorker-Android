@@ -16,10 +16,9 @@ import cn.chestnut.mvvm.teamworker.databinding.ActivityRegisterBinding;
 import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
-import cn.chestnut.mvvm.teamworker.main.bean.User;
 import cn.chestnut.mvvm.teamworker.http.RequestManager;
+import cn.chestnut.mvvm.teamworker.main.bean.User;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
-import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
 import cn.chestnut.mvvm.teamworker.utils.StringUtil;
 
 /**
@@ -53,11 +52,11 @@ public class RegisterActivity extends BaseActivity {
                 String password = binding.etPassword.getText().toString();
                 String confirmPassword = binding.etConfirmPassword.getText().toString();
                 if (StringUtil.isBlank(account) | StringUtil.isBlank(password) | StringUtil.isBlank(confirmPassword)) {
-                    CommonUtil.showToast("用户名和密码不能为空", RegisterActivity.this);
+                    showToast("用户名和密码不能为空");
                 } else if (password.length() < 6) {
-                    CommonUtil.showToast("密码不能小于6位", RegisterActivity.this);
+                    showToast("密码不能小于6位");
                 } else if (!password.equals(confirmPassword)) {
-                    CommonUtil.showToast("两次输入密码不一致", RegisterActivity.this);
+                    showToast("两次输入密码不一致");
                 } else {
                     register(account, password);
                 }

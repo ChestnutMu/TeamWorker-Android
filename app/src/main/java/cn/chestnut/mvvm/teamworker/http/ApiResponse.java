@@ -17,10 +17,6 @@ public class ApiResponse<T> {
         return status == HttpResponseCodes.SUCCESS;
     }
 
-    public int getStatus() {
-        return status;
-    }
-
     public void setStatus(int status) {
         this.status = status;
     }

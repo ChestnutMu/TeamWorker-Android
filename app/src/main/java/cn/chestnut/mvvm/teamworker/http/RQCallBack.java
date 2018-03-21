@@ -6,7 +6,6 @@ import java.net.SocketTimeoutException;
 import java.util.zip.DataFormatException;
 
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
-import cn.chestnut.mvvm.teamworker.utils.StringUtil;
 
 /**
  * Copyright (c) 2017, Chestnut All rights reserved

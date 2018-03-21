@@ -1,12 +1,10 @@
 package cn.chestnut.mvvm.teamworker.utils.sqlite;
 
-import android.content.Context;
-
 import org.greenrobot.greendao.query.QueryBuilder;
 
 import cn.chestnut.mvvm.teamworker.db.DaoMaster;
-
 import cn.chestnut.mvvm.teamworker.db.DaoSession;
+import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
 
 /**
  * Copyright (c) 2017, Chestnut All rights reserved
@@ -19,13 +17,14 @@ import cn.chestnut.mvvm.teamworker.db.DaoSession;
 public class DaoManager {
     private static final String DB_NAME = "teamworker2018";
 
-    private Context context;
-
     //多线程中要被共享的使用volatile关键字修饰
-    private volatile static DaoManager manager = new DaoManager();
+    private volatile static DaoManager daoManager;
     private static DaoMaster sDaoMaster;
     private static DaoMaster.DevOpenHelper sHelper;
     private static DaoSession sDaoSession;
+
+    private DaoManager() {
+    }
 
     /**
      * 单例模式获得操作数据库对象
@@ -33,11 +32,14 @@ public class DaoManager {
      * @return
      */
     public static DaoManager getInstance() {
-        return manager;
-    }
+        if (daoManager == null) {
+            synchronized (DaoManager.class) {
+                if (daoManager == null)
+                    daoManager = new DaoManager();
+            }
+        }
+        return daoManager;
 
-    public void init(Context context) {
-        this.context = context;
     }
 
     /**
@@ -47,7 +49,7 @@ public class DaoManager {
      */
     public DaoMaster getDaoMaster() {
         if (sDaoMaster == null) {
-            DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(context, DB_NAME, null);
+            DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(MyApplication.getInstance(), DB_NAME, null);
             sDaoMaster = new DaoMaster(helper.getWritableDatabase());
         }
         return sDaoMaster;

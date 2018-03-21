@@ -23,7 +23,6 @@ import java.net.URLDecoder;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.zip.DataFormatException;
 
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
@@ -46,8 +45,8 @@ import rx.schedulers.Schedulers;
 
 public class RQ {
     private static Gson gson = new Gson();
-    public static OkHttpClient CLIENT = null;
-    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private static OkHttpClient CLIENT = null;
+    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     public static void getInstance() {
         if (CLIENT == null) {
@@ -59,7 +58,7 @@ public class RQ {
     }
 
 
-    public final static void get(String urlTo, List<String> params,
+    public static void get(String urlTo, List<String> params,
                                  List<String> values, final AppCallBack<String> app) {
         if (!CommonUtil.checkNetState(MyApplication.getInstance())) {
             if (app != null) {
@@ -151,8 +150,8 @@ public class RQ {
         }
     }
 
-    public final static void post(final String url, List<String> params,
-                                  List<Object> values, final AppCallBack<String> app) {
+    public static void post(final String url, List<String> params,
+                            List<Object> values, final AppCallBack<String> app) {
         if (!CommonUtil.checkNetState(MyApplication.getInstance())) {
             if (app != null) {
                 JSONObject temp = new JSONObject();
@@ -243,7 +242,7 @@ public class RQ {
 
     }
 
-    public final static <T> void post(final String url, String params, final AppCallBack<ApiResponse<T>> app) {
+    public static <T> void post(final String url, String params, final AppCallBack<ApiResponse<T>> app) {
         Log.d("url = " + url + "      params = " + params);
         if (!CommonUtil.checkNetState(MyApplication.getInstance())) {
             if (app != null) {
@@ -294,18 +293,16 @@ public class RQ {
 
                     } catch (Exception error) {
                         try {
-                            String errorMessage = null;
-                            if (error != null) {
-                                if (error instanceof ConnectException) {
-                                    errorMessage = "服务器连接失败！";
-                                } else if (error instanceof SocketTimeoutException) {
-                                    errorMessage = "连接超时!";
-                                } else if (error instanceof DataFormatException) {
-                                    errorMessage = "数据格式异常!";
-                                } else {
-                                    errorMessage = "请求异常!";
-                                }
+                            String errorMessage;
+
+                            if (error instanceof ConnectException) {
+                                errorMessage = "服务器连接失败！";
+                            } else if (error instanceof SocketTimeoutException) {
+                                errorMessage = "连接超时!";
+                            } else {
+                                errorMessage = "请求异常!";
                             }
+
                             ApiResponse<T> temp = new ApiResponse<>();
                             temp.setStatus(HttpResponseCodes.FAILED);
                             temp.setMessage(errorMessage);
@@ -345,7 +342,7 @@ public class RQ {
 
     }
 
-     class TimeCalibrationInterceptor implements Interceptor {
+    class TimeCalibrationInterceptor implements Interceptor {
         long minResponseTime = Long.MAX_VALUE;
 
         @Override

@@ -59,5 +59,8 @@ public class HttpUrls {
     //获取消息中用户的信息
     public static final String GET_USER_INFO = "/user/getUserInfo";
 
+    //获取七牛云token
+    public static final String GET_QINIUTOKEN = "/third/getQiniuToken";
+
 
 }

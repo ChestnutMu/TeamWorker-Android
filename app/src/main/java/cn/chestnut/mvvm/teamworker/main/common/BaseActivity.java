@@ -2,10 +2,8 @@ package cn.chestnut.mvvm.teamworker.main.common;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,16 +13,11 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.Serializable;
-
-import cn.chestnut.mvvm.teamworker.Constant;
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.core.OnHandlerSessionListener;
 import cn.chestnut.mvvm.teamworker.core.TeamWorkerMessageHandler;
 import cn.chestnut.mvvm.teamworker.databinding.ActivityBaseBinding;
 import cn.chestnut.mvvm.teamworker.http.RequestManager;
-import cn.chestnut.mvvm.teamworker.module.massage.bean.Message;
-import cn.chestnut.mvvm.teamworker.socket.ReceiverProtocol;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.ProgressDialogShow;
@@ -146,7 +139,7 @@ public abstract class BaseActivity extends AppCompatActivity implements OnHandle
 
     public void showToast(String stringRes) {
         try {
-            CommonUtil.showToast(stringRes, BaseActivity.this);
+            CommonUtil.showToast(stringRes, MyApplication.getInstance());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -162,7 +155,7 @@ public abstract class BaseActivity extends AppCompatActivity implements OnHandle
             if (mHandler != null)
                 mHandler.send(msgId, obj);
         } else {
-            CommonUtil.showToast("网络不太好哦", this);
+            showToast("网络不太好哦");
         }
 
     }

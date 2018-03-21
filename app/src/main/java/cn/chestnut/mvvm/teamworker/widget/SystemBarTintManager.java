@@ -19,6 +19,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import com.jaiky.imagespickers.ImageConfig;
+
 import java.lang.reflect.Method;
 
 /**
@@ -55,6 +57,7 @@ public class SystemBarTintManager
 
     private static String sNavBarOverride;
     private SystemBarConfig mConfig;
+    private ImageConfig imageConfig;
     private boolean mStatusBarAvailable;
     private boolean mNavBarAvailable;
     private boolean mStatusBarTintEnabled;

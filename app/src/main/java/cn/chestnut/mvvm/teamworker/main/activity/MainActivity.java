@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.ActivityMainBinding;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
@@ -59,7 +61,6 @@ public class MainActivity extends BaseActivity {
 
         switch (msgId) {
             case ReceiverProtocol.RECEIVE_NEW_MESSAGE:
-
                 break;
 
             default:
