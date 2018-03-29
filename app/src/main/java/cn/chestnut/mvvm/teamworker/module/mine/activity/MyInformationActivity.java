@@ -62,7 +62,6 @@ public class MyInformationActivity extends BaseActivity {
     private String token;
     private String userId;
 
-
     private ProcessPhotoUtils processPhotoUtils;
     private String qiniuToken;
 
@@ -83,25 +82,15 @@ public class MyInformationActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ProcessPhotoUtils.UPLOAD_PHOTO_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-
             Uri originalUri = data.getData(); // 获得图片的uri
-
-            // 显得到bitmap图片
-            // imageView.setImageBitmap(bm);
-
             String[] proj = {MediaStore.Images.Media.DATA};
-
-            // 好像是android多媒体数据库的封装接口，具体的看Android文档
             Cursor cursor = managedQuery(originalUri, proj, null, null, null);
-
-            // 按我个人理解 这个是获得用户选择的图片的索引值
+            //获得用户选择的图片的索引值
             int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
             // 将光标移至开头 ，这个很重要，不小心很容易引起越界
             cursor.moveToFirst();
-            // 最后根据索引值获取图片路径
-            String path = cursor.getString(column_index);
             //获得图片的uri
-            String filePath = path;
+            String filePath = cursor.getString(column_index);
             Log.d("filePath " + filePath);
             uploadPicture(filePath);
         } else if (requestCode == ProcessPhotoUtils.SHOOT_PHOTO_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
@@ -267,7 +256,7 @@ public class MyInformationActivity extends BaseActivity {
                     binding.tvBirthday.setText(response.getData().getBirthday());
                     binding.tvRegion.setText(response.getData().getRegion());
                     GlideLoader glideLoader = new GlideLoader();
-                    glideLoader.displayImage(MyInformationActivity.this, "http://p2fnlgaq8.bkt.clouddn.com/" + response.getData().getAvatar(), binding.ivAvatar);
+                    glideLoader.displayImage(MyInformationActivity.this, HttpUrls.GET_PHOTO + response.getData().getAvatar(), binding.ivAvatar);
                 }
             }
 
@@ -309,10 +298,10 @@ public class MyInformationActivity extends BaseActivity {
                     binding.tvRegion.setText(response.getData().getRegion());
                     if (StringUtil.isStringNotNull(user.getAvatar())) {
                         GlideLoader glideLoader = new GlideLoader();
-                        glideLoader.displayImage(MyInformationActivity.this, "http://p2fnlgaq8.bkt.clouddn.com/" + response.getData().getAvatar(), binding.ivAvatar);
+                        glideLoader.displayImage(MyInformationActivity.this, HttpUrls.GET_PHOTO + response.getData().getAvatar(), binding.ivAvatar);
                     }
                 }
-                showToast(response.getMessage());
+                Log.d("update_my_information" + response.getMessage());
             }
 
             @Override
@@ -364,7 +353,8 @@ public class MyInformationActivity extends BaseActivity {
                 @Override
                 public void next(ApiResponse<String> response) {
                     if (response.isSuccess()) {
-                        uploadPicture(data, response.getData());
+                        qiniuToken = response.getData();
+                        uploadPicture(data, qiniuToken);
                     }
                 }
 

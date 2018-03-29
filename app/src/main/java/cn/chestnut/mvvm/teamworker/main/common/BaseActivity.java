@@ -117,6 +117,7 @@ public abstract class BaseActivity extends AppCompatActivity implements OnHandle
 
         @Override
         public void onClick(View view) {
+            Log.d("BackOnclick");
             back();
         }
     }

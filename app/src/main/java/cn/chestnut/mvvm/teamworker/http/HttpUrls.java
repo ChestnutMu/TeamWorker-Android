@@ -13,6 +13,9 @@ public class HttpUrls {
 //    public static final String HTTPHOST = "http://172.18.210.71";
     public static final String HTTPHOST = "http://192.168.199.241";
 //    public static final String HTTPHOST = "http://172.18.92.153";
+
+    public static final String GET_PHOTO = "http://p2fnlgaq8.bkt.clouddn.com/";
+
     //---------端口------------
     public static final String PORT = "8090";
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,13 +65,29 @@ public class LoginActivity extends BaseActivity {
         binding.tvLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String account = binding.etAccount.getText().toString();
-                String password = binding.etPassword.getText().toString();
-                if (StringUtil.isStringNotNull(account) && StringUtil.isStringNotNull(password)) {
-                    login(account, password);
-                } else {
-                    showToast("用户名和密码不能为空");
+                login();
+            }
+        });
+
+        //点击软键盘上的回车键也进行登陆操作
+        binding.etAccount.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+                    login();
+                    return true;
                 }
+                return false;
+            }
+        });
+        binding.etPassword.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+                    login();
+                    return true;
+                }
+                return false;
             }
         });
 
@@ -90,6 +107,7 @@ public class LoginActivity extends BaseActivity {
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
             }
         });
+
     }
 
     private void showDoubleLoginDialog() {
@@ -144,6 +162,16 @@ public class LoginActivity extends BaseActivity {
                 hideProgressDialog();
             }
         });
+    }
+
+    private void login() {
+        String account = binding.etAccount.getText().toString();
+        String password = binding.etPassword.getText().toString();
+        if (StringUtil.isStringNotNull(account) && StringUtil.isStringNotNull(password)) {
+            login(account, password);
+        } else {
+            showToast("用户名和密码不能为空");
+        }
     }
 
     /**
