@@ -8,11 +8,12 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="60dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -22,8 +23,8 @@
                     android:layout_marginTop="16dp"
                     android:background="@color/white"
                     android:gravity="center_vertical"
-                    android:paddingLeft="8dp"
-                    android:paddingRight="5dp">
+                    android:paddingLeft="@dimen/team_worker_padding"
+                    android:paddingRight="@dimen/team_worker_padding">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -60,8 +61,8 @@
                     android:layout_marginTop="24dp"
                     android:background="@color/white"
                     android:gravity="center_vertical"
-                    android:paddingLeft="8dp"
-                    android:paddingRight="5dp">
+                    android:paddingLeft="@dimen/team_worker_padding"
+                    android:paddingRight="@dimen/team_worker_padding">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -98,8 +99,8 @@
                     android:layout_marginTop="1dp"
                     android:background="@color/white"
                     android:gravity="center_vertical"
-                    android:paddingLeft="8dp"
-                    android:paddingRight="5dp">
+                    android:paddingLeft="@dimen/team_worker_padding"
+                    android:paddingRight="@dimen/team_worker_padding">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -135,8 +136,8 @@
                     android:layout_marginTop="1dp"
                     android:background="@color/white"
                     android:gravity="center_vertical"
-                    android:paddingLeft="8dp"
-                    android:paddingRight="16dp">
+                    android:paddingLeft="@dimen/team_worker_padding"
+                    android:paddingRight="@dimen/team_worker_padding">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -159,9 +160,11 @@
                         android:layout_weight="1"
                         android:background="@null"
                         android:gravity="right"
-                        android:textSize="@dimen/text_size_normal"
-                        android:text="请输入时长"
-                        android:textColor="@color/text_gray" />
+                        android:hint="请输入时长"
+                        android:inputType="number"
+                        android:textColor="@color/text_gray"
+                        android:textSize="@dimen/text_size_normal" />
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -170,8 +173,7 @@
                     android:layout_marginTop="16dp"
                     android:background="@color/white"
                     android:gravity="center_vertical"
-                    android:paddingLeft="8dp"
-                    android:paddingRight="16dp">
+                    android:paddingLeft="@dimen/team_worker_padding">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -210,8 +212,7 @@
                     android:gravity="center_vertical"
                     android:orientation="vertical"
                     android:paddingBottom="10dp"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="16dp"
+                    android:paddingLeft="@dimen/team_worker_padding"
                     android:paddingTop="10dp">
 
                     <TextView
@@ -223,8 +224,9 @@
 
                     <ImageView
                         android:id="@+id/iv_picture"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_marginLeft="3dp"
                         android:layout_marginTop="16dp"
                         android:background="@mipmap/icon_plus" />
                 </LinearLayout>
@@ -237,8 +239,7 @@
                     android:gravity="center_vertical"
                     android:orientation="vertical"
                     android:paddingBottom="10dp"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="16dp"
+                    android:paddingLeft="@dimen/team_worker_padding"
                     android:paddingTop="10dp">
 
                     <TextView
@@ -250,8 +251,9 @@
 
                     <ImageView
                         android:id="@+id/iv_approver"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_marginLeft="3dp"
                         android:layout_marginTop="16dp"
                         android:background="@mipmap/icon_plus" />
                 </LinearLayout>

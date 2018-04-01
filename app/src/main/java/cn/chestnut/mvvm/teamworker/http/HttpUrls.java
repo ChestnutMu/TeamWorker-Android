@@ -50,6 +50,9 @@ public class HttpUrls {
     //获取一个部门所有成员
     public static final String GET_USER_BY_DEPARTMENT = "/Department/getUserByDepartment";
 
+    //获取用户所属的部门
+    public static final String GET_DEPARTMENT_BY_USERID = "/Department/getDepartmentByUserId";
+
     //根据UID获取考勤记录
     public static final String GET_ATTENDANCE = "/Attendance/getAttendance";
 

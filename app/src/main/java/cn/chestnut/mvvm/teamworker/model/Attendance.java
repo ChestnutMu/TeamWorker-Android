@@ -1,4 +1,4 @@
-package cn.chestnut.mvvm.teamworker.module.checkattendance.bean;
+package cn.chestnut.mvvm.teamworker.model;
 
 import cn.chestnut.mvvm.teamworker.utils.FormatDateUtil;
 
@@ -20,7 +20,9 @@ public class Attendance {
 
     private String latitude;//纬度
 
-    private String detailAddress;//详细地址
+    private String punchInAddress;//上班地址
+
+    private String punchOutAddress;//下班地址
 
     private Long punchInTime;//上班打卡时间
 
@@ -58,12 +60,20 @@ public class Attendance {
         this.latitude = latitude;
     }
 
-    public String getDetailAddress() {
-        return detailAddress;
+    public String getPunchInAddress() {
+        return punchInAddress;
     }
 
-    public void setDetailAddress(String detailAddress) {
-        this.detailAddress = detailAddress;
+    public void setPunchInAddress(String punchInAddress) {
+        this.punchInAddress = punchInAddress;
+    }
+
+    public String getPunchOutAddress() {
+        return punchOutAddress;
+    }
+
+    public void setPunchOutAddress(String punchOutAddress) {
+        this.punchOutAddress = punchOutAddress;
     }
 
     public Long getPunchInTime() {

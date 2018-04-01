@@ -15,9 +15,8 @@ import cn.chestnut.mvvm.teamworker.R;
  * Description：创建图片加载器
  * Email: xiaoting233zhang@126.com
  */
-public class GlideLoader implements ImageLoader {
-    @Override
-    public void displayImage(Context context, String path, ImageView imageView) {
+public class GlideLoader {
+    public static void displayImage(Context context, String path, ImageView imageView) {
         Glide.with(context)
                 .load(path)
                 .placeholder(R.drawable.global_img_default)

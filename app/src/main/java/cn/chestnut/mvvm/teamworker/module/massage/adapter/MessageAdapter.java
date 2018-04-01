@@ -7,9 +7,9 @@ import java.util.List;
 import cn.chestnut.mvvm.teamworker.databinding.ItemMessageBinding;
 import cn.chestnut.mvvm.teamworker.main.adapter.BaseRecyclerViewAdapter;
 import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
-import cn.chestnut.mvvm.teamworker.module.massage.bean.Message;
-import cn.chestnut.mvvm.teamworker.module.massage.bean.MessageUser;
-import cn.chestnut.mvvm.teamworker.module.massage.bean.MessageVo;
+import cn.chestnut.mvvm.teamworker.model.Message;
+import cn.chestnut.mvvm.teamworker.model.MessageUser;
+import cn.chestnut.mvvm.teamworker.model.MessageVo;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 import cn.chestnut.mvvm.teamworker.utils.StringUtil;
 

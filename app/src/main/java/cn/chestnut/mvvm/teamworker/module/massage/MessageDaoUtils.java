@@ -1,7 +1,5 @@
 package cn.chestnut.mvvm.teamworker.module.massage;
 
-import android.content.Context;
-
 import org.greenrobot.greendao.query.Query;
 import org.greenrobot.greendao.query.QueryBuilder;
 import org.greenrobot.greendao.query.WhereCondition;
@@ -11,9 +9,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import cn.chestnut.mvvm.teamworker.db.MessageDao;
-import cn.chestnut.mvvm.teamworker.module.massage.bean.Message;
-import cn.chestnut.mvvm.teamworker.module.massage.bean.MessageUser;
-import cn.chestnut.mvvm.teamworker.module.massage.bean.MessageVo;
+import cn.chestnut.mvvm.teamworker.model.Message;
+import cn.chestnut.mvvm.teamworker.model.MessageUser;
+import cn.chestnut.mvvm.teamworker.model.MessageVo;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.sqlite.DaoManager;
 

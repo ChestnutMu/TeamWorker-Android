@@ -5,7 +5,7 @@
 
         <variable
             name="message"
-            type="cn.chestnut.mvvm.teamworker.module.massage.bean.MessageVo" />
+            type="cn.chestnut.mvvm.teamworker.model.MessageVo" />
     </data>
 
     <LinearLayout

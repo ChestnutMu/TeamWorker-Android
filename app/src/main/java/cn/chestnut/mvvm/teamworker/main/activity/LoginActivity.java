@@ -21,7 +21,7 @@ import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
 import cn.chestnut.mvvm.teamworker.http.RequestManager;
-import cn.chestnut.mvvm.teamworker.main.bean.User;
+import cn.chestnut.mvvm.teamworker.model.User;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
@@ -144,8 +144,8 @@ public class LoginActivity extends BaseActivity {
                     PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("account", response.getData().getAccount());
                     PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("token", response.getData().getToken());
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
                     finish();
+                    startActivity(intent);
                     userLogin();
                 } else {
                     showToast(response.getMessage());

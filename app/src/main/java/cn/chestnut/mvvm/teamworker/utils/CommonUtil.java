@@ -93,7 +93,7 @@ public class CommonUtil {
      *
      * @param bgAlpha
      */
-    public static void backgroundAlpha(float bgAlpha, Context context) {
+    public static void setBackgroundAlpha(float bgAlpha, Context context) {
         WindowManager.LayoutParams lp = ((Activity) context).getWindow().getAttributes();
         lp.alpha = bgAlpha; //0.0-1.0
         ((Activity) context).getWindow().setAttributes(lp);

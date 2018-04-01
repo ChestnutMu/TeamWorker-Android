@@ -82,7 +82,7 @@
         <activity android:name=".module.massage.activity.SelectDepartmentActivity" />
         <activity android:name=".module.massage.activity.SelectReceiverActivity" />
         <activity android:name=".module.massage.activity.SendNotificationActivity" />
-        <activity android:name=".module.checkattendance.activity.CheckAttendanceActivity" />
+        <activity android:name=".module.checkattendance.CheckAttendanceActivity" />
         <activity android:name=".module.mine.activity.MyInformationActivity" />
         <activity android:name=".module.approval.ApprovalActivity"/>
         <activity android:name=".module.approval.AskForWorkOffActivity"/>

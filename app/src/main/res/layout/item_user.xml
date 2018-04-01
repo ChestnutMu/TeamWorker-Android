@@ -4,7 +4,7 @@
     <data>
         <variable
             name="user"
-            type="cn.chestnut.mvvm.teamworker.module.massage.bean.User" />
+            type="cn.chestnut.mvvm.teamworker.model.User" />
     </data>
 
     <LinearLayout

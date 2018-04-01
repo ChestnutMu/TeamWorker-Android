@@ -25,16 +25,15 @@ import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
 import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.BaseFragment;
-import cn.chestnut.mvvm.teamworker.main.activity.LoginActivity;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
-import cn.chestnut.mvvm.teamworker.module.checkattendance.activity.CheckAttendanceActivity;
-import cn.chestnut.mvvm.teamworker.module.massage.bean.User;
+import cn.chestnut.mvvm.teamworker.module.checkattendance.CheckAttendanceActivity;
+import cn.chestnut.mvvm.teamworker.model.User;
 import cn.chestnut.mvvm.teamworker.module.mine.activity.MyInformationActivity;
 import cn.chestnut.mvvm.teamworker.socket.TeamWorkerClient;
 import cn.chestnut.mvvm.teamworker.utils.EmojiUtil;
 import cn.chestnut.mvvm.teamworker.utils.Log;
-import cn.chestnut.mvvm.teamworker.utils.PermissionsUtil;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
+import cn.chestnut.mvvm.teamworker.widget.GlideLoader;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -58,6 +57,12 @@ public class MineFragment extends BaseFragment {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_mine, viewGroup, true);
         initView();
         addListener();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getMyInfomation();
     }
 
     private void initView() {
@@ -156,6 +161,8 @@ public class MineFragment extends BaseFragment {
                 if (response.isSuccess()) {
                     try {
                         binding.tvNickname.setText(EmojiUtil.emojiRecovery(response.getData().getNickname()));
+                        GlideLoader.displayImage(getActivity(), HttpUrls.GET_PHOTO + response.getData().getAvatar(), binding.ivAvatar);
+
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }

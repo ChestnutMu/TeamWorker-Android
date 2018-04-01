@@ -27,8 +27,8 @@ import cn.chestnut.mvvm.teamworker.http.HttpUrls;
 import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.module.massage.adapter.DepartmentAdapter;
-import cn.chestnut.mvvm.teamworker.module.massage.bean.Department;
-import cn.chestnut.mvvm.teamworker.module.massage.bean.User;
+import cn.chestnut.mvvm.teamworker.model.Department;
+import cn.chestnut.mvvm.teamworker.model.User;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved

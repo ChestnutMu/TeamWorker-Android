@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.ActivityApprovalBinding;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
-import cn.chestnut.mvvm.teamworker.module.checkattendance.activity.CheckAttendanceActivity;
 import cn.chestnut.mvvm.teamworker.module.work.adapter.GridViewAdapter;
 
 /**
@@ -51,7 +50,7 @@ public class ApprovalActivity extends BaseActivity {
 
         drawableList = new ArrayList<>();
         drawableList.add(R.mipmap.icon_offwork);
-        drawableList.add(R.mipmap.icon_reimbursement);
+        drawableList.add(R.mipmap.icon_decrusement);
     }
 
     private void initView() {
@@ -67,7 +66,7 @@ public class ApprovalActivity extends BaseActivity {
                     case R.mipmap.icon_offwork:
                         startActivity(new Intent(ApprovalActivity.this, AskForWorkOffActivity.class));
                         break;
-                    case R.mipmap.icon_reimbursement:
+                    case R.mipmap.icon_decrusement:
                         startActivity(new Intent(ApprovalActivity.this, ApprovalActivity.class));
                         break;
                 }

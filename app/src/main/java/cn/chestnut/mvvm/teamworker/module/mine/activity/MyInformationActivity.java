@@ -9,7 +9,6 @@ import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,14 +23,11 @@ import com.qiniu.android.storage.UpCompletionHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-import cn.chestnut.mvvm.teamworker.Constant;
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.ActivityMyInformationBinding;
 import cn.chestnut.mvvm.teamworker.http.ApiResponse;
@@ -40,7 +36,7 @@ import cn.chestnut.mvvm.teamworker.http.HttpUrls;
 import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
-import cn.chestnut.mvvm.teamworker.module.massage.bean.User;
+import cn.chestnut.mvvm.teamworker.model.User;
 import cn.chestnut.mvvm.teamworker.utils.EmojiUtil;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
@@ -255,8 +251,7 @@ public class MyInformationActivity extends BaseActivity {
                     binding.tvSex.setText(response.getData().getSex());
                     binding.tvBirthday.setText(response.getData().getBirthday());
                     binding.tvRegion.setText(response.getData().getRegion());
-                    GlideLoader glideLoader = new GlideLoader();
-                    glideLoader.displayImage(MyInformationActivity.this, HttpUrls.GET_PHOTO + response.getData().getAvatar(), binding.ivAvatar);
+                    GlideLoader.displayImage(MyInformationActivity.this, HttpUrls.GET_PHOTO + response.getData().getAvatar(), binding.ivAvatar);
                 }
             }
 

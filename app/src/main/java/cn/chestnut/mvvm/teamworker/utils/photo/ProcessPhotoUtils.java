@@ -71,8 +71,7 @@ public class ProcessPhotoUtils {
                     }
 
                 }).create();
-        Window window = dialog.getWindow();
-        window.setGravity(Gravity.CENTER);
+        dialog.setCanceledOnTouchOutside(true);
         dialog.show();
     }
 

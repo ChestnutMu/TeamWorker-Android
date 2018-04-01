@@ -8,8 +8,8 @@ import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.identityscope.IdentityScopeType;
 import org.greenrobot.greendao.internal.DaoConfig;
 
-import cn.chestnut.mvvm.teamworker.module.massage.bean.Message;
-import cn.chestnut.mvvm.teamworker.module.massage.bean.MessageUser;
+import cn.chestnut.mvvm.teamworker.model.Message;
+import cn.chestnut.mvvm.teamworker.model.MessageUser;
 
 import cn.chestnut.mvvm.teamworker.db.MessageDao;
 import cn.chestnut.mvvm.teamworker.db.MessageUserDao;

@@ -1,13 +1,9 @@
 package cn.chestnut.mvvm.teamworker.module.massage.adapter;
 
-import android.databinding.ViewDataBinding;
-
 import java.util.List;
 
 import cn.chestnut.mvvm.teamworker.main.adapter.BaseRecyclerViewAdapter;
-import cn.chestnut.mvvm.teamworker.main.adapter.BindingItem;
-import cn.chestnut.mvvm.teamworker.module.massage.bean.Department;
-import cn.chestnut.mvvm.teamworker.module.massage.bean.Message;
+import cn.chestnut.mvvm.teamworker.model.Department;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved

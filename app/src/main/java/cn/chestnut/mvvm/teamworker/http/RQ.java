@@ -22,6 +22,7 @@ import java.net.SocketTimeoutException;
 import java.net.URLDecoder;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
@@ -59,7 +60,7 @@ public class RQ {
 
 
     public static void get(String urlTo, List<String> params,
-                                 List<String> values, final AppCallBack<String> app) {
+                           List<String> values, final AppCallBack<String> app) {
         if (!CommonUtil.checkNetState(MyApplication.getInstance())) {
             if (app != null) {
                 JSONObject temp = new JSONObject();
@@ -242,7 +243,7 @@ public class RQ {
 
     }
 
-    public static <T> void post(final String url, String params, final AppCallBack<ApiResponse<T>> app) {
+    public static <T> void post(final String url, final Map<String, String> headers, String params, final AppCallBack<ApiResponse<T>> app) {
         Log.d("url = " + url + "      params = " + params);
         if (!CommonUtil.checkNetState(MyApplication.getInstance())) {
             if (app != null) {
@@ -260,8 +261,14 @@ public class RQ {
                 @Override
                 public void call(Subscriber<? super ApiResponse<T>> subscriber) {
                     try {
-                        Request request = new Request.Builder().url(url)
-                                .post(body).build();
+                        Request.Builder builder = new Request.Builder().url(url)
+                                .post(body);
+                        if (!headers.isEmpty()) {
+                            for (Map.Entry<String, String> header : headers.entrySet()) {
+                                builder.addHeader(header.getKey(), header.getValue());
+                            }
+                        }
+                        Request request = builder.build();
                         Response response = CLIENT.newCall(request)
                                 .execute();
                         int code = response.code();
@@ -340,6 +347,10 @@ public class RQ {
                     });
         }
 
+    }
+
+    public static <T> void post(final String url, String params, final AppCallBack<ApiResponse<T>> app) {
+        post(url, null, params, app);
     }
 
     class TimeCalibrationInterceptor implements Interceptor {

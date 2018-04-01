@@ -5,4 +5,5 @@
     <dimen name="text_size_small">11sp</dimen>
 
     <dimen name="team_worker_margin">5dp</dimen>
+    <dimen name="team_worker_padding">10dp</dimen>
 </resources>

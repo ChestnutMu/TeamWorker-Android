@@ -12,13 +12,11 @@ import android.support.v4.content.LocalBroadcastManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import cn.chestnut.mvvm.teamworker.Constant;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
-import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
 import cn.chestnut.mvvm.teamworker.socket.ReceiverProtocol;
 import cn.chestnut.mvvm.teamworker.socket.TeamWorkerClient;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
@@ -233,9 +231,9 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
     private void handleUserNotifyMessage(Object response) {
         Log.d("TeamWorkerMessageHandler接收到一条新消息:" + response.toString());
         Intent intent = new Intent(Constant.ActionConstant.ACTION_GET_NEW_MESSAGE);
-        cn.chestnut.mvvm.teamworker.module.massage.bean.Message newMessage = new Gson().fromJson(
+        cn.chestnut.mvvm.teamworker.model.Message newMessage = new Gson().fromJson(
                 response.toString(),
-                new TypeToken<cn.chestnut.mvvm.teamworker.module.massage.bean.Message>() {
+                new TypeToken<cn.chestnut.mvvm.teamworker.model.Message>() {
                 }.getType());
         intent.putExtra("newMessage", newMessage);
         LocalBroadcastManager.getInstance(MyApplication.getInstance()).sendBroadcast(intent);

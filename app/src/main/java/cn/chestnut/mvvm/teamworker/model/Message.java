@@ -1,4 +1,4 @@
-package cn.chestnut.mvvm.teamworker.module.massage.bean;
+package cn.chestnut.mvvm.teamworker.model;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;

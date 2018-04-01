@@ -4,7 +4,10 @@ import android.app.Activity;
 
 import com.google.gson.Gson;
 
+import java.util.HashMap;
 import java.util.Map;
+
+import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 
 /**
  * Copyright (c) 2017, Chestnut All rights reserved
@@ -40,7 +43,11 @@ public class RequestManager {
      * @return
      */
     public <T> void executeRequest(final String api, Map<String, Object> params, final AppCallBack<ApiResponse<T>> callBack) {
-        RQ.post(HttpUrls.getUrls(api), gson.toJson(params), callBack);
+        Map<String, String> headers = new HashMap<>();
+        headers.put("uid", PreferenceUtil.getInstances(activity).getPreferenceString("userId"));
+        headers.put("token", PreferenceUtil.getInstances(activity).getPreferenceString("token"));
+        RQ.post(HttpUrls.getUrls(api), headers, gson.toJson(params), callBack);
+//        RQ.post(HttpUrls.getUrls(api), gson.toJson(params), callBack);
     }
 
     /**
@@ -50,7 +57,11 @@ public class RequestManager {
      * @return
      */
     public <T> void executeRequest(final String api, Object params, final AppCallBack<ApiResponse<T>> callBack) {
-        RQ.post(HttpUrls.getUrls(api), gson.toJson(params), callBack);
+        Map<String, String> headers = new HashMap<>();
+        headers.put("uid", PreferenceUtil.getInstances(activity).getPreferenceString("userId"));
+        headers.put("token", PreferenceUtil.getInstances(activity).getPreferenceString("token"));
+        RQ.post(HttpUrls.getUrls(api), headers, gson.toJson(params), callBack);
+//        RQ.post(HttpUrls.getUrls(api), gson.toJson(params), callBack);
     }
 
 }

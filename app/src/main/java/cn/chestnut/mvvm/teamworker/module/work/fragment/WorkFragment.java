@@ -14,7 +14,7 @@ import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.FragmentWorkBinding;
 import cn.chestnut.mvvm.teamworker.main.common.BaseFragment;
 import cn.chestnut.mvvm.teamworker.module.approval.ApprovalActivity;
-import cn.chestnut.mvvm.teamworker.module.checkattendance.activity.CheckAttendanceActivity;
+import cn.chestnut.mvvm.teamworker.module.checkattendance.CheckAttendanceActivity;
 import cn.chestnut.mvvm.teamworker.module.work.adapter.GridViewAdapter;
 
 /**

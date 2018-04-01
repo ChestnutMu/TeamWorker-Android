@@ -1,4 +1,4 @@
-package cn.chestnut.mvvm.teamworker.module.checkattendance.activity;
+package cn.chestnut.mvvm.teamworker.module.checkattendance;
 
 import android.databinding.DataBindingUtil;
 import android.view.LayoutInflater;
@@ -21,7 +21,7 @@ import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
-import cn.chestnut.mvvm.teamworker.module.checkattendance.bean.Attendance;
+import cn.chestnut.mvvm.teamworker.model.Attendance;
 import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
@@ -150,8 +150,9 @@ public class CheckAttendanceActivity extends BaseActivity {
             public void next(ApiResponse<Attendance> response) {
                 if (response.isSuccess()) {
                     binding.setAttendance(response.getData());
+                }else {
+                    showToast(response.getMessage());
                 }
-                showToast(response.getMessage());
             }
 
             @Override
@@ -172,7 +173,7 @@ public class CheckAttendanceActivity extends BaseActivity {
         params.put("userId", userId);
         params.put("altitude", altitude);
         params.put("latitude", latitude);
-        params.put("detailAddress", detailAddress);
+        params.put("punchInAddress", detailAddress);
         showProgressDialog(this);
         RequestManager.getInstance(this).executeRequest(HttpUrls.PUNCH_IN, params, new AppCallBack<ApiResponse<Attendance>>() {
             @Override
@@ -201,7 +202,7 @@ public class CheckAttendanceActivity extends BaseActivity {
         params.put("userId", userId);
         params.put("altitude", altitude);
         params.put("latitude", latitude);
-        params.put("detailAddress", detailAddress);
+        params.put("punchOutAddress", detailAddress);
         showProgressDialog(this);
         RequestManager.getInstance(this).executeRequest(HttpUrls.PUNCH_OUT, params, new AppCallBack<ApiResponse<Attendance>>() {
             @Override

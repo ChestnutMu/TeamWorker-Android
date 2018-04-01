@@ -9,7 +9,7 @@ import java.util.List;
 import cn.chestnut.mvvm.teamworker.databinding.ItemChatBinding;
 import cn.chestnut.mvvm.teamworker.main.adapter.BaseRecyclerViewAdapter;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
-import cn.chestnut.mvvm.teamworker.module.massage.bean.MessageVo;
+import cn.chestnut.mvvm.teamworker.model.MessageVo;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved

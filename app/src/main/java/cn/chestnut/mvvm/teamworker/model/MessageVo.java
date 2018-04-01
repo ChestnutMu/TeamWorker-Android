@@ -1,4 +1,4 @@
-package cn.chestnut.mvvm.teamworker.module.massage.bean;
+package cn.chestnut.mvvm.teamworker.model;
 
 import cn.chestnut.mvvm.teamworker.BR;
 import cn.chestnut.mvvm.teamworker.R;
