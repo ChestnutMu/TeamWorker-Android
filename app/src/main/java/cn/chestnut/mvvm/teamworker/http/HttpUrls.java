@@ -41,25 +41,25 @@ public class HttpUrls {
     public static final String UPDATE_MY_INFORMATION = "/user/updateMyInformation";
 
     //获取用户还未接收的消息列表
-    public static final String GET_NOT_SEND_MESSAGES_BY_USER_ID = "/Message/getNotSendMessagesByUserId";
+    public static final String GET_NOT_SEND_MESSAGES_BY_USER_ID = "/message/getNotSendMessagesByUserId";
 
     //获取所有部门
-    public static final String GET_ALL_DEPARTMENTS = "/Department/getDepartments";
+    public static final String GET_ALL_DEPARTMENTS = "/department/getDepartments";
 
     //获取一个部门所有成员
-    public static final String GET_USER_BY_DEPARTMENT = "/Department/getUserByDepartment";
+    public static final String GET_USER_BY_DEPARTMENT = "/department/getUserByDepartment";
 
     //获取用户所属的部门
-    public static final String GET_DEPARTMENT_BY_USERID = "/Department/getDepartmentByUserId";
+    public static final String GET_DEPARTMENT_BY_USERID = "/department/getDepartmentByUserId";
 
     //根据UID获取考勤记录
-    public static final String GET_ATTENDANCE = "/Attendance/getAttendance";
+    public static final String GET_ATTENDANCE = "/attendance/getAttendance";
 
     //添加上班打卡记录
-    public static final String PUNCH_IN = "/Attendance/punchIn";
+    public static final String PUNCH_IN = "/attendance/punchIn";
 
     //添加下班打卡记录
-    public static final String PUNCH_OUT = "/Attendance/punchOut";
+    public static final String PUNCH_OUT = "/attendance/punchOut";
 
     //获取消息中用户的信息
     public static final String GET_USER_INFO = "/user/getUserInfo";
@@ -72,6 +72,5 @@ public class HttpUrls {
 
     //审批请假
     public static final String APPROVE_WORK_OFF = "/workoff/approveWorkOff";
-
 
 }

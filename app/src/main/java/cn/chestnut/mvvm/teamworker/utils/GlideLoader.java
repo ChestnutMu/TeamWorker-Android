@@ -1,4 +1,4 @@
-package cn.chestnut.mvvm.teamworker.widget;
+package cn.chestnut.mvvm.teamworker.utils;
 
 import android.content.Context;
 import android.widget.ImageView;
@@ -19,8 +19,9 @@ public class GlideLoader {
     public static void displayImage(Context context, String path, ImageView imageView) {
         Glide.with(context)
                 .load(path)
-                .placeholder(R.drawable.global_img_default)
+                .placeholder(R.mipmap.ic_launcher)
                 .centerCrop()
+                .error(R.drawable.global_img_default)
                 .into(imageView);
     }
 

@@ -222,7 +222,7 @@ public class MessageDaoUtils {
     }
 
     /**
-     * 根据userId查询接收到的消息列表
+     * 根据chatId查询接收到的消息列表
      *
      * @return
      */

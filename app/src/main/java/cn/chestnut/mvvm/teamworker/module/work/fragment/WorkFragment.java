@@ -87,6 +87,13 @@ public class WorkFragment extends BaseFragment {
                 }
             }
         });
+
+        binding.llBuildTeam.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
 }

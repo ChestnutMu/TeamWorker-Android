@@ -157,6 +157,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="3dp"
+                        android:layout_marginRight="8dp"
                         android:layout_weight="1"
                         android:background="@null"
                         android:gravity="right"

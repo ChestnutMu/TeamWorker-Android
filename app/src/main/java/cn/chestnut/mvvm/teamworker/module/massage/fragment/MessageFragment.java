@@ -190,15 +190,17 @@ public class MessageFragment extends BaseFragment {
         messageAdapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(), ChatActivity.class);
-                intent.putExtra("chatId", messageList.get(position).getMessage().getChatId());
-                String chatName = messageList.get(position).getMessage().getChatName();
-                if (StringUtil.isStringNotNull(chatName)) {
-                    intent.putExtra("chatName", chatName);
+                Message message = messageList.get(position).getMessage();
+                if (message.getMessageType() == 1) {//为通知消息
+
                 } else {
-                    intent.putExtra("title", messageList.get(position).getMessage().getChatName());
+                    Intent intent = new Intent(getActivity(), ChatActivity.class);
+                    intent.putExtra("chatId", message.getChatId());
+                    if (StringUtil.isStringNotNull(message.getChatName())) {
+                        intent.putExtra("chatName", message.getChatName());
+                    }
+                    getActivity().startActivity(intent);
                 }
-                getActivity().startActivity(intent);
             }
         });
     }

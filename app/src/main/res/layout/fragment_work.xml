@@ -31,5 +31,54 @@
             android:scrollbars="none"
             android:verticalSpacing="1dp" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@color/white"
+            android:padding="12dp"
+            android:text="我的团队"
+            android:textColor="@color/black" />
+
+        <ListView
+            android:id="@+id/lv_my_team"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:gravity="center_vertical"
+            android:id="@+id/ll_build_team"
+            android:background="@color/white"
+            android:padding="12dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@mipmap/icon_build_team" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="创建一个新的团队"
+                android:textColor="@color/text_black"
+                android:layout_marginLeft="8dp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:layout_height="wrap_content"
+                android:text="企业、组织、团队"
+                android:textColor="@color/text_gray"
+                android:textSize="@dimen/text_size_small"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/icon_arrow_grey"/>
+        </LinearLayout>
     </LinearLayout>
 </layout>

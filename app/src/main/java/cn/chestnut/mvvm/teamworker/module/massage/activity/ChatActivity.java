@@ -234,7 +234,6 @@ public class ChatActivity extends BaseActivity {
 
         Map<String, String> params = new HashMap<>();
         params.put("chatId", chatId);
-        params.put("title", "");
         params.put("content", content);
         params.put("uids", gson.toJson(senderIdList));
         executeRequest(SendProtocol.MSG_SEND_MESSAGE, gson.toJson(params));

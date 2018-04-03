@@ -33,7 +33,7 @@ import cn.chestnut.mvvm.teamworker.socket.TeamWorkerClient;
 import cn.chestnut.mvvm.teamworker.utils.EmojiUtil;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
-import cn.chestnut.mvvm.teamworker.widget.GlideLoader;
+import cn.chestnut.mvvm.teamworker.utils.GlideLoader;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved

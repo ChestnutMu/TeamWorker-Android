@@ -50,7 +50,7 @@ public class ApprovalActivity extends BaseActivity {
 
         drawableList = new ArrayList<>();
         drawableList.add(R.mipmap.icon_offwork);
-        drawableList.add(R.mipmap.icon_decrusement);
+        drawableList.add(R.mipmap.icon_reimbursement);
     }
 
     private void initView() {
@@ -72,6 +72,7 @@ public class ApprovalActivity extends BaseActivity {
                 }
             }
         });
+
     }
 
 }

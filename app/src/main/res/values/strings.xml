@@ -5,4 +5,7 @@
     <string name="fragment_work">工作</string>
     <string name="fragment_mine">我的</string>
 
+    <string name="work_wait">待办</string>
+    <string name="work_notification">通知</string>
+
 </resources>
