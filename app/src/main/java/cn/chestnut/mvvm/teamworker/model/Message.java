@@ -24,6 +24,8 @@ import cn.chestnut.mvvm.teamworker.utils.FormatDateUtil;
 @Entity
 public class Message implements Serializable{
 
+    private static final long serialVersionUID = 42L;
+
     @Id(autoincrement = true)
     private Long id;
 
@@ -39,30 +41,27 @@ public class Message implements Serializable{
     
     private String receiverId;
 
-    private String title;
-
     @NotNull
     private String content;
 
     @NotNull
     private Long time;
 
+    private int messageType;//null标识为一条聊天消息；1标识为一条通知消息
 
-    private static final long serialVersionUID = 42L;
-
-    @Generated(hash = 876155601)
+    @Generated(hash = 1931657622)
     public Message(Long id, String messageId, String chatId, String chatName,
-            @NotNull String senderId, String receiverId, String title,
-            @NotNull String content, @NotNull Long time) {
+            @NotNull String senderId, String receiverId, @NotNull String content,
+            @NotNull Long time, int messageType) {
         this.id = id;
         this.messageId = messageId;
         this.chatId = chatId;
         this.chatName = chatName;
         this.senderId = senderId;
         this.receiverId = receiverId;
-        this.title = title;
         this.content = content;
         this.time = time;
+        this.messageType = messageType;
     }
 
     @Generated(hash = 637306882)
@@ -109,14 +108,6 @@ public class Message implements Serializable{
         this.receiverId = receiverId;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContent() {
         return this.content;
     }
@@ -142,4 +133,11 @@ public class Message implements Serializable{
         this.id = id;
     }
 
+    public int getMessageType() {
+        return messageType;
+    }
+
+    public void setMessageType(int messageType) {
+        this.messageType = messageType;
+    }
 }

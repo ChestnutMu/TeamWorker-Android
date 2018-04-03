@@ -30,9 +30,9 @@ public class MessageDao extends AbstractDao<Message, Long> {
         public final static Property ChatName = new Property(3, String.class, "chatName", false, "CHAT_NAME");
         public final static Property SenderId = new Property(4, String.class, "senderId", false, "SENDER_ID");
         public final static Property ReceiverId = new Property(5, String.class, "receiverId", false, "RECEIVER_ID");
-        public final static Property Title = new Property(6, String.class, "title", false, "TITLE");
-        public final static Property Content = new Property(7, String.class, "content", false, "CONTENT");
-        public final static Property Time = new Property(8, Long.class, "time", false, "TIME");
+        public final static Property Content = new Property(6, String.class, "content", false, "CONTENT");
+        public final static Property Time = new Property(7, Long.class, "time", false, "TIME");
+        public final static Property MessageType = new Property(8, int.class, "messageType", false, "MESSAGE_TYPE");
     }
 
 
@@ -54,9 +54,9 @@ public class MessageDao extends AbstractDao<Message, Long> {
                 "\"CHAT_NAME\" TEXT," + // 3: chatName
                 "\"SENDER_ID\" TEXT NOT NULL ," + // 4: senderId
                 "\"RECEIVER_ID\" TEXT," + // 5: receiverId
-                "\"TITLE\" TEXT," + // 6: title
-                "\"CONTENT\" TEXT NOT NULL ," + // 7: content
-                "\"TIME\" INTEGER NOT NULL );"); // 8: time
+                "\"CONTENT\" TEXT NOT NULL ," + // 6: content
+                "\"TIME\" INTEGER NOT NULL ," + // 7: time
+                "\"MESSAGE_TYPE\" INTEGER NOT NULL );"); // 8: messageType
     }
 
     /** Drops the underlying database table. */
@@ -94,13 +94,9 @@ public class MessageDao extends AbstractDao<Message, Long> {
         if (receiverId != null) {
             stmt.bindString(6, receiverId);
         }
- 
-        String title = entity.getTitle();
-        if (title != null) {
-            stmt.bindString(7, title);
-        }
-        stmt.bindString(8, entity.getContent());
-        stmt.bindLong(9, entity.getTime());
+        stmt.bindString(7, entity.getContent());
+        stmt.bindLong(8, entity.getTime());
+        stmt.bindLong(9, entity.getMessageType());
     }
 
     @Override
@@ -132,13 +128,9 @@ public class MessageDao extends AbstractDao<Message, Long> {
         if (receiverId != null) {
             stmt.bindString(6, receiverId);
         }
- 
-        String title = entity.getTitle();
-        if (title != null) {
-            stmt.bindString(7, title);
-        }
-        stmt.bindString(8, entity.getContent());
-        stmt.bindLong(9, entity.getTime());
+        stmt.bindString(7, entity.getContent());
+        stmt.bindLong(8, entity.getTime());
+        stmt.bindLong(9, entity.getMessageType());
     }
 
     @Override
@@ -155,9 +147,9 @@ public class MessageDao extends AbstractDao<Message, Long> {
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // chatName
             cursor.getString(offset + 4), // senderId
             cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // receiverId
-            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // title
-            cursor.getString(offset + 7), // content
-            cursor.getLong(offset + 8) // time
+            cursor.getString(offset + 6), // content
+            cursor.getLong(offset + 7), // time
+            cursor.getInt(offset + 8) // messageType
         );
         return entity;
     }
@@ -170,9 +162,9 @@ public class MessageDao extends AbstractDao<Message, Long> {
         entity.setChatName(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setSenderId(cursor.getString(offset + 4));
         entity.setReceiverId(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
-        entity.setTitle(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
-        entity.setContent(cursor.getString(offset + 7));
-        entity.setTime(cursor.getLong(offset + 8));
+        entity.setContent(cursor.getString(offset + 6));
+        entity.setTime(cursor.getLong(offset + 7));
+        entity.setMessageType(cursor.getInt(offset + 8));
      }
     
     @Override

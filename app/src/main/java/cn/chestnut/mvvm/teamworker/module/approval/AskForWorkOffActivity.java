@@ -49,8 +49,10 @@ import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
 import cn.chestnut.mvvm.teamworker.model.Department;
 import cn.chestnut.mvvm.teamworker.model.User;
+import cn.chestnut.mvvm.teamworker.model.WorkOff;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
 import cn.chestnut.mvvm.teamworker.utils.Log;
+import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 import cn.chestnut.mvvm.teamworker.utils.StringUtil;
 import cn.chestnut.mvvm.teamworker.utils.photo.ProcessPhotoUtils;
 import cn.chestnut.mvvm.teamworker.widget.GlideLoader;
@@ -108,8 +110,14 @@ public class AskForWorkOffActivity extends BaseActivity {
             //获得图片的uri
             filePath = cursor.getString(column_index);
             Log.d("filePath " + filePath);
+            if (StringUtil.isStringNotNull(filePath)) {
+                GlideLoader.displayImage(AskForWorkOffActivity.this, filePath, binding.ivPicture);
+            }
         } else if (requestCode == ProcessPhotoUtils.SHOOT_PHOTO_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             filePath = processPhotoUtils.getMyPhotoFile().getPath();
+            if (StringUtil.isStringNotNull(filePath)) {
+                GlideLoader.displayImage(AskForWorkOffActivity.this, filePath, binding.ivPicture);
+            }
             Log.d("filePath " + filePath);
         }
     }
@@ -161,6 +169,25 @@ public class AskForWorkOffActivity extends BaseActivity {
             }
         });
 
+        binding.btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (StringUtil.isStringNotNull(binding.tvWorkOffType.getText().toString())
+                        && StringUtil.isStringNotNull(binding.tvStartTime.getText().toString())
+                        && StringUtil.isStringNotNull(binding.tvEndTime.getText().toString())
+                        && StringUtil.isStringNotNull(binding.etDayCount.getText().toString())
+                        && StringUtil.isStringNotNull(binding.etWorkOffReason.getText().toString())
+                        && StringUtil.isStringNotNull(approverId)) {
+                    if (StringUtil.isStringNotNull(filePath)) {
+                        uploadPicture(filePath);
+                    }
+
+                } else {
+                    showToast("请带红色*号的信息");
+                }
+            }
+        });
+
     }
 
     private void selectDateAndTime(final int timeType) {
@@ -204,7 +231,7 @@ public class AskForWorkOffActivity extends BaseActivity {
     }
 
     private void selectOffWorkType() {
-        Dialog dialog = new AlertDialog.Builder(this).setTitle("请选择请假类型")
+        Dialog dialog = new AlertDialog.Builder(this)
                 .setItems(new String[]{"年假", "事假", "病假", "调休", "产假", "陪产假", "婚假", "例假", "丧假"},
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -256,8 +283,8 @@ public class AskForWorkOffActivity extends BaseActivity {
 
     }
 
-    private void uploadPicture(String data, String token) {
-        MyApplication.getUploadManager().put(data, null, token,
+    private void uploadPicture(String filePath, String token) {
+        MyApplication.getUploadManager().put(filePath, null, token,
                 new UpCompletionHandler() {
                     @Override
                     public void complete(String key, ResponseInfo info, JSONObject res) {
@@ -266,10 +293,10 @@ public class AskForWorkOffActivity extends BaseActivity {
                             Log.i("qiniu Upload Success");
                             try {
                                 pictureKey = res.getString("key");
+                                applyWorkOff();
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                            GlideLoader.displayImage(AskForWorkOffActivity.this, HttpUrls.GET_PHOTO + pictureKey, binding.ivPicture);
                         } else {
                             Log.i("qiniu Upload Fail");
                             //如果失败，这里可以把info信息上报自己的服务器，便于后面分析上传错误原因
@@ -280,7 +307,7 @@ public class AskForWorkOffActivity extends BaseActivity {
 
     }
 
-    private void uploadPicture(final String data) {
+    private void uploadPicture(final String filePath) {
 
         if (StringUtil.isEmpty(qiniuToken))
 
@@ -290,7 +317,7 @@ public class AskForWorkOffActivity extends BaseActivity {
                 public void next(ApiResponse<String> response) {
                     if (response.isSuccess()) {
                         qiniuToken = response.getData();
-                        uploadPicture(data, qiniuToken);
+                        uploadPicture(filePath, qiniuToken);
                     }
                 }
 
@@ -307,7 +334,7 @@ public class AskForWorkOffActivity extends BaseActivity {
             });
 
         else {
-            uploadPicture(data, qiniuToken);
+            uploadPicture(filePath, qiniuToken);
         }
     }
 
@@ -411,6 +438,45 @@ public class AskForWorkOffActivity extends BaseActivity {
     public static void loadUrlImage(ImageView view, String url) {
         Log.d("url = " + HttpUrls.GET_PHOTO + url);
         GlideLoader.displayImage(MyApplication.getInstance(), HttpUrls.GET_PHOTO + url, view);
+    }
+
+    private void applyWorkOff() {
+        WorkOff workOff = new WorkOff();
+        workOff.setUserId(PreferenceUtil.getInstances(this).getPreferenceString("userId"));
+        workOff.setUserName(PreferenceUtil.getInstances(this).getPreferenceString("nickname"));
+        workOff.setWorkOffType(binding.tvWorkOffType.getText().toString());
+        workOff.setStartTime(binding.tvStartTime.getText().toString());
+        workOff.setEndTime(binding.tvEndTime.getText().toString());
+        workOff.setDayCount(Integer.parseInt(binding.etDayCount.getText().toString()));
+        workOff.setWorkOffReason(binding.etWorkOffReason.getText().toString());
+        if (StringUtil.isStringNotNull(pictureKey)) {
+            workOff.setPhoto(pictureKey);
+        }
+        workOff.setApproverId(approverId);
+
+        RequestManager.getInstance(this).executeRequest(HttpUrls.APPLY_WORK_OFF, workOff, new AppCallBack<ApiResponse<WorkOff>>() {
+            @Override
+            public void next(ApiResponse<WorkOff> response) {
+                if (response.isSuccess()) {
+                    showToast("你的请假已成功提交");
+                    finish();
+                    // TODO: 2018/4/3 跳转到请假详情
+                }else {
+                    showToast("你的请假提交失败");
+                    finish();
+                }
+            }
+
+            @Override
+            public void error(Throwable error) {
+
+            }
+
+            @Override
+            public void complete() {
+
+            }
+        });
     }
 
 }

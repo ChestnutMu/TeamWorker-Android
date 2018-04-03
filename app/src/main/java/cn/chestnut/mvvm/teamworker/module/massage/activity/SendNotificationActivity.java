@@ -139,7 +139,6 @@ public class SendNotificationActivity extends BaseActivity {
         message.setSenderId(PreferenceUtil.getInstances(this).getPreferenceString("userId"));
         message.setContent(content);
         message.setChatId(chatId);
-        message.setTitle("");
         MessageDaoUtils messageDaoUtils = new MessageDaoUtils();
         message.setTime(TimeManager.getInstance().getServiceTime());
         messageDaoUtils.insertMessage(message);

@@ -133,6 +133,7 @@ public class MineFragment extends BaseFragment {
         PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey("userId");
         PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey("account");
         PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey("token");
+        PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey("nickname");
     }
 
     /**

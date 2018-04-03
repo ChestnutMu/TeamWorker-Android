@@ -86,6 +86,7 @@ public class RegisterActivity extends BaseActivity {
             @Override
             public void next(ApiResponse<User> response) {
                 showToast(response.getMessage());
+                finish();
             }
 
             @Override

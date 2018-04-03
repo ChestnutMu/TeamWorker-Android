@@ -10,7 +10,7 @@ import cn.chestnut.mvvm.teamworker.main.adapter.BindingItem;
  * Copyright (c) 2018, Chestnut All rights reserved
  * Author: Chestnut
  * CreateTime：at 2018/1/2 22:28:36
- * Description：
+ * Description：用户Bean
  * Email: xiaoting233zhang@126.com
  */
 

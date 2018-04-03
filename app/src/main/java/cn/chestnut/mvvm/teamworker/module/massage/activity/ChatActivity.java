@@ -216,7 +216,6 @@ public class ChatActivity extends BaseActivity {
         }
         message.setContent(content);
         message.setChatId(chatId);
-        message.setTitle("");
         message.setTime(TimeManager.getInstance().getServiceTime());
         messageDaoUtils.insertMessage(message);
         MessageVo messageVo = new MessageVo();

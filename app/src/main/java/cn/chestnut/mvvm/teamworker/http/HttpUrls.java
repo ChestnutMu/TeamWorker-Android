@@ -10,9 +10,8 @@ package cn.chestnut.mvvm.teamworker.http;
 
 public class HttpUrls {
     //---------域名------------
-//    public static final String HTTPHOST = "http://172.18.210.71";
     public static final String HTTPHOST = "http://192.168.199.241";
-//    public static final String HTTPHOST = "http://172.18.92.153";
+//    public static final String HTTPHOST = "http://http://13.230.251.164";
 
     public static final String GET_PHOTO = "http://p2fnlgaq8.bkt.clouddn.com/";
 
@@ -67,6 +66,12 @@ public class HttpUrls {
 
     //获取七牛云token
     public static final String GET_QINIUTOKEN = "/third/getQiniuToken";
+
+    //请假
+    public static final String APPLY_WORK_OFF = "/workoff/applyWorkOff";
+
+    //审批请假
+    public static final String APPROVE_WORK_OFF = "/workoff/approveWorkOff";
 
 
 }

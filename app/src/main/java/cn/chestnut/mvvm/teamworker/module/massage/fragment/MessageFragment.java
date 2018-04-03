@@ -93,7 +93,6 @@ public class MessageFragment extends BaseFragment {
                 Log.d("MessageFragment收到一条新消息" + newMessage.toString());
                 if (!newMessage.getSenderId().equals(userId)) {
                     try {
-                        newMessage.setTitle(EmojiUtil.emojiRecovery(newMessage.getTitle()));
                         newMessage.setContent(EmojiUtil.emojiRecovery(newMessage.getContent()));
                         newMessage.setChatName(EmojiUtil.emojiRecovery(newMessage.getChatName()));
                     } catch (UnsupportedEncodingException e) {
@@ -217,7 +216,6 @@ public class MessageFragment extends BaseFragment {
                 if (response.isSuccess()) {
                     for (int i = 0; i < response.getData().size(); i++) {
                         try {
-                            response.getData().get(i).setTitle(EmojiUtil.emojiConvert(response.getData().get(i).getTitle()));
                             response.getData().get(i).setContent(EmojiUtil.emojiConvert(response.getData().get(i).getContent()));
                             response.getData().get(i).setChatName(EmojiUtil.emojiConvert(response.getData().get(i).getChatName()));
                         } catch (UnsupportedEncodingException e) {

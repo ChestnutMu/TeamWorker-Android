@@ -143,6 +143,7 @@ public class LoginActivity extends BaseActivity {
                     PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("userId", response.getData().getUserId());
                     PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("account", response.getData().getAccount());
                     PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("token", response.getData().getToken());
+                    PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("nickname", response.getData().getNickname());
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     finish();
                     startActivity(intent);
