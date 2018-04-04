@@ -1,4 +1,4 @@
-package cn.chestnut.mvvm.teamworker.module.work.fragment;
+package cn.chestnut.mvvm.teamworker.module.work;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -15,6 +15,7 @@ import cn.chestnut.mvvm.teamworker.databinding.FragmentWorkBinding;
 import cn.chestnut.mvvm.teamworker.main.common.BaseFragment;
 import cn.chestnut.mvvm.teamworker.module.approval.ApprovalActivity;
 import cn.chestnut.mvvm.teamworker.module.checkattendance.CheckAttendanceActivity;
+import cn.chestnut.mvvm.teamworker.module.team.BuildTeamActivity;
 import cn.chestnut.mvvm.teamworker.module.work.adapter.GridViewAdapter;
 
 /**
@@ -91,7 +92,7 @@ public class WorkFragment extends BaseFragment {
         binding.llBuildTeam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivity(new Intent(getActivity(), BuildTeamActivity.class));
             }
         });
     }

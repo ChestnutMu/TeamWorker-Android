@@ -21,8 +21,7 @@ import cn.chestnut.mvvm.teamworker.main.adapter.CommonViewPagerAdapter;
  */
 
 
-public abstract class ViewPagerBaseActivity
-        extends BaseActivity {
+public abstract class ViewPagerBaseActivity extends BaseActivity {
 
     LayoutInflater inflater;
 

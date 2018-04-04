@@ -1,7 +1,9 @@
-package cn.chestnut.mvvm.teamworker.module.team.activity;
+package cn.chestnut.mvvm.teamworker.module.team;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -31,5 +33,13 @@ public class BuildTeamActivity extends BaseActivity {
         binding = DataBindingUtil.inflate(inflater, R.layout.activity_build_team, viewGroup, true);
     }
 
+    private void addListener(){
+        binding.llAddMember.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent());
+            }
+        });
+    }
 
 }

@@ -1,4 +1,4 @@
-package cn.chestnut.mvvm.teamworker.module.mine.activity;
+package cn.chestnut.mvvm.teamworker.module.mine;
 
 import android.app.Activity;
 import android.app.AlertDialog;

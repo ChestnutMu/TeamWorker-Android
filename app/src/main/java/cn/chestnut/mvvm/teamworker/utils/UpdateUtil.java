@@ -15,7 +15,7 @@ import android.support.v7.app.AlertDialog;
 import java.io.File;
 
 import cn.chestnut.mvvm.teamworker.Constant;
-import cn.chestnut.mvvm.teamworker.module.update.bean.UpdateInfo;
+import cn.chestnut.mvvm.teamworker.model.UpdateInfo;
 
 /**
  * Copyright (c) 2017, Chestnut All rights reserved
@@ -117,7 +117,7 @@ public class UpdateUtil {
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { //android N的权限问题
                     intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    Uri contentUri = FileProvider.getUriForFile(context, "work.model.com.framework.fileprovider", new File(Environment.getExternalStorageDirectory(), Constant.PreferenceConstants.APK_NAME));//注意修改
+                    Uri contentUri = FileProvider.getUriForFile(context, "cn.chestnut.mvvm.teamworker", new File(Environment.getExternalStorageDirectory(), Constant.PreferenceConstants.APK_NAME));
                     intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
                 } else {
                     intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory(), Constant.PreferenceConstants.APK_NAME)), "application/vnd.android.package-archive");

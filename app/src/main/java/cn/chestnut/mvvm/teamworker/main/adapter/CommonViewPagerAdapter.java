@@ -14,39 +14,33 @@ import java.util.List;
  * Email: xiaoting233zhang@126.com
  */
 
-public class CommonViewPagerAdapter
-        extends PagerAdapter
-{
+public class CommonViewPagerAdapter extends PagerAdapter {
 
     private List<View> views;
 
-    public CommonViewPagerAdapter(List<View> views){
-        this.views=views;
+    public CommonViewPagerAdapter(List<View> views) {
+        this.views = views;
     }
 
 
     @Override
-    public int getCount()
-    {
+    public int getCount() {
         return views.size();
     }
 
     @Override
-    public boolean isViewFromObject(View view, Object object)
-    {
-        return view==object;
+    public boolean isViewFromObject(View view, Object object) {
+        return view == object;
     }
 
     @Override
-    public void destroyItem(ViewGroup container, int position, Object object)
-    {
+    public void destroyItem(ViewGroup container, int position, Object object) {
         container.removeView(views.get(position));
     }
 
     @Override
-    public Object instantiateItem(ViewGroup container, int position)
-    {
-        container.addView(views.get(position),0);
+    public Object instantiateItem(ViewGroup container, int position) {
+        container.addView(views.get(position), 0);
         return views.get(position);
     }
 }

@@ -10,6 +10,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:background="@color/white"
             android:padding="@dimen/team_worker_padding">
 
@@ -34,6 +35,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:layout_marginTop="1dp"
             android:background="@color/white"
             android:padding="@dimen/team_worker_padding">
@@ -62,6 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="1dp"
             android:background="@color/white"
+            android:gravity="center_vertical"
             android:padding="@dimen/team_worker_padding">
 
             <TextView
@@ -79,6 +82,66 @@
                 android:background="@null"
                 android:gravity="right"
                 android:textSize="@dimen/text_size_normal" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/icon_arrow_grey" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_region"
+            android:layout_width="match_parent"
+            android:gravity="center_vertical"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:background="@color/white"
+            android:padding="@dimen/team_worker_padding">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="地区"
+                android:textColor="@color/text_black"
+                android:textSize="@dimen/text_size_big" />
+
+            <TextView
+                android:id="@+id/tv_region"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@null"
+                android:gravity="right"
+                android:textSize="@dimen/text_size_normal" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/icon_arrow_grey" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_add_member"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
+            android:background="@color/white"
+            android:padding="@dimen/team_worker_padding">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@mipmap/icon_plus_blue" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="添加团队成员"
+                android:textColor="@color/text_black"
+                android:textSize="@dimen/text_size_big" />
 
             <ImageView
                 android:layout_width="wrap_content"

@@ -89,7 +89,7 @@ public class PermissionsUtil {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
+            Manifest.permission.READ_CONTACTS
     };
 
     public static void checkAndRequestPermissions(final Activity activity) {
@@ -116,7 +116,7 @@ public class PermissionsUtil {
                 if (!showRationaleUI(activity, permission)) {
                     // 判断App是否是首次启动
                     if (!isAppFirstRun(activity)) {
-                        CommonUtil.showToast("注意：某些必要权限被禁止了!!!,请到系统设置权限。",activity);
+                        CommonUtil.showToast("注意：某些必要权限被禁止了!!!,请到系统设置权限。", activity);
                     }
                 }
                 break;

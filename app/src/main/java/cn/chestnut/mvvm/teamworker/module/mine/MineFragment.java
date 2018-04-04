@@ -1,4 +1,4 @@
-package cn.chestnut.mvvm.teamworker.module.mine.fragment;
+package cn.chestnut.mvvm.teamworker.module.mine;
 
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -28,7 +28,7 @@ import cn.chestnut.mvvm.teamworker.main.common.BaseFragment;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
 import cn.chestnut.mvvm.teamworker.module.checkattendance.CheckAttendanceActivity;
 import cn.chestnut.mvvm.teamworker.model.User;
-import cn.chestnut.mvvm.teamworker.module.mine.activity.MyInformationActivity;
+import cn.chestnut.mvvm.teamworker.module.mine.MyInformationActivity;
 import cn.chestnut.mvvm.teamworker.socket.TeamWorkerClient;
 import cn.chestnut.mvvm.teamworker.utils.EmojiUtil;
 import cn.chestnut.mvvm.teamworker.utils.Log;

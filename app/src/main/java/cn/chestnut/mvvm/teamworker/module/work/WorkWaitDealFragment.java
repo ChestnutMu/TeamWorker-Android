@@ -1,4 +1,4 @@
-package cn.chestnut.mvvm.teamworker.module.work.fragment;
+package cn.chestnut.mvvm.teamworker.module.work;
 
 import android.app.Fragment;
 import android.os.Bundle;

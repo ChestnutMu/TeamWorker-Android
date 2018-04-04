@@ -27,4 +27,9 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
+    <declare-styleable name="WordsIndexBar">
+        <attr name="bar_width" format="float"/>
+        <attr name="words_color" format="color"/>
+        <attr name="words_background_color" format="color"/>
+    </declare-styleable>
 </resources>

@@ -15,8 +15,8 @@ import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.ActivityMainBinding;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.module.massage.fragment.MessageFragment;
-import cn.chestnut.mvvm.teamworker.module.mine.fragment.MineFragment;
-import cn.chestnut.mvvm.teamworker.module.work.fragment.WorkFragment;
+import cn.chestnut.mvvm.teamworker.module.mine.MineFragment;
+import cn.chestnut.mvvm.teamworker.module.work.WorkFragment;
 import cn.chestnut.mvvm.teamworker.socket.ReceiverProtocol;
 import cn.chestnut.mvvm.teamworker.utils.PermissionsUtil;
 

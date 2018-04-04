@@ -16,6 +16,7 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
     <!--用于进行网络定位-->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <!--用于访问GPS定位-->
@@ -37,6 +38,7 @@
     <!--用于申请获取蓝牙信息进行室内定位-->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
 
     <application
         android:name="cn.chestnut.mvvm.teamworker.main.common.MyApplication"
@@ -72,20 +74,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".main.activity.RegisterActivity" />
         <activity
             android:name=".main.activity.MainActivity"
             android:launchMode="singleTask" />
         <activity
             android:name=".module.massage.activity.ChatActivity"
             android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".main.activity.RegisterActivity" />
         <activity android:name=".module.massage.activity.SelectDepartmentActivity" />
         <activity android:name=".module.massage.activity.SelectReceiverActivity" />
         <activity android:name=".module.massage.activity.SendNotificationActivity" />
         <activity android:name=".module.checkattendance.CheckAttendanceActivity" />
-        <activity android:name=".module.mine.activity.MyInformationActivity" />
-        <activity android:name=".module.approval.ApprovalActivity"/>
-        <activity android:name=".module.approval.AskForWorkOffActivity"/>
+        <activity android:name=".module.mine.MyInformationActivity" />
+        <activity android:name=".module.approval.ApprovalActivity" />
+        <activity android:name=".module.approval.AskForWorkOffActivity" />
+        <activity
+            android:name=".module.team.BuildTeamActivity"
+            android:windowSoftInputMode="stateHidden" />
     </application>
 
 </manifest>
