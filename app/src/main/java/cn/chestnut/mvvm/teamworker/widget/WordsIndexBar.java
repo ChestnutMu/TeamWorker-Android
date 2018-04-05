@@ -116,7 +116,7 @@ public class WordsIndexBar extends View {
                     touchIndex = index;
                 }
                 //防止数组越界
-                if (onWordChangeListener != null && touchIndex >= 0 && touchIndex <= words.length) {
+                if (onWordChangeListener != null && touchIndex >= 0 && touchIndex < words.length) {
                     onWordChangeListener.onWordChange(words[touchIndex]);
                 }
                 invalidate();

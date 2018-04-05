@@ -1,12 +1,15 @@
 package cn.chestnut.mvvm.teamworker.module.team;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -17,9 +20,8 @@ import java.util.List;
 import cn.chestnut.mvvm.teamworker.BR;
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.ActivityPhoneDirectoryBinding;
-import cn.chestnut.mvvm.teamworker.main.adapter.BaseListViewAdapter;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
-import cn.chestnut.mvvm.teamworker.model.PhoneDirctoryPerson;
+import cn.chestnut.mvvm.teamworker.model.PhoneDirectoryPerson;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.widget.WordsIndexBar;
 
@@ -35,7 +37,7 @@ public class PhoneDirectoryActivity extends BaseActivity {
 
     private ActivityPhoneDirectoryBinding binding;
 
-    private List<PhoneDirctoryPerson> persons;
+    private List<PhoneDirectoryPerson> persons;
 
     @Override
     protected void setBaseTitle(TextView titleView) {
@@ -48,16 +50,13 @@ public class PhoneDirectoryActivity extends BaseActivity {
         initData();
         initView();
         addListener();
-
-
     }
 
     private void initData() {
         getContacts();
-
-        Collections.sort(persons, new Comparator<PhoneDirctoryPerson>() {
+        Collections.sort(persons, new Comparator<PhoneDirectoryPerson>() {
             @Override
-            public int compare(PhoneDirctoryPerson lhs, PhoneDirctoryPerson rhs) {
+            public int compare(PhoneDirectoryPerson lhs, PhoneDirectoryPerson rhs) {
                 //根据拼音进行排序
                 return lhs.getPinyin().compareTo(rhs.getPinyin());
             }
@@ -84,6 +83,16 @@ public class PhoneDirectoryActivity extends BaseActivity {
             @Override
             public void onWordChange(String words) {
                 updateListView(words);
+            }
+        });
+
+        binding.lvPhoneDirectory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent();
+                intent.putExtra("person", persons.get(position));
+                PhoneDirectoryActivity.this.setResult(RESULT_OK, intent);
+                finish();
             }
         });
     }
@@ -125,8 +134,8 @@ public class PhoneDirectoryActivity extends BaseActivity {
                     do {
                         String phone = phonesCusor.getString(0);
                         Log.d("name:" + name + "   phone:" + phone);
-                        PhoneDirctoryPerson phoneDirctoryPerson = new PhoneDirctoryPerson(name, phone);
-                        persons.add(phoneDirctoryPerson);
+                        PhoneDirectoryPerson phoneDirectoryPerson = new PhoneDirectoryPerson(name, phone);
+                        persons.add(phoneDirectoryPerson);
                     } while (phonesCusor.moveToNext());
                 }
             } while (cursor.moveToNext());

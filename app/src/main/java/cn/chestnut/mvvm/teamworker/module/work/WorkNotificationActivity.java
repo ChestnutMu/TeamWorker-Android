@@ -11,9 +11,8 @@ import android.widget.TextView;
 
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.ActivityMainBinding;
+import cn.chestnut.mvvm.teamworker.databinding.ActivityWorkNotificationBinding;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
-import cn.chestnut.mvvm.teamworker.module.massage.fragment.MessageFragment;
-import cn.chestnut.mvvm.teamworker.module.work.WorkFragment;
 import cn.chestnut.mvvm.teamworker.socket.ReceiverProtocol;
 import cn.chestnut.mvvm.teamworker.utils.PermissionsUtil;
 
@@ -26,46 +25,30 @@ import cn.chestnut.mvvm.teamworker.utils.PermissionsUtil;
  */
 
 public class WorkNotificationActivity extends BaseActivity {
-    private ActivityMainBinding binding;
+    private ActivityWorkNotificationBinding binding;
     //Tab 文字
     private final int[] TAB_TITLES = new int[]{R.string.work_wait, R.string.work_notification};
     //Fragment 数组
-    private final Fragment[] TAB_FRAGMENTS = new Fragment[]{new MessageFragment(), new WorkFragment()};
+    private final Fragment[] TAB_FRAGMENTS = new Fragment[]{new WorkWaitDealFragment(), new WorkFragment()};
     //Tab 数目
     private final int COUNT = TAB_TITLES.length;
     private MyViewPagerAdapter mAdapter;
 
     @Override
     protected void setBaseTitle(TextView titleView) {
-        titleView.setText("首页");
+        titleView.setText("工作通知");
     }
 
     @Override
     protected void addContainerView(ViewGroup viewGroup, LayoutInflater inflater) {
-        binding = DataBindingUtil.inflate(inflater, R.layout.activity_main, viewGroup, true);
+        binding = DataBindingUtil.inflate(inflater, R.layout.activity_work_notification, viewGroup, true);
         initView();
         initData();
     }
 
-    @Override
-    public void onSessionMessage(int msgId, Object object) {
-
-        switch (msgId) {
-            case ReceiverProtocol.RECEIVE_NEW_MESSAGE:
-                break;
-
-            default:
-                break;
-        }
-
-    }
-
-    private void initData() {
-        PermissionsUtil.checkAndRequestPermissions(this);
-    }
+    private void initData() {}
 
     private void initView() {
-        setTitleBarVisible(false);//设置BaseActivity定义的标题栏不可见
         setTabs();
         mAdapter = new MyViewPagerAdapter(getSupportFragmentManager());
         binding.viewPager.setOffscreenPageLimit(2);

@@ -34,6 +34,9 @@ public class HttpUrls {
     //注册
     public static final String ADD_USER = "/user/addUser";
 
+    //通过账号搜索用户
+    public static final String SEARCH_USER = "/user/searchUser";
+
     //获取用户个人信息
     public static final String GET_MY_INFORMATION = "/user/getMyInformation";
 
@@ -43,14 +46,26 @@ public class HttpUrls {
     //获取用户还未接收的消息列表
     public static final String GET_NOT_SEND_MESSAGES_BY_USER_ID = "/message/getNotSendMessagesByUserId";
 
-    //获取所有部门
-    public static final String GET_ALL_DEPARTMENTS = "/department/getDepartments";
+    //创建一个部门
+    public static final String ADD_DEPARTMENT = "/department/addDepartment";
 
-    //获取一个部门所有成员
+    //获取一个部门的所有成员
     public static final String GET_USER_BY_DEPARTMENT = "/department/getUserByDepartment";
 
     //获取用户所属的部门
     public static final String GET_DEPARTMENT_BY_USERID = "/department/getDepartmentByUserId";
+
+    //添加一条部门关系记录
+    public static final String ADD_DEPARTMENT_RELATION = "/department/addDepartmentRelation";
+
+    //添加多条部门关系记录
+    public static final String ADD_DEPARTMENT_RELATIONS = "/department/addDepartmentRelations";
+
+    //添加一条部门成员关系记录
+    public static final String ADD_DEPARTMENT_MEMBER_RELATION = "/department/addDepartmentMemberRelation";
+
+    //添加多条部门成员关系记录
+    public static final String ADD_DEPARTMENT_MEMBER_RELATIONS = "/department/addDepartmentMemberRelations";
 
     //根据UID获取考勤记录
     public static final String GET_ATTENDANCE = "/attendance/getAttendance";
@@ -72,5 +87,7 @@ public class HttpUrls {
 
     //审批请假
     public static final String APPROVE_WORK_OFF = "/workoff/approveWorkOff";
+
+
 
 }

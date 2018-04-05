@@ -66,13 +66,6 @@ public class MineFragment extends BaseFragment {
     }
 
     private void initView() {
-        BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                binding.tvNickname.setText(intent.getStringExtra("nickname"));
-            }
-        };
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter(Constant.ActionConstant.ACTION_GET_NEW_MESSAGE));
         getMyInfomation();
     }
 

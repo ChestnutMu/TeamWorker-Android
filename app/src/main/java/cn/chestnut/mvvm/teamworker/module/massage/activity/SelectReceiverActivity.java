@@ -63,7 +63,7 @@ public class SelectReceiverActivity extends BaseActivity {
      * 初始化数据
      */
     private void initData() {
-        userList =new ArrayList<>();
+        userList = new ArrayList<>();
         departmentId = getIntent().getStringExtra("departmentId");
         getUserByDepartment(departmentId, pageNum, pageSize);
     }
@@ -92,7 +92,6 @@ public class SelectReceiverActivity extends BaseActivity {
         binding.swipeToLoadLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
-
                 if (userList != null) {
                     pageNum++;
                     getUserByDepartment(departmentId, pageNum, pageSize);

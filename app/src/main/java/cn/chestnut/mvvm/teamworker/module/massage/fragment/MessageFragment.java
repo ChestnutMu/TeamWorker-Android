@@ -3,30 +3,45 @@ package cn.chestnut.mvvm.teamworker.module.massage.fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import cn.chestnut.mvvm.teamworker.BR;
+import cn.chestnut.mvvm.teamworker.Constant;
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.FragmentMessageBinding;
+import cn.chestnut.mvvm.teamworker.databinding.PopupMineAddBinding;
+import cn.chestnut.mvvm.teamworker.databinding.PopupSelectApproverBinding;
 import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
 import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.activity.MainActivity;
+import cn.chestnut.mvvm.teamworker.main.adapter.BaseListViewAdapter;
 import cn.chestnut.mvvm.teamworker.main.common.BaseFragment;
+import cn.chestnut.mvvm.teamworker.model.User;
+import cn.chestnut.mvvm.teamworker.module.approval.AskForWorkOffActivity;
 import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
 import cn.chestnut.mvvm.teamworker.module.massage.activity.ChatActivity;
 import cn.chestnut.mvvm.teamworker.module.massage.activity.SendNotificationActivity;
@@ -35,7 +50,9 @@ import cn.chestnut.mvvm.teamworker.model.Message;
 import cn.chestnut.mvvm.teamworker.model.MessageUser;
 import cn.chestnut.mvvm.teamworker.model.MessageVo;
 import cn.chestnut.mvvm.teamworker.socket.SendProtocol;
+import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
 import cn.chestnut.mvvm.teamworker.utils.EmojiUtil;
+import cn.chestnut.mvvm.teamworker.utils.GlideLoader;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 import cn.chestnut.mvvm.teamworker.utils.StringUtil;
@@ -55,6 +72,7 @@ public class MessageFragment extends BaseFragment {
     private LinkedList<MessageVo> messageList;
     private String userId;
     private MessageDaoUtils messageDaoUtils;
+    private List<AddAction> addActionList;
 
     private static final long MILLISECOND_OF_TWO_HOUR = 60 * 60 * 1000;
 
@@ -72,17 +90,52 @@ public class MessageFragment extends BaseFragment {
     }
 
     @Override
-    public void setButton(TextView edit, ImageView add, ImageView search) {
+    public void setButton(TextView edit, final ImageView add, ImageView search) {
         super.setButton(edit, add, search);
         add.setVisibility(View.VISIBLE);
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), SendNotificationActivity.class);
-                getActivity().startActivity(intent);
+                addActionList = new ArrayList<>(3);
+                AddAction scanQR = new AddAction(getResources().getDrawable(R.mipmap.icon_qr_scan),"扫描二维码");
+                AddAction addChat = new AddAction(getResources().getDrawable(R.mipmap.icon_add_chat),"发起聊天");
+                AddAction addFriend = new AddAction(getResources().getDrawable(R.mipmap.icon_add_friend),"添加朋友");
+                addActionList.add(scanQR);
+                addActionList.add(addChat);
+                addActionList.add(addFriend);
+
+                CommonUtil.setBackgroundAlpha(0.5f, getActivity());
+
+                PopupMineAddBinding popupBinding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.popup_mine_add, null, false);
+                BaseListViewAdapter adapter = new BaseListViewAdapter<>(R.layout.item_mine_add, BR.addAction, addActionList);
+                popupBinding.lvMineAdd.setAdapter(adapter);
+                final PopupWindow popupWindow = new PopupWindow(popupBinding.getRoot(), ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                popupWindow.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#F8F8F8")));
+                popupWindow.setFocusable(true);
+                popupWindow.setOutsideTouchable(true);
+                popupWindow.showAsDropDown(add, 0, 0);
+
+                popupBinding.lvMineAdd.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        popupWindow.dismiss();
+                    }
+                });
+                popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                    @Override
+                    public void onDismiss() {
+                        CommonUtil.setBackgroundAlpha(1, getActivity());
+                    }
+                });
             }
         });
         search.setVisibility(View.VISIBLE);
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     private void initData() {
@@ -121,6 +174,7 @@ public class MessageFragment extends BaseFragment {
                 }
             }
         };
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, new IntentFilter(Constant.ActionConstant.ACTION_GET_NEW_MESSAGE));
 
         messageDaoUtils = new MessageDaoUtils();
         userId = PreferenceUtil.getInstances(getActivity()).getPreferenceString("userId");
@@ -246,6 +300,59 @@ public class MessageFragment extends BaseFragment {
 
         });
 
+    }
+
+    private void searchUser(String account){
+        Map<String,String> param = new HashMap<>(1);
+        param.put("account",account);
+        RequestManager.getInstance(getActivity()).executeRequest(HttpUrls.SEARCH_USER, param, new AppCallBack<ApiResponse<User>>() {
+            @Override
+            public void next(ApiResponse<User> response) {
+                if(response.isSuccess()){
+                    Log.d("username" + response.getData().getNickname());
+                }
+            }
+
+            @Override
+            public void error(Throwable error) {
+
+            }
+
+            @Override
+            public void complete() {
+
+            }
+        });
+    }
+
+    /**
+     * 点击右上角的加号后，显示的PopupWindow内的listview的item内容
+     */
+    public class AddAction {
+        private Drawable icon;
+
+        private String action;
+
+        public AddAction(Drawable icon, String action) {
+            this.icon = icon;
+            this.action = action;
+        }
+
+        public Drawable getIcon() {
+            return icon;
+        }
+
+        public void setIcon(Drawable icon) {
+            this.icon = icon;
+        }
+
+        public String getAction() {
+            return action;
+        }
+
+        public void setAction(String action) {
+            this.action = action;
+        }
     }
 
 }

@@ -14,7 +14,7 @@ import cn.chestnut.mvvm.teamworker.main.adapter.BindingItem;
  * Email: xiaoting233zhang@126.com
  */
 
-public class User extends BindingItem implements Serializable{
+public class User extends BindingItem implements Serializable {
     private String userId;
 
     private String account;

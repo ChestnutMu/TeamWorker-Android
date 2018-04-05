@@ -5,12 +5,12 @@
 
         <variable
             name="person"
-            type="cn.chestnut.mvvm.teamworker.model.PhoneDirctoryPerson" />
+            type="cn.chestnut.mvvm.teamworker.model.PhoneDirectoryPerson" />
     </data>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <!--显示字母-->
@@ -18,21 +18,35 @@
             android:id="@+id/tv_word"
             android:layout_width="match_parent"
             android:layout_height="20dp"
+            android:paddingLeft="10dp"
             android:background="#ebebeb"
             android:gravity="center_vertical"
-            android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
-            android:text="@{person.wordHeader}" />
+            android:text="@{person.wordHeader}"
+            android:textSize="@dimen/text_size_small" />
 
-        <!--显示联系人信息-->
-        <TextView
-            android:id="@+id/tv_name"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:padding="10dp"
             android:gravity="center_vertical"
-            android:minHeight="?android:attr/listPreferredItemHeightSmall"
-            android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
-            android:paddingRight="?android:attr/listPreferredItemPaddingRight"
-            android:text="@{person.name}"
-            android:textAppearance="?android:attr/textAppearanceListItemSmall" />
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_name_abbreviation"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_tv_name_abbreviaion"
+                android:gravity="center"
+                android:text="@{person.abbreviation}"
+                android:textColor="@color/white" />
+
+            <!--显示联系人信息-->
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="@{person.name}"
+                android:textSize="@dimen/text_size_normal" />
+        </LinearLayout>
     </LinearLayout>
 </layout>

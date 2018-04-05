@@ -2,6 +2,7 @@ package cn.chestnut.mvvm.teamworker.main.common;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -17,8 +18,10 @@ import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.core.OnHandlerSessionListener;
 import cn.chestnut.mvvm.teamworker.core.TeamWorkerMessageHandler;
 import cn.chestnut.mvvm.teamworker.databinding.ActivityBaseBinding;
+import cn.chestnut.mvvm.teamworker.http.HttpUrls;
 import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
+import cn.chestnut.mvvm.teamworker.utils.GlideLoader;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.ProgressDialogShow;
 
@@ -59,7 +62,6 @@ public abstract class BaseActivity extends AppCompatActivity implements OnHandle
      * 获取控件资源
      */
     protected void initViews() {
-
         binding.btnBack.setOnClickListener(new BackOnClickListener());
         addContainerView(binding.baseContainerLayout, inflater);
         setButton(binding.edit, binding.add, binding.search);
@@ -205,6 +207,12 @@ public abstract class BaseActivity extends AppCompatActivity implements OnHandle
     @Override
     public void onSessionTimeout() {
 
+    }
+
+    @BindingAdapter({"load_url_image"})
+    public static void loadUrlImage(ImageView view, String url) {
+        Log.d("url = " + HttpUrls.GET_PHOTO + url);
+        GlideLoader.displayImage(MyApplication.getInstance(), HttpUrls.GET_PHOTO + url, view);
     }
 
 }

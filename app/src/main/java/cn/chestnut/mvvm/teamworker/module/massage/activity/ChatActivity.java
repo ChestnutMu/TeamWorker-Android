@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -239,7 +240,7 @@ public class ChatActivity extends BaseActivity {
         executeRequest(SendProtocol.MSG_SEND_MESSAGE, gson.toJson(params));
     }
 
-    @SuppressLint("HandlerLeak")
+
     Handler mHandler = new Handler() {
         @Override
         public void handleMessage(android.os.Message msg) {
@@ -249,6 +250,7 @@ public class ChatActivity extends BaseActivity {
             }
         }
     };
+
 
     /**
      * 更新用户信息

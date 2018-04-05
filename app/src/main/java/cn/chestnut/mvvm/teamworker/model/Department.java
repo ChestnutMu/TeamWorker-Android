@@ -12,12 +12,18 @@ import cn.chestnut.mvvm.teamworker.main.adapter.BindingItem;
  * Email: xiaoting233zhang@126.com
  */
 
-public class Department extends BindingItem{
+public class Department extends BindingItem {
     private String departmentId;
 
     private String departmentName;
 
     private String departmentBadge;
+
+    private String departmentIndustry;
+
+    private String personnelScale;
+
+    private String departmentRegion;
 
     public String getDepartmentId() {
         return departmentId;
@@ -35,12 +41,36 @@ public class Department extends BindingItem{
         this.departmentName = departmentName;
     }
 
+    public String getDepartmentIndustry() {
+        return departmentIndustry;
+    }
+
+    public void setDepartmentIndustry(String departmentIndustry) {
+        this.departmentIndustry = departmentIndustry;
+    }
+
     public String getDepartmentBadge() {
         return departmentBadge;
     }
 
     public void setDepartmentBadge(String departmentBadge) {
         this.departmentBadge = departmentBadge;
+    }
+
+    public String getDepartmentRegion() {
+        return departmentRegion;
+    }
+
+    public void setDepartmentRegion(String departmentRegion) {
+        this.departmentRegion = departmentRegion;
+    }
+
+    public String getPersonnelScale() {
+        return personnelScale;
+    }
+
+    public void setPersonnelScale(String personnelScale) {
+        this.personnelScale = personnelScale;
     }
 
     @Override

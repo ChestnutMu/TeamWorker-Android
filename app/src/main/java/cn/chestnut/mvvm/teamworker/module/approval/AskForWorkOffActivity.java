@@ -183,7 +183,7 @@ public class AskForWorkOffActivity extends BaseActivity {
                     }
 
                 } else {
-                    showToast("请带红色*号的信息");
+                    showToast("请填写带红色*号的信息");
                 }
             }
         });
@@ -432,12 +432,6 @@ public class AskForWorkOffActivity extends BaseActivity {
 
             }
         });
-    }
-
-    @BindingAdapter({"load_url_image"})
-    public static void loadUrlImage(ImageView view, String url) {
-        Log.d("url = " + HttpUrls.GET_PHOTO + url);
-        GlideLoader.displayImage(MyApplication.getInstance(), HttpUrls.GET_PHOTO + url, view);
     }
 
     private void applyWorkOff() {

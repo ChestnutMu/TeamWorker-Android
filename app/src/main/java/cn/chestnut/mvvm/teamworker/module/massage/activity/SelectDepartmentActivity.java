@@ -29,6 +29,7 @@ import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.module.massage.adapter.DepartmentAdapter;
 import cn.chestnut.mvvm.teamworker.model.Department;
 import cn.chestnut.mvvm.teamworker.model.User;
+import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -130,11 +131,8 @@ public class SelectDepartmentActivity extends BaseActivity {
      * 获取所有部门
      */
     private void getAllDepartments(int pageNum, int pageSize) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("pageNum", pageNum);
-        params.put("pageSize", pageSize);
         showProgressDialog(this);
-        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_ALL_DEPARTMENTS, params, new AppCallBack<ApiResponse<List<Department>>>() {
+        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_DEPARTMENT_BY_USERID, null, new AppCallBack<ApiResponse<List<Department>>>() {
 
             @Override
             public void next(ApiResponse<List<Department>> response) {

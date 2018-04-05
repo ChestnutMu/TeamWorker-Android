@@ -9,7 +9,7 @@ import java.util.List;
 
 import cn.chestnut.mvvm.teamworker.databinding.ItemPhoneDirectoryBinding;
 import cn.chestnut.mvvm.teamworker.main.adapter.BaseListViewAdapter;
-import cn.chestnut.mvvm.teamworker.model.PhoneDirctoryPerson;
+import cn.chestnut.mvvm.teamworker.model.PhoneDirectoryPerson;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -19,16 +19,17 @@ import cn.chestnut.mvvm.teamworker.model.PhoneDirctoryPerson;
  * Email: xiaoting233zhang@126.com
  */
 
-public class PhoneDirectoryAdapter extends BaseListViewAdapter{
+public class PhoneDirectoryAdapter extends BaseListViewAdapter {
 
     private ItemPhoneDirectoryBinding binding;
 
-    private List<PhoneDirctoryPerson> personList;
+    private List<PhoneDirectoryPerson> personList;
 
     private int itemLayoutId;
+
     private int itemId;
 
-    public PhoneDirectoryAdapter(int itemLayoutId, int itemId, List<PhoneDirctoryPerson> objects) {
+    public PhoneDirectoryAdapter(int itemLayoutId, int itemId, List<PhoneDirectoryPerson> objects) {
         super(itemLayoutId, itemId, objects);
         this.itemLayoutId = itemLayoutId;
         this.itemId = itemId;
@@ -52,7 +53,7 @@ public class PhoneDirectoryAdapter extends BaseListViewAdapter{
             binding.tvWord.setVisibility(View.VISIBLE);
         } else {
             //后一个与前一个对比,判断首字母是否相同，相同则隐藏
-            if (personList.get(position).getWordHeader().equals(personList.get(position-1).getWordHeader())) {
+            if (personList.get(position).getWordHeader().equals(personList.get(position - 1).getWordHeader())) {
                 binding.tvWord.setVisibility(View.GONE);
             } else {
                 binding.tvWord.setVisibility(View.VISIBLE);
