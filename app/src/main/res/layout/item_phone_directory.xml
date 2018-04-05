@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="person"
+            type="cn.chestnut.mvvm.teamworker.model.PhoneDirctoryPerson" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!--显示字母-->
+        <TextView
+            android:id="@+id/tv_word"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:background="#ebebeb"
+            android:gravity="center_vertical"
+            android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
+            android:text="@{person.wordHeader}" />
+
+        <!--显示联系人信息-->
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:minHeight="?android:attr/listPreferredItemHeightSmall"
+            android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
+            android:paddingRight="?android:attr/listPreferredItemPaddingRight"
+            android:text="@{person.name}"
+            android:textAppearance="?android:attr/textAppearanceListItemSmall" />
+    </LinearLayout>
+</layout>

@@ -91,6 +91,8 @@
         <activity
             android:name=".module.team.BuildTeamActivity"
             android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".module.work.WorkNotificationActivity"/>
+        <activity android:name=".module.team.PhoneDirectoryActivity"/>
     </application>
 
 </manifest>

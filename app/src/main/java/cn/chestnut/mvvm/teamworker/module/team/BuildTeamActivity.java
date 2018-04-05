@@ -1,5 +1,8 @@
 package cn.chestnut.mvvm.teamworker.module.team;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.view.LayoutInflater;
@@ -31,13 +34,56 @@ public class BuildTeamActivity extends BaseActivity {
     @Override
     protected void addContainerView(ViewGroup viewGroup, LayoutInflater inflater) {
         binding = DataBindingUtil.inflate(inflater, R.layout.activity_build_team, viewGroup, true);
+        addListener();
     }
 
-    private void addListener(){
+    private void addListener() {
+        binding.llPersonnelScale.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Dialog dialog = new AlertDialog.Builder(BuildTeamActivity.this).setTitle("请选择团队人员规模")
+                        .setItems(new String[]{"1~10人", "11~20人", "21~50人", "51~100人", "101~200人", "201~500人", "501~1000人", "1001~2000人"}, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which) {
+                                    case 0:
+                                        binding.tvPersonnelScale.setText("1~10人");
+                                        break;
+                                    case 1:
+                                        binding.tvPersonnelScale.setText("11~20人");
+                                        break;
+                                    case 2:
+                                        binding.tvPersonnelScale.setText("21~50人");
+                                        break;
+                                    case 3:
+                                        binding.tvPersonnelScale.setText("51~100人");
+                                        break;
+                                    case 4:
+                                        binding.tvPersonnelScale.setText("101~200人");
+                                        break;
+                                    case 5:
+                                        binding.tvPersonnelScale.setText("201~500人");
+                                        break;
+                                    case 6:
+                                        binding.tvPersonnelScale.setText("501~1000人");
+                                        break;
+                                    case 7:
+                                        binding.tvPersonnelScale.setText("1001~2000人");
+                                        break;
+
+                                }
+                                dialog.dismiss();
+                            }
+                        }).create();
+                dialog.setCanceledOnTouchOutside(true);
+                dialog.show();
+            }
+        });
+
         binding.llAddMember.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent());
+                startActivity(new Intent(BuildTeamActivity.this,PhoneDirectoryActivity.class));
             }
         });
     }

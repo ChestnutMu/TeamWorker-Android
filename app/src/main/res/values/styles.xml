@@ -28,8 +28,9 @@
     </style>
 
     <declare-styleable name="WordsIndexBar">
-        <attr name="bar_width" format="float"/>
-        <attr name="words_color" format="color"/>
+        <attr name="words_size" format="dimension"/>
+        <attr name="words_selected_color" format="color"/>
+        <attr name="words_unselected_color" format="color"/>
         <attr name="words_background_color" format="color"/>
     </declare-styleable>
 </resources>

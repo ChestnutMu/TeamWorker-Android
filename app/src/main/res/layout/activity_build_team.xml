@@ -1,152 +1,183 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="12dp"
-        android:orientation="vertical">
+        android:focusableInTouchMode="true">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="60dp">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/team_worker_padding">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="团队名称"
+                        android:textColor="@color/text_black"
+                        android:textSize="@dimen/text_size_big" />
+
+                    <EditText
+                        android:id="@+id/et_team_name"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:gravity="right"
+                        android:hint="请输入团队名称"
+                        android:textSize="@dimen/text_size_normal" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:background="@color/white"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/team_worker_padding">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="行业"
+                        android:textColor="@color/text_black"
+                        android:textSize="@dimen/text_size_big" />
+
+                    <EditText
+                        android:id="@+id/et_team_industry"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:gravity="right"
+                        android:hint="请输入团队所处行业"
+                        android:textSize="@dimen/text_size_normal" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_personnel_scale"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:background="@color/white"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/team_worker_padding">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="人员规模"
+                        android:textColor="@color/text_black"
+                        android:textSize="@dimen/text_size_big" />
+
+                    <TextView
+                        android:id="@+id/tv_personnel_scale"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:gravity="right"
+                        android:textSize="@dimen/text_size_normal" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@mipmap/icon_arrow_grey" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_region"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:background="@color/white"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/team_worker_padding">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="地区"
+                        android:textColor="@color/text_black"
+                        android:textSize="@dimen/text_size_big" />
+
+                    <TextView
+                        android:id="@+id/tv_region"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:gravity="right"
+                        android:textSize="@dimen/text_size_normal" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@mipmap/icon_arrow_grey" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_add_member"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@color/white"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/team_worker_padding">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@mipmap/icon_plus_blue" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        android:text="添加团队成员"
+                        android:textColor="@color/text_black"
+                        android:textSize="@dimen/text_size_big" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@mipmap/icon_arrow_grey" />
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
+            android:layout_height="56dp"
+            android:layout_alignParentBottom="true"
             android:background="@color/white"
-            android:padding="@dimen/team_worker_padding">
+            android:gravity="center">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="团队名称"
-                android:textColor="@color/text_black"
-                android:textSize="@dimen/text_size_big" />
+            <Button
+                android:id="@+id/btn_submit"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@drawable/bg_workoff_submit_btn"
+                android:text="创建团队"
+                android:textColor="@color/white" />
 
-            <EditText
-                android:id="@+id/et_team_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@null"
-                android:gravity="right"
-                android:hint="请输入团队名称"
-                android:textSize="@dimen/text_size_normal" />
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:layout_marginTop="1dp"
-            android:background="@color/white"
-            android:padding="@dimen/team_worker_padding">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="行业"
-                android:textColor="@color/text_black"
-                android:textSize="@dimen/text_size_big" />
-
-            <EditText
-                android:id="@+id/et_team_industry"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@null"
-                android:gravity="right"
-                android:hint="请输入团队所处行业"
-                android:textSize="@dimen/text_size_normal" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_personnel_scale"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
-            android:background="@color/white"
-            android:gravity="center_vertical"
-            android:padding="@dimen/team_worker_padding">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="人员规模"
-                android:textColor="@color/text_black"
-                android:textSize="@dimen/text_size_big" />
-
-            <TextView
-                android:id="@+id/tv_personnel_scale"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@null"
-                android:gravity="right"
-                android:textSize="@dimen/text_size_normal" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/icon_arrow_grey" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_region"
-            android:layout_width="match_parent"
-            android:gravity="center_vertical"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
-            android:background="@color/white"
-            android:padding="@dimen/team_worker_padding">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="地区"
-                android:textColor="@color/text_black"
-                android:textSize="@dimen/text_size_big" />
-
-            <TextView
-                android:id="@+id/tv_region"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@null"
-                android:gravity="right"
-                android:textSize="@dimen/text_size_normal" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/icon_arrow_grey" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_add_member"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:gravity="center_vertical"
-            android:background="@color/white"
-            android:padding="@dimen/team_worker_padding">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@mipmap/icon_plus_blue" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="添加团队成员"
-                android:textColor="@color/text_black"
-                android:textSize="@dimen/text_size_big" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/icon_arrow_grey" />
-        </LinearLayout>
-    </LinearLayout>
+    </RelativeLayout>
 </layout>

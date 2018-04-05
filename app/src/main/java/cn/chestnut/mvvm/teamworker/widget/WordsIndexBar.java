@@ -22,8 +22,14 @@ import cn.chestnut.mvvm.teamworker.R;
 
 public class WordsIndexBar extends View {
 
-    /*画笔*/
-    private Paint mPaint;
+    /*字母画笔*/
+    private Paint wordPaint;
+
+    /*字母圆圈背景画笔*/
+    private Paint bgPaint;
+
+    /*字母字体大小*/
+    private float wordSize;
 
     /*侧边索引栏的宽度(字母宽度)*/
     private float barWidth;
@@ -35,8 +41,11 @@ public class WordsIndexBar extends View {
     private String words[] = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",
             "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "#"};
 
-    /*字母颜色*/
-    private int wordsColor;
+    /*被选中的字母颜色*/
+    private int wordsSelectedColor;
+
+    /*未被选中的字母颜色*/
+    private int wordsUnselectedColor;
 
     /*字母背景圆圈颜色*/
     private int wordsBackgroundColor;
@@ -53,11 +62,16 @@ public class WordsIndexBar extends View {
     public WordsIndexBar(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.WordsIndexBar);
-        // TODO: 2018/4/4 测试这里的默认值，设置为多大合适
-        barWidth = typedArray.getFloat(R.styleable.WordsIndexBar_bar_width, 100);
+        wordSize = typedArray.getDimension(R.styleable.WordsIndexBar_words_size, 23);
+        wordsSelectedColor = typedArray.getColor(R.styleable.WordsIndexBar_words_selected_color, getResources().getColor(R.color.appTheme));
+        wordsUnselectedColor = typedArray.getColor(R.styleable.WordsIndexBar_words_unselected_color, getResources().getColor(R.color.transparent));
         wordsBackgroundColor = typedArray.getColor(R.styleable.WordsIndexBar_words_background_color, getResources().getColor(R.color.appTheme));
-        wordsColor = typedArray.getColor(R.styleable.WordsIndexBar_words_color, getResources().getColor(R.color.text_black));
-        mPaint = new Paint();
+        typedArray.recycle();
+
+        bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        bgPaint.setColor(wordsBackgroundColor);
+        wordPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        wordPaint.setTextSize(wordSize);
         rect = new Rect();
     }
 
@@ -65,28 +79,28 @@ public class WordsIndexBar extends View {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         barWidth = getMeasuredWidth();
-        itemHeight = (getMeasuredHeight()) / 27;
+        itemHeight = getMeasuredHeight() / 27;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         for (int i = 0; i < 27; i++) {
-            //判断是否为按下的字母，若是则绘制字母的圆形背景色
+            //判断是否为按下的字母，若是则绘制字母的圆形背景色,并改变字母画笔的颜色
             if (i == touchIndex) {
-                mPaint.setColor(wordsBackgroundColor);
-                canvas.drawCircle(barWidth / 2, itemHeight * i + itemHeight / 2, itemHeight / 2, mPaint);
+                canvas.drawCircle(barWidth / 2, itemHeight * i + itemHeight / 2, itemHeight / 2, bgPaint);
+                wordPaint.setColor(wordsSelectedColor);
+            } else {
+                wordPaint.setColor(wordsUnselectedColor);
             }
             //获取字母的宽高
-            mPaint.getTextBounds(words[i], 0, 1, rect);
+            wordPaint.getTextBounds(words[i], 0, 1, rect);
             int wordWidth = rect.width();
             int wordHeight = rect.height();
             //绘制字母
             float wordX = barWidth / 2 - wordWidth / 2;
-            float wordY = itemHeight / 2 + wordHeight / 2;
-            mPaint.setColor(wordsColor);
-            canvas.drawText(words[i], wordX, wordY, mPaint);
-
+            float wordY = itemHeight / 2 + i * itemHeight + wordHeight / 2;
+            canvas.drawText(words[i], wordX, wordY, wordPaint);
         }
     }
 
@@ -109,7 +123,19 @@ public class WordsIndexBar extends View {
                 break;
             case MotionEvent.ACTION_UP:
                 break;
-        }return true;
+        }
+        return true;
+    }
+
+    /*设置当前按下的是那个字母*/
+    public void setTouchIndex(String word) {
+        for (int i = 0; i < words.length; i++) {
+            if (words[i].equals(word)) {
+                touchIndex = i;
+                invalidate();
+                return;
+            }
+        }
     }
 
     /*手指按下了哪个字母的回调接口*/

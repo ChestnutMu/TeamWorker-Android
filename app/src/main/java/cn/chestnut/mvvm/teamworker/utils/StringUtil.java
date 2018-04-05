@@ -2,7 +2,6 @@ package cn.chestnut.mvvm.teamworker.utils;
 
 import android.content.ClipData;
 import android.content.Context;
-import android.os.Build;
 
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
@@ -311,7 +310,7 @@ public class StringUtil {
      * @param chinese
      * @return
      */
-    public static String ToPinyin(String chinese) {
+    public static String toPinyin(String chinese) {
         String pinyinStr = "";
         char[] newChar = chinese.toCharArray();
         HanyuPinyinOutputFormat defaultFormat = new HanyuPinyinOutputFormat();
@@ -320,7 +319,12 @@ public class StringUtil {
         for (int i = 0; i < newChar.length; i++) {
             if (newChar[i] > 128) {
                 try {
-                    pinyinStr += PinyinHelper.toHanyuPinyinStringArray(newChar[i], defaultFormat)[0];
+                    // TODO: 2018/4/5 出现"嫲"会报空指针。。。 ？？？
+                    if (newChar[i] != '嫲' && (newChar[i] >= 0x4e00) && (newChar[i] <= 0x9fbb)) {
+                        pinyinStr += PinyinHelper.toHanyuPinyinStringArray(newChar[i], defaultFormat)[0];
+                    } else {
+                        pinyinStr += newChar[i];
+                    }
                 } catch (BadHanyuPinyinOutputFormatCombination e) {
                     e.printStackTrace();
                 }

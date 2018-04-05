@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -44,6 +45,19 @@ public class WorkFragment extends BaseFragment {
         initData();
         initView();
         addListener();
+    }
+
+    @Override
+    public void setButton(TextView edit, ImageView add, ImageView search) {
+        super.setButton(edit, add, search);
+        add.setVisibility(View.VISIBLE);
+        add.setImageDrawable(getResources().getDrawable(R.mipmap.icon_to_to_list));
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(),WorkNotificationActivity.class));
+            }
+        });
     }
 
     /**
