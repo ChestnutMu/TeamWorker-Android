@@ -115,6 +115,10 @@ public class User extends BindingItem implements Serializable {
         this.region = region;
     }
 
+    public boolean isWoman() {
+        return sex.equals("女");
+    }
+
     @Override
     public int getViewType() {
         return R.layout.item_user;

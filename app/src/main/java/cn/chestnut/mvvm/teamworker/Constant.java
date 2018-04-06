@@ -18,6 +18,10 @@ public class Constant {
 
         public static final String ACTION_GET_NEW_MESSAGE = "action_get_new_message";//收到一条新消息
 
+        public static final String ACTION_GET_NEW_FRIEND_REQUEST = "action_get_new_friend_request";//收到一条新的好友请求
+
+        public static final String ACTION_SHOW_BADGE = "action_show_badge_number";//有未处理的好友请求，显示小红点
+
     }
 
     //传值常量类

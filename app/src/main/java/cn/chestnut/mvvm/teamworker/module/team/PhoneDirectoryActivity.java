@@ -52,7 +52,7 @@ public class PhoneDirectoryActivity extends BaseActivity {
         addListener();
     }
 
-    private void initData() {
+    protected void initData() {
         getContacts();
         Collections.sort(persons, new Comparator<PhoneDirectoryPerson>() {
             @Override
@@ -63,12 +63,12 @@ public class PhoneDirectoryActivity extends BaseActivity {
         });
     }
 
-    private void initView() {
+    protected void initView() {
         PhoneDirectoryAdapter adapter = new PhoneDirectoryAdapter(R.layout.item_phone_directory, BR.person, persons);
         binding.lvPhoneDirectory.setAdapter(adapter);
     }
 
-    private void addListener() {
+    protected void addListener() {
         binding.lvPhoneDirectory.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {}

@@ -66,7 +66,7 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
      **/
     public void addOnTWHandlerSessionListener(OnHandlerSessionListener listener) {
         if (mSessionListeners == null)
-            mSessionListeners = new ArrayList<OnHandlerSessionListener>();
+            mSessionListeners = new ArrayList<>();
 
         if (!mSessionListeners.contains(listener))
             mSessionListeners.add(listener);
@@ -107,6 +107,8 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
             case ReceiverProtocol.RECEIVE_NEW_MESSAGE:
                 handleUserNotifyMessage(response);
                 return;
+            case ReceiverProtocol.RECEIVE_NEW_FRIEND_REQUEST:
+                handleFriendQuest(response);
             default:
                 break;
         }
@@ -236,6 +238,18 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
                 new TypeToken<cn.chestnut.mvvm.teamworker.model.Message>() {
                 }.getType());
         intent.putExtra("newMessage", newMessage);
+        LocalBroadcastManager.getInstance(MyApplication.getInstance()).sendBroadcast(intent);
+    }
+
+    /**
+     * 处理收到的好友请求通知
+     *
+     * @param response
+     */
+    private void handleFriendQuest(Object response) {
+        Log.d("TeamWorkerMessageHandler接收到一条新的好友请求，请求好友的userId为:" + response.toString());
+        Intent intent = new Intent(Constant.ActionConstant.ACTION_GET_NEW_FRIEND_REQUEST);
+        intent.putExtra("requesterId", response.toString());
         LocalBroadcastManager.getInstance(MyApplication.getInstance()).sendBroadcast(intent);
     }
 

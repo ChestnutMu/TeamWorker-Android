@@ -86,6 +86,21 @@ public abstract class BaseActivity extends AppCompatActivity implements OnHandle
         search.setVisibility(View.GONE);
     }
 
+    /**
+     * 初始化数据
+     */
+    protected void initData() {}
+
+    /**
+     * 初始化界面
+     */
+    protected void initView() {}
+
+    /**
+     * 添加监听器
+     */
+    protected void addListener() {}
+
     protected abstract void addContainerView(ViewGroup viewGroup, LayoutInflater inflater);
 
     /**
@@ -191,23 +206,16 @@ public abstract class BaseActivity extends AppCompatActivity implements OnHandle
     @Override
     public void onSessionMessageException(int msgId, Exception exception) {
         Log.d(exception == null ? "exception is null !" : "" + exception.getMessage());
-
     }
 
     @Override
-    public void onSessionClosed() {
-
-    }
+    public void onSessionClosed() {}
 
     @Override
-    public void onSessionConnect() {
-
-    }
+    public void onSessionConnect() {}
 
     @Override
-    public void onSessionTimeout() {
-
-    }
+    public void onSessionTimeout() {}
 
     @BindingAdapter({"load_url_image"})
     public static void loadUrlImage(ImageView view, String url) {

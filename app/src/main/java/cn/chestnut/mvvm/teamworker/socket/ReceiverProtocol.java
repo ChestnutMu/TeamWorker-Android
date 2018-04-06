@@ -15,7 +15,12 @@ public class ReceiverProtocol {
     public static final int DUPLICATE_LOGIN = 1004;
 
     /**
-     * 接收新消息
+     * 接收新一条新消息
      */
     public static final int RECEIVE_NEW_MESSAGE = 1005;
+
+    /**
+     * 接收新的好友请求
+     */
+    public static final int RECEIVE_NEW_FRIEND_REQUEST = 1006;
 }

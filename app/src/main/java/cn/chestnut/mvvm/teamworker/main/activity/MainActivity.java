@@ -1,24 +1,41 @@
 package cn.chestnut.mvvm.teamworker.main.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RemoteViews;
 import android.widget.TextView;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import cn.chestnut.mvvm.teamworker.Constant;
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.ActivityMainBinding;
+import cn.chestnut.mvvm.teamworker.databinding.TabCustomBinding;
+import cn.chestnut.mvvm.teamworker.http.ApiResponse;
+import cn.chestnut.mvvm.teamworker.http.AppCallBack;
+import cn.chestnut.mvvm.teamworker.http.HttpUrls;
+import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
+import cn.chestnut.mvvm.teamworker.model.NewFriendRequest;
 import cn.chestnut.mvvm.teamworker.module.massage.fragment.MessageFragment;
 import cn.chestnut.mvvm.teamworker.module.mine.MineFragment;
 import cn.chestnut.mvvm.teamworker.module.work.WorkFragment;
 import cn.chestnut.mvvm.teamworker.socket.ReceiverProtocol;
 import cn.chestnut.mvvm.teamworker.utils.PermissionsUtil;
+import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 
 /**
  * Copyright (c) 2017, Chestnut All rights reserved
@@ -31,6 +48,9 @@ import cn.chestnut.mvvm.teamworker.utils.PermissionsUtil;
 public class MainActivity extends BaseActivity {
 
     private ActivityMainBinding binding;
+
+    private TabCustomBinding tabBinding;
+
     //Tab 文字
     private final int[] TAB_TITLES = new int[]{R.string.fragment_message, R.string.fragment_work, R.string.fragment_mine};
     //Tab 图片
@@ -39,7 +59,10 @@ public class MainActivity extends BaseActivity {
     private final Fragment[] TAB_FRAGMENTS = new Fragment[]{new MessageFragment(), new WorkFragment(), new MineFragment()};
     //Tab 数目
     private final int COUNT = TAB_TITLES.length;
+
     private MyViewPagerAdapter mAdapter;
+
+    private BroadcastReceiver receiver;
 
     @Override
     protected void setBaseTitle(TextView titleView) {
@@ -49,8 +72,8 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void addContainerView(ViewGroup viewGroup, LayoutInflater inflater) {
         binding = DataBindingUtil.inflate(inflater, R.layout.activity_main, viewGroup, true);
-        initView();
         initData();
+        initView();
     }
 
     @Override
@@ -66,11 +89,19 @@ public class MainActivity extends BaseActivity {
 
     }
 
-    private void initData() {
+    protected void initData() {
         PermissionsUtil.checkAndRequestPermissions(this);
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals(Constant.ActionConstant.ACTION_GET_NEW_FRIEND_REQUEST)) {
+                    getNotSendRequestCountByUserId();
+                }
+            }
+        };
     }
 
-    private void initView() {
+    protected void initView() {
         setTitleBarVisible(false);//设置BaseActivity定义的标题栏不可见
         setTabs(binding.tabLayout, this.getLayoutInflater(), TAB_TITLES, TAB_IMGS);
         mAdapter = new MyViewPagerAdapter(getSupportFragmentManager());
@@ -93,6 +124,8 @@ public class MainActivity extends BaseActivity {
 
             }
         });
+        //更新未处理的好友请求消息的角标数量
+        getNotSendRequestCountByUserId();
     }
 
     /**
@@ -101,15 +134,11 @@ public class MainActivity extends BaseActivity {
     private void setTabs(TabLayout tabLayout, LayoutInflater inflater, int[] tabTitlees, int[] tabImgs) {
         for (int i = 0; i < tabImgs.length; i++) {
             TabLayout.Tab tab = tabLayout.newTab();
-            View view = inflater.inflate(R.layout.tab_custom, null);
-            tab.setCustomView(view);
-
-            TextView tvTitle = view.findViewById(R.id.tv_tab);
-            tvTitle.setText(tabTitlees[i]);
-            ImageView imgTab = view.findViewById(R.id.img_tab);
-            imgTab.setImageResource(tabImgs[i]);
+            tabBinding = DataBindingUtil.inflate(inflater, R.layout.tab_custom, null, false);
+            tab.setCustomView(tabBinding.getRoot());
+            tabBinding.tvTab.setText(tabTitlees[i]);
+            tabBinding.imgTab.setImageResource(tabImgs[i]);
             tabLayout.addTab(tab);
-
         }
     }
 
@@ -132,5 +161,31 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    private void getNotSendRequestCountByUserId() {
+        String userId = PreferenceUtil.getInstances(this).getPreferenceString("userId");
+        Map param = new HashMap<String, String>(1);
+        param.put("userId", userId);
+        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_NOT_SEND_REQUEST_COUNT_BY_USERID, param, new AppCallBack<ApiResponse<Integer>>() {
+            @Override
+            public void next(ApiResponse<Integer> response) {
+                if (response.isSuccess()) {
+                    if (response.getData() > 0) {
+                        tabBinding.tvBadge.setVisibility(View.VISIBLE);
+                        tabBinding.tvBadge.setText(response.getData());
+                        LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(new Intent(Constant.ActionConstant.ACTION_SHOW_BADGE));
+                    }
+                }
+            }
 
+            @Override
+            public void error(Throwable error) {
+
+            }
+
+            @Override
+            public void complete() {
+
+            }
+        });
+    }
 }

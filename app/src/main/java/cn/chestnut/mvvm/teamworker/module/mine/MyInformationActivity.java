@@ -96,21 +96,17 @@ public class MyInformationActivity extends BaseActivity {
         }
     }
 
-    /**
-     * 初始化数据
-     */
-
-    private void initData() {
+    protected void initData() {
         token = PreferenceUtil.getInstances(this).getPreferenceString("token");
         userId = PreferenceUtil.getInstances(this).getPreferenceString("userId");
     }
 
 
-    private void initView() {
+    protected void initView() {
         getMyInfomation(token, userId);
     }
 
-    private void addListener() {
+    protected void addListener() {
         //修改头像
         binding.llAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -252,6 +248,8 @@ public class MyInformationActivity extends BaseActivity {
                     binding.tvBirthday.setText(response.getData().getBirthday());
                     binding.tvRegion.setText(response.getData().getRegion());
                     GlideLoader.displayImage(MyInformationActivity.this, HttpUrls.GET_PHOTO + response.getData().getAvatar(), binding.ivAvatar);
+                }else {
+                    showToast(response.getMessage());
                 }
             }
 
@@ -295,6 +293,8 @@ public class MyInformationActivity extends BaseActivity {
                         GlideLoader glideLoader = new GlideLoader();
                         glideLoader.displayImage(MyInformationActivity.this, HttpUrls.GET_PHOTO + response.getData().getAvatar(), binding.ivAvatar);
                     }
+                }else {
+                    showToast(response.getMessage());
                 }
                 Log.d("update_my_information" + response.getMessage());
             }
@@ -350,6 +350,8 @@ public class MyInformationActivity extends BaseActivity {
                     if (response.isSuccess()) {
                         qiniuToken = response.getData();
                         uploadPicture(data, qiniuToken);
+                    }else {
+                        showToast(response.getMessage());
                     }
                 }
 

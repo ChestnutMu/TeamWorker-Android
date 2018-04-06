@@ -109,7 +109,7 @@ public class BuildTeamActivity extends BaseActivity {
         }
     }
 
-    private void initData() {
+    protected void initData() {
         processPhotoUtils = new ProcessPhotoUtils(this);
         personList = new ArrayList<>();
         adapter = new BuildTeamAdapter(personList);
@@ -120,7 +120,7 @@ public class BuildTeamActivity extends BaseActivity {
         adapter.notifyDataSetChanged();
     }
 
-    private void addListener() {
+    protected void addListener() {
         binding.llPersonnelScale.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -233,6 +233,8 @@ public class BuildTeamActivity extends BaseActivity {
                     if (response.isSuccess()) {
                         qiniuToken = response.getData();
                         uploadPicture(filePath, qiniuToken);
+                    }else {
+                        showToast(response.getMessage());
                     }
                 }
 
@@ -269,6 +271,8 @@ public class BuildTeamActivity extends BaseActivity {
                     String departmentId = response.getData().getDepartmentId();
                     addDepartmentMember(departmentId);
 
+                }else {
+                    showToast(response.getMessage());
                 }
             }
 
@@ -290,6 +294,8 @@ public class BuildTeamActivity extends BaseActivity {
             public void next(ApiResponse<String> response) {
                 if (response.isSuccess()) {
 
+                }else {
+                    showToast(response.getMessage());
                 }
             }
 

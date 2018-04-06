@@ -4,14 +4,41 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:id="@+id/ll_parent_layout"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_marginTop="24dp"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:padding="12dp"
+            android:layout_marginTop="24dp"
+            android:background="@color/white">
 
+            <ImageView
+                android:id="@+id/iv_search_friend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/icon_search_friend" />
 
-        </LinearLayout>
+            <EditText
+                android:id="@+id/et_search_friend"
+                android:background="@null"
+                android:hint="搜索账号添加好友"
+                android:layout_marginLeft="12dp"
+                android:layout_width="match_parent"
+                android:textSize="@dimen/text_size_normal"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/iv_search_friend"
+                android:layout_toRightOf="@id/iv_search_friend" />
+
+            <View
+                android:layout_below="@id/iv_search_friend"
+                android:layout_width="match_parent"
+                android:background="@color/appTheme"
+                android:layout_marginTop="5dp"
+                android:layout_height="1dp" />
+
+        </RelativeLayout>
     </LinearLayout>
 </layout>

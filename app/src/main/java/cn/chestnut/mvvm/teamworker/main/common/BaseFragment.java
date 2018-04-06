@@ -45,17 +45,18 @@ public abstract class BaseFragment extends Fragment {
     protected void initViews() {
         addContainerView(binding.baseContainerLayout, mInflater);
         setButton(binding.edit, binding.add, binding.search);
-
     }
 
     /**
      * 显示右上角按钮，由子activity根据具体情况重写
      */
+    public void setButton(TextView edit, ImageView add, ImageView search) {}
 
-    public void setButton(TextView edit, ImageView add, ImageView search) {
-        edit.setVisibility(View.GONE);
-        add.setVisibility(View.GONE);
-        search.setVisibility(View.GONE);
+    /**
+     * 显示search按钮右上角的badge，由子activity根据具体情况重写
+     */
+    public void setBadgeVisibility(int isVisable) {
+        binding.badge.setVisibility(View.VISIBLE);
     }
 
     public void showToast(String stringRes) {

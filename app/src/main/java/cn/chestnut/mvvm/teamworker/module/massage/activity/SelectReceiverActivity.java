@@ -59,16 +59,13 @@ public class SelectReceiverActivity extends BaseActivity {
         addListener();
     }
 
-    /**
-     * 初始化数据
-     */
-    private void initData() {
+    protected void initData() {
         userList = new ArrayList<>();
         departmentId = getIntent().getStringExtra("departmentId");
         getUserByDepartment(departmentId, pageNum, pageSize);
     }
 
-    private void initView() {
+    protected void initView() {
         userAdapter = new UserAdapter(userList);
         binding.swipeTarget.setAdapter(userAdapter);
         LinearLayoutManager manager = new LinearLayoutManager(this);
@@ -77,7 +74,7 @@ public class SelectReceiverActivity extends BaseActivity {
         binding.swipeTarget.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
     }
 
-    private void addListener() {
+    protected void addListener() {
         binding.swipeToLoadLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {

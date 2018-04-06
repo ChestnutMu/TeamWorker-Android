@@ -25,6 +25,7 @@ public class HttpUrls {
     //获取更新信息
     public static final String GET_UPDATE_INFO = "";
 
+    //------------------user接口--------------------------------------------------------
     //用户名密码登陆
     public static final String LOGIN = "/user/login";
 
@@ -37,15 +38,43 @@ public class HttpUrls {
     //通过账号搜索用户
     public static final String SEARCH_USER = "/user/searchUser";
 
+    //是否我的好友
+    public static final String IS_MY_FRIEND = "/user/isMyFriend";
+
+    //发送好友申请
+    public static final String SEND_FRIEND_REQUEST = "/user/sendFriendRequest";
+
+    //添加好友
+    public static final String ADD_USER_RELATION = "/user/addUserRelation";
+
+    //接受好友请求
+    public static final String IS_ACCEPTED = "/user/isAccepted";
+
+    //获取其收到的所有好友请求消息
+    public static final String GET_REQUEST_BY_USERID = "/user/getRequestByUserId";
+
+    //获取其还未接收成功的好友请求消息
+    public static final String GET_NOT_SEND_REQUEST_BY_USERID = "/user/getNotSendRequestByUserId";
+
+    //获取其还未接收成功的好友请求消息数量
+    public static final String GET_NOT_SEND_REQUEST_COUNT_BY_USERID = "/user/getNotSendRequestCountByUserId";
+
     //获取用户个人信息
     public static final String GET_MY_INFORMATION = "/user/getMyInformation";
 
     //修改用户个人信息
     public static final String UPDATE_MY_INFORMATION = "/user/updateMyInformation";
 
+    //获取消息中用户的信息
+    public static final String GET_USER_INFO = "/user/getUserInfo";
+
+
+    //------------------消息接口---------------------------------------------------------------------
     //获取用户还未接收的消息列表
     public static final String GET_NOT_SEND_MESSAGES_BY_USER_ID = "/message/getNotSendMessagesByUserId";
 
+
+    //-----------------------部门接口------------------------------------------------------
     //创建一个部门
     public static final String ADD_DEPARTMENT = "/department/addDepartment";
 
@@ -67,6 +96,8 @@ public class HttpUrls {
     //添加多条部门成员关系记录
     public static final String ADD_DEPARTMENT_MEMBER_RELATIONS = "/department/addDepartmentMemberRelations";
 
+
+    //--------------------------------考勤接口-------------------------------------------------------
     //根据UID获取考勤记录
     public static final String GET_ATTENDANCE = "/attendance/getAttendance";
 
@@ -76,18 +107,17 @@ public class HttpUrls {
     //添加下班打卡记录
     public static final String PUNCH_OUT = "/attendance/punchOut";
 
-    //获取消息中用户的信息
-    public static final String GET_USER_INFO = "/user/getUserInfo";
 
+    //-------------------------第三方接口------------------------------------------------------------
     //获取七牛云token
     public static final String GET_QINIUTOKEN = "/third/getQiniuToken";
 
+
+    //-------------------------请假接口--------------------------------------------------------------
     //请假
     public static final String APPLY_WORK_OFF = "/workoff/applyWorkOff";
 
     //审批请假
     public static final String APPROVE_WORK_OFF = "/workoff/approveWorkOff";
-
-
 
 }

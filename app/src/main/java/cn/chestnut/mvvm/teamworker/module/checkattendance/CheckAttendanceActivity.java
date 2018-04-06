@@ -64,22 +64,16 @@ public class CheckAttendanceActivity extends BaseActivity {
         addListener();
     }
 
-    /**
-     * 初始化数据
-     */
-    private void initData() {
+    protected void initData() {
         userId = PreferenceUtil.getInstances(this).getPreferenceString("userId");
     }
 
-    /**
-     * 初始化界面
-     */
-    private void initView() {
+    protected void initView() {
         initLocation();
         getAttendance();
     }
 
-    private void addListener() {
+    protected void addListener() {
         binding.upWork.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -211,7 +205,6 @@ public class CheckAttendanceActivity extends BaseActivity {
                     binding.setAttendance(response.getData());
                 }
                 showToast(response.getMessage());
-
             }
 
             @Override

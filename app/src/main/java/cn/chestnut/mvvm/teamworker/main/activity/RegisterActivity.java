@@ -44,7 +44,7 @@ public class RegisterActivity extends BaseActivity {
         addListener();
     }
 
-    private void addListener() {
+    protected void addListener() {
         binding.tvRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

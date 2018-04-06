@@ -8,7 +8,6 @@ import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -20,7 +19,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.DatePicker;
-import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -51,11 +49,11 @@ import cn.chestnut.mvvm.teamworker.model.Department;
 import cn.chestnut.mvvm.teamworker.model.User;
 import cn.chestnut.mvvm.teamworker.model.WorkOff;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
+import cn.chestnut.mvvm.teamworker.utils.GlideLoader;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 import cn.chestnut.mvvm.teamworker.utils.StringUtil;
 import cn.chestnut.mvvm.teamworker.utils.photo.ProcessPhotoUtils;
-import cn.chestnut.mvvm.teamworker.utils.GlideLoader;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -122,15 +120,15 @@ public class AskForWorkOffActivity extends BaseActivity {
         }
     }
 
-    private void initData() {
+    protected void initData() {
 
     }
 
 
-    private void initView() {
+    protected void initView() {
     }
 
-    private void addListener() {
+    protected void addListener() {
         binding.llStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -455,7 +453,7 @@ public class AskForWorkOffActivity extends BaseActivity {
                     showToast("你的请假已成功提交");
                     finish();
                     // TODO: 2018/4/3 跳转到请假详情
-                }else {
+                } else {
                     showToast("你的请假提交失败");
                     finish();
                 }

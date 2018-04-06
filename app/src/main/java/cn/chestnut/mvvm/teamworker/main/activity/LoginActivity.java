@@ -51,7 +51,7 @@ public class LoginActivity extends BaseActivity {
         addListener();
     }
 
-    private void initView() {
+    protected void initView() {
         setTranslucentStatus(true);
         if (PreferenceUtil.getInstances(MyApplication.getInstance()).getPreferenceBoolean("isShowLoginConflict")) {
             showDoubleLoginDialog();
@@ -61,7 +61,7 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-    private void addListener() {
+    protected void addListener() {
         binding.tvLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

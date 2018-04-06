@@ -89,22 +89,16 @@ public class SendNotificationActivity extends BaseActivity {
         }
     }
 
-    /**
-     * 初始化数据
-     */
-    private void initData() {
+    protected void initData() {
         uidList = new ArrayList<>();
         messageList = new ArrayList<>();
     }
 
-    /**
-     * 初始化界面
-     */
-    private void initView() {
+    protected void initView() {
         setTitleBarVisible(true);
     }
 
-    private void addListener() {
+    protected void addListener() {
         binding.tvReceivers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

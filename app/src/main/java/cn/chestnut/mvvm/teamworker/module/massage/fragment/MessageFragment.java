@@ -73,6 +73,7 @@ public class MessageFragment extends BaseFragment {
     private String userId;
     private MessageDaoUtils messageDaoUtils;
     private List<AddAction> addActionList;
+    private BroadcastReceiver receiver;
 
     private static final long MILLISECOND_OF_TWO_HOUR = 60 * 60 * 1000;
 
@@ -139,7 +140,7 @@ public class MessageFragment extends BaseFragment {
     }
 
     private void initData() {
-        BroadcastReceiver receiver = new BroadcastReceiver() {
+        receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Message newMessage = (Message) intent.getSerializableExtra("newMessage");
@@ -302,29 +303,6 @@ public class MessageFragment extends BaseFragment {
 
     }
 
-    private void searchUser(String account){
-        Map<String,String> param = new HashMap<>(1);
-        param.put("account",account);
-        RequestManager.getInstance(getActivity()).executeRequest(HttpUrls.SEARCH_USER, param, new AppCallBack<ApiResponse<User>>() {
-            @Override
-            public void next(ApiResponse<User> response) {
-                if(response.isSuccess()){
-                    Log.d("username" + response.getData().getNickname());
-                }
-            }
-
-            @Override
-            public void error(Throwable error) {
-
-            }
-
-            @Override
-            public void complete() {
-
-            }
-        });
-    }
-
     /**
      * 点击右上角的加号后，显示的PopupWindow内的listview的item内容
      */
@@ -355,4 +333,9 @@ public class MessageFragment extends BaseFragment {
         }
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        getActivity().unregisterReceiver(receiver);
+    }
 }

@@ -71,6 +71,8 @@ public class ChatActivity extends BaseActivity {
     private String chatId;
     private List<String> senderIdList;
 
+    private BroadcastReceiver receiver;
+
     private static final long MILLISECOND_OF_TWO_HOUR = 60 * 60 * 1000;
 
     @Override
@@ -97,7 +99,7 @@ public class ChatActivity extends BaseActivity {
         super.finish();
     }
 
-    private void initData() {
+    protected void initData() {
         userId = PreferenceUtil.getInstances(this).getPreferenceString("userId");
         chatId = getIntent().getStringExtra("chatId");
         if (StringUtil.isEmpty(chatId)) {
@@ -116,7 +118,7 @@ public class ChatActivity extends BaseActivity {
         }
         chatAdapter = new ChatAdapter(messageVoList, userId);
 
-        BroadcastReceiver receiver = new BroadcastReceiver() {
+        receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Message newMessage = (Message) intent.getSerializableExtra("newMessage");
@@ -141,14 +143,14 @@ public class ChatActivity extends BaseActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter(Constant.ActionConstant.ACTION_GET_NEW_MESSAGE));
     }
 
-    private void initView() {
+    protected void initView() {
         binding.rcRecord.setAdapter(chatAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         binding.rcRecord.setLayoutManager(linearLayoutManager);
         scrollToBottom();
     }
 
-    private void addListener() {
+    protected void addListener() {
         binding.tvSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -311,5 +313,6 @@ public class ChatActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         mHandler.removeCallbacksAndMessages(null);
+        unregisterReceiver(receiver);
     }
 }

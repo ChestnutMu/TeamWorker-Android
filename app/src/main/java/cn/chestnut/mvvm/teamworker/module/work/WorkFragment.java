@@ -1,7 +1,10 @@
 package cn.chestnut.mvvm.teamworker.module.work;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.opengl.Visibility;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,12 +14,15 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import cn.chestnut.mvvm.teamworker.Constant;
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.FragmentWorkBinding;
 import cn.chestnut.mvvm.teamworker.main.common.BaseFragment;
 import cn.chestnut.mvvm.teamworker.module.approval.ApprovalActivity;
 import cn.chestnut.mvvm.teamworker.module.checkattendance.CheckAttendanceActivity;
 import cn.chestnut.mvvm.teamworker.module.team.BuildTeamActivity;
+import cn.chestnut.mvvm.teamworker.module.user.NewFriendActivity;
+import cn.chestnut.mvvm.teamworker.module.user.UserInformationActivity;
 import cn.chestnut.mvvm.teamworker.module.work.adapter.GridViewAdapter;
 
 /**
@@ -33,6 +39,8 @@ public class WorkFragment extends BaseFragment {
     private GridViewAdapter gridViewAdapter;
     private ArrayList<String> nameList;
     private ArrayList<Integer> drawableList;
+
+    private BroadcastReceiver receiver;
 
     @Override
     protected void setBaseTitle(TextView titleView) {
@@ -55,7 +63,15 @@ public class WorkFragment extends BaseFragment {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(),WorkNotificationActivity.class));
+                startActivity(new Intent(getActivity(), WorkNotificationActivity.class));
+            }
+        });
+        search.setVisibility(View.VISIBLE);
+        search.setImageDrawable(getResources().getDrawable(R.mipmap.icon_notification));
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), NewFriendActivity.class));
             }
         });
     }
@@ -75,6 +91,15 @@ public class WorkFragment extends BaseFragment {
         drawableList.add(R.mipmap.icon_approval);
         drawableList.add(R.mipmap.icon_attendance);
         drawableList.add(R.mipmap.icon_approval);
+
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals(Constant.ActionConstant.ACTION_SHOW_BADGE)) {
+                    setBadgeVisibility(View.VISIBLE);
+                }
+            }
+        };
     }
 
     /**

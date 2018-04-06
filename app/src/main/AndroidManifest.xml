@@ -88,6 +88,10 @@
             android:windowSoftInputMode="stateHidden" />
         <activity android:name=".module.work.WorkNotificationActivity"/>
         <activity android:name=".module.team.PhoneDirectoryActivity"/>
+        <activity android:name=".module.user.SearchFriendActivity"/>
+        <activity android:name=".module.user.UserInformationActivity"/>
+        <activity android:name=".module.user.RequestFriendActivity"/>
+        <activity android:name=".module.user.NewFriendActivity"/>
     </application>
 
 </manifest>

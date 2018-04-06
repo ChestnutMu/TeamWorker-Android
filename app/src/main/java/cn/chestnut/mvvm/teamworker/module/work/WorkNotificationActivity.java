@@ -46,9 +46,9 @@ public class WorkNotificationActivity extends BaseActivity {
         initData();
     }
 
-    private void initData() {}
+    protected void initData() {}
 
-    private void initView() {
+    protected void initView() {
         setTabs();
         mAdapter = new MyViewPagerAdapter(getSupportFragmentManager());
         binding.viewPager.setOffscreenPageLimit(2);

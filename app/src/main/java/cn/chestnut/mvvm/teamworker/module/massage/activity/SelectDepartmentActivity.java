@@ -76,15 +76,12 @@ public class SelectDepartmentActivity extends BaseActivity {
         }
     }
 
-    /**
-     * 初始化数据
-     */
-    private void initData() {
+    protected void initData() {
         departmentList = new ArrayList<>();
         getAllDepartments(pageNum, pageSize);
     }
 
-    private void initView() {
+    protected void initView() {
         departmentAdapter = new DepartmentAdapter(departmentList);
         binding.swipeTarget.setAdapter(departmentAdapter);
         LinearLayoutManager manager = new LinearLayoutManager(this);
@@ -93,7 +90,7 @@ public class SelectDepartmentActivity extends BaseActivity {
         binding.swipeTarget.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
     }
 
-    private void addListener() {
+    protected void addListener() {
         binding.swipeToLoadLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {

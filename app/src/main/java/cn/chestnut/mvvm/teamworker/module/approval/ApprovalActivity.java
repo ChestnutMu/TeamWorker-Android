@@ -43,7 +43,7 @@ public class ApprovalActivity extends BaseActivity {
         addListener();
     }
 
-    private void initData() {
+    protected void initData() {
         nameList = new ArrayList<>();
         nameList.add("请假");
         nameList.add("报销");
@@ -53,12 +53,12 @@ public class ApprovalActivity extends BaseActivity {
         drawableList.add(R.mipmap.icon_reimbursement);
     }
 
-    private void initView() {
+    protected void initView() {
         gridViewAdapter = new GridViewAdapter(this, nameList, drawableList);
         binding.gvApproval.setAdapter(gridViewAdapter);
     }
 
-    private void addListener() {
+    protected void addListener() {
         binding.gvApproval.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
