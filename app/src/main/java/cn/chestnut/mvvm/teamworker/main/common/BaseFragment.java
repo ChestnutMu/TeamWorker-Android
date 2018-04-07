@@ -56,7 +56,7 @@ public abstract class BaseFragment extends Fragment {
      * 显示search按钮右上角的badge，由子activity根据具体情况重写
      */
     public void setBadgeVisibility(int isVisable) {
-        binding.badge.setVisibility(View.VISIBLE);
+        binding.badge.setVisibility(isVisable);
     }
 
     public void showToast(String stringRes) {

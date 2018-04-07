@@ -9,14 +9,14 @@
     </data>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:padding="@dimen/team_worker_padding">
+        android:gravity="center_vertical">
 
         <ImageView
             android:id="@+id/iv_icon"
             android:layout_width="24dp"
+            android:layout_margin="8dp"
             android:layout_height="24dp"
             android:src="@{addAction.icon}" />
 
@@ -24,6 +24,7 @@
             android:id="@+id/tv_action"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="8dp"
             android:layout_marginLeft="16dp"
             android:text="@{addAction.action}"
             android:textColor="@color/text_black" />

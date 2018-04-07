@@ -41,6 +41,9 @@ public class HttpUrls {
     //是否我的好友
     public static final String IS_MY_FRIEND = "/user/isMyFriend";
 
+    //获取我的好友
+    public static final String GET_MY_FRIENDS = "/user/getMyFriends";
+
     //发送好友申请
     public static final String SEND_FRIEND_REQUEST = "/user/sendFriendRequest";
 
@@ -75,6 +78,9 @@ public class HttpUrls {
 
 
     //-----------------------部门接口------------------------------------------------------
+    //创建一个部门
+    public static final String BUILD_TEAM = "/department/buildTeam";
+
     //创建一个部门
     public static final String ADD_DEPARTMENT = "/department/addDepartment";
 

@@ -8,9 +8,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,13 +34,15 @@ import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
 import cn.chestnut.mvvm.teamworker.model.Department;
+import cn.chestnut.mvvm.teamworker.model.DepartmentVo;
+import cn.chestnut.mvvm.teamworker.model.MyFriend;
 import cn.chestnut.mvvm.teamworker.model.PhoneDirectoryPerson;
-import cn.chestnut.mvvm.teamworker.model.User;
-import cn.chestnut.mvvm.teamworker.module.approval.AskForWorkOffActivity;
 import cn.chestnut.mvvm.teamworker.utils.GlideLoader;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.StringUtil;
 import cn.chestnut.mvvm.teamworker.utils.photo.ProcessPhotoUtils;
+
+import static cn.chestnut.mvvm.teamworker.module.team.SelectFromMyFriendActivity.FROM_MY_FRIEND;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -54,7 +56,9 @@ public class BuildTeamActivity extends BaseActivity {
 
     private ActivityBuildTeamBinding binding;
 
-    private List<PhoneDirectoryPerson> personList;
+    private List<MyFriend> personList;
+
+    private ArrayList<String> userIdList;
 
     private BuildTeamAdapter adapter;
 
@@ -101,9 +105,11 @@ public class BuildTeamActivity extends BaseActivity {
                 GlideLoader.displayImage(BuildTeamActivity.this, filePath, binding.ivTeamBadge);
             }
             Log.d("filePath " + filePath);
-        } else if (requestCode == RESULT_OK) {
-            PhoneDirectoryPerson phoneDirectoryPerson = (PhoneDirectoryPerson) data.getSerializableExtra("person");
-            personList.add(phoneDirectoryPerson);
+        } else if (requestCode == FROM_MY_FRIEND && resultCode == Activity.RESULT_OK) {
+            MyFriend myFriend = (MyFriend) data.getSerializableExtra("person");
+            Log.d("person" + myFriend.getNickname());
+            personList.add(myFriend);
+            userIdList.add(myFriend.getUserId());
             adapter.notifyItemInserted(personList.size());
             adapter.notifyDataSetChanged();
         }
@@ -112,12 +118,12 @@ public class BuildTeamActivity extends BaseActivity {
     protected void initData() {
         processPhotoUtils = new ProcessPhotoUtils(this);
         personList = new ArrayList<>();
+        userIdList = new ArrayList<>();
         adapter = new BuildTeamAdapter(personList);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         binding.recyclerView.setLayoutManager(layoutManager);
         binding.recyclerView.setNestedScrollingEnabled(false);
         binding.recyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
     }
 
     protected void addListener() {
@@ -153,7 +159,6 @@ public class BuildTeamActivity extends BaseActivity {
                                     case 7:
                                         binding.tvPersonnelScale.setText("1001~2000人");
                                         break;
-
                                 }
                                 dialog.dismiss();
                             }
@@ -163,10 +168,21 @@ public class BuildTeamActivity extends BaseActivity {
             }
         });
 
+        binding.llRegion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
         binding.llAddMember.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityForResult(new Intent(BuildTeamActivity.this, PhoneDirectoryActivity.class), 1);
+                Intent intent = new Intent(BuildTeamActivity.this, SelectFromMyFriendActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putStringArrayList("userIdList", userIdList);
+                intent.putExtras(bundle);
+                startActivityForResult(intent, SelectFromMyFriendActivity.FROM_MY_FRIEND);
             }
         });
 
@@ -189,7 +205,6 @@ public class BuildTeamActivity extends BaseActivity {
                     if (StringUtil.isStringNotNull(filePath)) {
                         uploadPicture(filePath);
                     }
-
                 } else {
                     showToast("请填写带红色*号的团队信息");
                 }
@@ -233,7 +248,7 @@ public class BuildTeamActivity extends BaseActivity {
                     if (response.isSuccess()) {
                         qiniuToken = response.getData();
                         uploadPicture(filePath, qiniuToken);
-                    }else {
+                    } else {
                         showToast(response.getMessage());
                     }
                 }
@@ -264,37 +279,18 @@ public class BuildTeamActivity extends BaseActivity {
         department.setDepartmentIndustry(binding.etTeamIndustry.getText().toString());
         department.setDepartmentRegion(binding.tvRegion.getText().toString());
         department.setPersonnelScale(binding.tvPersonnelScale.getText().toString());
-        RequestManager.getInstance(this).executeRequest(HttpUrls.ADD_DEPARTMENT, department, new AppCallBack<ApiResponse<Department>>() {
-            @Override
-            public void next(ApiResponse<Department> response) {
-                if (response.isSuccess()) {
-                    String departmentId = response.getData().getDepartmentId();
-                    addDepartmentMember(departmentId);
 
-                }else {
-                    showToast(response.getMessage());
-                }
-            }
-
-            @Override
-            public void error(Throwable error) {
-
-            }
-
-            @Override
-            public void complete() {
-
-            }
-        });
+        buildTeam(department, userIdList);
     }
 
-    private void addDepartmentMember(String departmentId) {
-        RequestManager.getInstance(this).executeRequest(HttpUrls.ADD_DEPARTMENT_MEMBER_RELATIONS, personList, new AppCallBack<ApiResponse<String>>() {
+    private void buildTeam(Department department, List<String> userIdList) {
+        DepartmentVo departmentVo = new DepartmentVo(department, userIdList);
+        RequestManager.getInstance(this).executeRequest(HttpUrls.BUILD_TEAM, departmentVo, new AppCallBack<ApiResponse<String>>() {
             @Override
             public void next(ApiResponse<String> response) {
                 if (response.isSuccess()) {
 
-                }else {
+                } else {
                     showToast(response.getMessage());
                 }
             }

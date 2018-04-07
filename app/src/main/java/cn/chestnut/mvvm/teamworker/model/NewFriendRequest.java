@@ -1,14 +1,14 @@
 package cn.chestnut.mvvm.teamworker.model;
 
-import java.util.Date;
-
+import cn.chestnut.mvvm.teamworker.BR;
+import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.main.adapter.BindingItem;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
  * Author: Chestnut
  * CreateTime：at 2018/4/6 19:29:22
- * Description：
+ * Description：好友请求
  * Email: xiaoting233zhang@126.com
  */
 public class NewFriendRequest extends BindingItem{
@@ -35,13 +35,13 @@ public class NewFriendRequest extends BindingItem{
     private String authenticationMessage;
 
     //好友请求时间
-    private Date time;
+    private long time;
 
     //已发送
-    private Boolean isSend;
+    private boolean send;
 
     //已接受好友请求
-    private Boolean isAccepted;
+    private boolean accepted;
 
     public String getRequestId() {
         return requestId;
@@ -99,37 +99,37 @@ public class NewFriendRequest extends BindingItem{
         this.authenticationMessage = authenticationMessage;
     }
 
-    public Date getTime() {
+    public long getTime() {
         return time;
     }
 
-    public void setTime(Date time) {
+    public void setTime(long time) {
         this.time = time;
     }
 
-    public Boolean getSend() {
-        return isSend;
+    public boolean getSend() {
+        return send;
     }
 
-    public void setSend(Boolean send) {
-        isSend = send;
+    public void setSend(boolean send) {
+        this.send = send;
     }
 
-    public Boolean getAccepted() {
-        return isAccepted;
+    public boolean getAccepted() {
+        return accepted;
     }
 
-    public void setAccepted(Boolean accepted) {
-        isAccepted = accepted;
+    public void setAccepted(boolean accepted) {
+        this.accepted = accepted;
     }
 
     @Override
     public int getViewType() {
-        return 0;
+        return R.layout.item_new_friend;
     }
 
     @Override
     public int getViewVariableId() {
-        return 0;
+        return BR.request;
     }
 }

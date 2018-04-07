@@ -22,7 +22,6 @@ import cn.chestnut.mvvm.teamworker.module.approval.ApprovalActivity;
 import cn.chestnut.mvvm.teamworker.module.checkattendance.CheckAttendanceActivity;
 import cn.chestnut.mvvm.teamworker.module.team.BuildTeamActivity;
 import cn.chestnut.mvvm.teamworker.module.user.NewFriendActivity;
-import cn.chestnut.mvvm.teamworker.module.user.UserInformationActivity;
 import cn.chestnut.mvvm.teamworker.module.work.adapter.GridViewAdapter;
 
 /**
@@ -71,6 +70,7 @@ public class WorkFragment extends BaseFragment {
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setBadgeVisibility(View.INVISIBLE);
                 startActivity(new Intent(getActivity(), NewFriendActivity.class));
             }
         });

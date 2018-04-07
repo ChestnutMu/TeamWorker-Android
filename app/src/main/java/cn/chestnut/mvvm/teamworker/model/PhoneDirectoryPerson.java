@@ -20,28 +20,16 @@ public class PhoneDirectoryPerson extends BindingItem implements Serializable {
     //姓名
     private String name;
 
-    //名字缩写
-    private String abbreviation;
-
-    //拼音
-    private String pinyin;
-
-    //拼音首字母
-    private String wordHeader;
-
     //电话号码
     private String phone;
 
     public PhoneDirectoryPerson(String name, String phone) {
         this.name = name;
         this.phone = phone;
-        this.pinyin = StringUtil.toPinyin(name);
-        this.abbreviation = getAbbreviation(name);
-        this.wordHeader = pinyin.substring(0, 1);
     }
 
     public String getPinyin() {
-        return pinyin;
+        return StringUtil.toPinyin(name);
     }
 
     public String getName() {
@@ -53,23 +41,11 @@ public class PhoneDirectoryPerson extends BindingItem implements Serializable {
     }
 
     public String getWordHeader() {
-        return wordHeader.toUpperCase();
+        return getPinyin().substring(0, 1).toUpperCase();
     }
 
     public String getAbbreviation() {
-        return abbreviation;
-    }
-
-    public void setAbbreviation(String abbreviation) {
-        this.abbreviation = abbreviation;
-    }
-
-    public void setPinyin(String pinyin) {
-        this.pinyin = pinyin;
-    }
-
-    public void setWordHeader(String wordHeader) {
-        this.wordHeader = wordHeader;
+        return getAbbreviation(name);
     }
 
     public String getPhone() {

@@ -110,6 +110,12 @@ public class MineFragment extends BaseFragment {
                 getActivity().startActivity(new Intent(getActivity(), MyInformationActivity.class));
             }
         });
+        binding.llMyFriend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().startActivity(new Intent(getActivity(),MyFriendActivity.class));
+            }
+        });
     }
 
     /**

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/lv_my_friend"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none" />
+
+        <cn.chestnut.mvvm.teamworker.widget.WordsIndexBar
+            android:layout_width="32dp"
+            android:id="@+id/word_index_bar"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="end"
+            android:layout_marginTop="5dp"
+            app:words_background_color="@color/appTheme"
+            app:words_selected_color="@color/white"
+            app:words_size="14sp"
+            app:words_unselected_color="@color/appTheme" />
+
+    </RelativeLayout>
+</layout>

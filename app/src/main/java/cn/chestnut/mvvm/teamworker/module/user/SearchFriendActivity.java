@@ -69,15 +69,24 @@ public class SearchFriendActivity extends BaseActivity {
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
             }
         });
+
+        binding.tvSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchFriend();
+            }
+        });
     }
 
     private void searchFriend() {
-        RequestManager.getInstance(this).executeRequest(HttpUrls.SEARCH_USER, binding.etSearchFriend.getText().toString(), new AppCallBack<ApiResponse<String>>() {
+        Map param = new HashMap<String, String>(1);
+        param.put("account", binding.etSearchFriend.getText().toString());
+        RequestManager.getInstance(this).executeRequest(HttpUrls.SEARCH_USER, param, new AppCallBack<ApiResponse<String>>() {
             @Override
             public void next(ApiResponse<String> response) {
                 if (response.isSuccess()) {
                     Intent intent = new Intent(SearchFriendActivity.this, UserInformationActivity.class);
-                    intent.putExtra("user", response.getData());
+                    intent.putExtra("userId", response.getData());
                     startActivity(intent);
                 } else {
                     showToast(response.getMessage());

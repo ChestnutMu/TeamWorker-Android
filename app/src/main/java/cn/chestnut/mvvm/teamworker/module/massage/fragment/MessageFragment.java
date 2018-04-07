@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
@@ -49,6 +50,7 @@ import cn.chestnut.mvvm.teamworker.module.massage.adapter.MessageAdapter;
 import cn.chestnut.mvvm.teamworker.model.Message;
 import cn.chestnut.mvvm.teamworker.model.MessageUser;
 import cn.chestnut.mvvm.teamworker.model.MessageVo;
+import cn.chestnut.mvvm.teamworker.module.user.SearchFriendActivity;
 import cn.chestnut.mvvm.teamworker.socket.SendProtocol;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
 import cn.chestnut.mvvm.teamworker.utils.EmojiUtil;
@@ -98,16 +100,16 @@ public class MessageFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 addActionList = new ArrayList<>(3);
-                AddAction scanQR = new AddAction(getResources().getDrawable(R.mipmap.icon_qr_scan),"扫描二维码");
-                AddAction addChat = new AddAction(getResources().getDrawable(R.mipmap.icon_add_chat),"发起聊天");
-                AddAction addFriend = new AddAction(getResources().getDrawable(R.mipmap.icon_add_friend),"添加朋友");
+                AddAction scanQR = new AddAction(getResources().getDrawable(R.mipmap.icon_qr_scan), "扫描二维码");
+                AddAction addChat = new AddAction(getResources().getDrawable(R.mipmap.icon_add_chat), "发起聊天");
+                AddAction addFriend = new AddAction(getResources().getDrawable(R.mipmap.icon_add_friend), "添加朋友");
                 addActionList.add(scanQR);
                 addActionList.add(addChat);
                 addActionList.add(addFriend);
 
                 CommonUtil.setBackgroundAlpha(0.5f, getActivity());
 
-                PopupMineAddBinding popupBinding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.popup_mine_add, null, false);
+                final PopupMineAddBinding popupBinding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.popup_mine_add, null, false);
                 BaseListViewAdapter adapter = new BaseListViewAdapter<>(R.layout.item_mine_add, BR.addAction, addActionList);
                 popupBinding.lvMineAdd.setAdapter(adapter);
                 final PopupWindow popupWindow = new PopupWindow(popupBinding.getRoot(), ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -119,6 +121,13 @@ public class MessageFragment extends BaseFragment {
                 popupBinding.lvMineAdd.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        if (position == 0) {
+
+                        } else if (position == 1) {
+
+                        } else if (position == 2) {
+                            startActivity(new Intent(getActivity(), SearchFriendActivity.class));
+                        }
                         popupWindow.dismiss();
                     }
                 });
@@ -134,7 +143,6 @@ public class MessageFragment extends BaseFragment {
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
             }
         });
     }
@@ -250,6 +258,7 @@ public class MessageFragment extends BaseFragment {
 
                 } else {
                     Intent intent = new Intent(getActivity(), ChatActivity.class);
+                    intent.putExtra("chatType", 1);//1标识非首次聊天
                     intent.putExtra("chatId", message.getChatId());
                     if (StringUtil.isStringNotNull(message.getChatName())) {
                         intent.putExtra("chatName", message.getChatName());

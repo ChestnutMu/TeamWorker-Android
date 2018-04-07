@@ -1,5 +1,6 @@
 package cn.chestnut.mvvm.teamworker.module.team;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
@@ -39,6 +40,8 @@ public class PhoneDirectoryActivity extends BaseActivity {
 
     private List<PhoneDirectoryPerson> persons;
 
+    public static int FROM_PHONE_DIRECTORY = 3;
+
     @Override
     protected void setBaseTitle(TextView titleView) {
         titleView.setText("选择团队成员");
@@ -71,18 +74,23 @@ public class PhoneDirectoryActivity extends BaseActivity {
     protected void addListener() {
         binding.lvPhoneDirectory.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {}
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+            }
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                binding.wordIndexBar.setTouchIndex(persons.get(firstVisibleItem).getWordHeader());
+                if (persons.size() > 0) {
+                    binding.wordIndexBar.setTouchIndex(persons.get(firstVisibleItem).getWordHeader());
+                }
             }
         });
 
         binding.wordIndexBar.setOnWordsChangeListener(new WordsIndexBar.OnWordChangeListener() {
             @Override
             public void onWordChange(String words) {
-                updateListView(words);
+                if (persons.size() > 0) {
+                    updateListView(words);
+                }
             }
         });
 
@@ -91,7 +99,7 @@ public class PhoneDirectoryActivity extends BaseActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent();
                 intent.putExtra("person", persons.get(position));
-                PhoneDirectoryActivity.this.setResult(RESULT_OK, intent);
+                PhoneDirectoryActivity.this.setResult(Activity.RESULT_OK, intent);
                 finish();
             }
         });

@@ -21,6 +21,7 @@ import cn.chestnut.mvvm.teamworker.http.HttpUrls;
 import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.model.User;
+import cn.chestnut.mvvm.teamworker.module.massage.activity.ChatActivity;
 import cn.chestnut.mvvm.teamworker.module.work.WorkFragment;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 
@@ -36,7 +37,7 @@ public class UserInformationActivity extends BaseActivity {
 
     private ActivityUserInformationBinding binding;
 
-    private User user;
+    private String userId;
 
     private boolean isMyFriend;
 
@@ -50,31 +51,37 @@ public class UserInformationActivity extends BaseActivity {
         binding = DataBindingUtil.inflate(inflater, R.layout.activity_user_information, viewGroup, true);
         initData();
         initView();
-        addListener();
     }
 
     protected void initData() {
-        user = (User) getIntent().getSerializableExtra("user");
+        userId = getIntent().getStringExtra("userId");
     }
 
     protected void initView() {
-        binding.setVariable(BR.userInformation, user);
         isMyFriend();
-        //如果该用户是自己或者是好友，那么显示"发送消息"的按钮，否则显示默认的"添加到通讯录"按钮
-        if (isMyFriend || user.getUserId().equals(PreferenceUtil.getInstances(this).getPreferenceString("userId"))) {
-            binding.btnSubmit.setText("发送消息");
-        }
+        getUserInfo();
     }
 
     protected void addListener() {
-        binding.btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(UserInformationActivity.this, RequestFriendActivity.class);
-                intent.putExtra("userId", user.getUserId());
-                startActivity(intent);
-            }
-        });
+        if (isMyFriend || userId.equals(PreferenceUtil.getInstances(UserInformationActivity.this).getPreferenceString("userId"))) {
+            binding.btnSubmit.setText("发送消息");
+            binding.btnSubmit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(UserInformationActivity.this, ChatActivity.class);
+                    intent.putExtra("receiverId", userId);
+                }
+            });
+        } else {
+            binding.btnSubmit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(UserInformationActivity.this, RequestFriendActivity.class);
+                    intent.putExtra("userId", userId);
+                    startActivity(intent);
+                }
+            });
+        }
     }
 
     private void isMyFriend() {
@@ -85,6 +92,8 @@ public class UserInformationActivity extends BaseActivity {
             public void next(ApiResponse<Boolean> response) {
                 if (response.isSuccess()) {
                     isMyFriend = response.getData();
+                    //如果该用户是自己或者是好友，那么显示"发送消息"的按钮，否则显示默认的"添加到通讯录"按钮
+                    addListener();
                 }
             }
 
@@ -98,6 +107,38 @@ public class UserInformationActivity extends BaseActivity {
 
             }
         });
+    }
+
+    private void getUserInfo() {
+        Map<String, String> param = new HashMap<>(1);
+        param.put("userId", userId);
+        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_USER_INFO, param, new AppCallBack<ApiResponse<User>>() {
+            @Override
+            public void next(ApiResponse<User> response) {
+                if (response.isSuccess()) {
+                    binding.setVariable(BR.userInformation, response.getData());
+                }
+            }
+
+            @Override
+            public void error(Throwable error) {
+
+            }
+
+            @Override
+            public void complete() {
+
+            }
+        });
+    }
+
+    @BindingAdapter({"load_sex_image"})
+    public static void loadSexImage(ImageView view, String sex) {
+        if (null != sex && sex.equals("女")) {
+            view.setBackgroundResource(R.mipmap.icon_woman);
+        } else {
+            view.setBackgroundResource(R.mipmap.icon_man);
+        }
     }
 
 }

@@ -1,40 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
         <variable
             name="teamPerson"
-            type="cn.chestnut.mvvm.teamworker.model.PhoneDirectoryPerson" />
+            type="cn.chestnut.mvvm.teamworker.model.MyFriend" />
     </data>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:padding="12dp"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:padding="12dp">
 
-        <TextView
-            android:id="@+id/tv_name_abbreviation"
+        <ImageView
+            android:id="@+id/iv_avatar"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:background="@drawable/bg_tv_name_abbreviaion"
-            android:gravity="center"
-            android:text="@{teamPerson.abbreviation}"
-            android:textColor="@color/white" />
+            app:load_url_image="@{teamPerson.avatar}" />
 
         <TextView
-            android:layout_marginLeft="12dp"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="@{teamPerson.name}" />
+            android:layout_marginLeft="12dp"
+            android:layout_weight="1"
+            android:text="@{teamPerson.nickname}" />
 
         <ImageView
             android:id="@+id/iv_delete"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@mipmap/icon_delete"/>
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@mipmap/icon_delete" />
     </LinearLayout>
 </layout>

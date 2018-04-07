@@ -150,7 +150,7 @@ public class SendNotificationActivity extends BaseActivity {
             return;
         }
         Map<String, String> params = new HashMap<>();
-        params.put("title", title);
+        params.put("chatName", title);
         params.put("chatId", chatId);
         params.put("content", content);
         params.put("uids", gson.toJson(uidList));

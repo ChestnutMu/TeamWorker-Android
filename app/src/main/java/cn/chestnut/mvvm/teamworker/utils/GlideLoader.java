@@ -19,9 +19,9 @@ public class GlideLoader {
     public static void displayImage(Context context, String path, ImageView imageView) {
         Glide.with(context)
                 .load(path)
-                .placeholder(R.mipmap.ic_launcher)
+                .placeholder(R.drawable.global_img_default)
                 .centerCrop()
-                .error(R.drawable.global_img_default)
+                .error(R.mipmap.ic_launcher)
                 .into(imageView);
     }
 

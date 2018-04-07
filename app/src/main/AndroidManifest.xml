@@ -92,6 +92,8 @@
         <activity android:name=".module.user.UserInformationActivity"/>
         <activity android:name=".module.user.RequestFriendActivity"/>
         <activity android:name=".module.user.NewFriendActivity"/>
+        <activity android:name=".module.mine.MyFriendActivity"/>
+        <activity android:name=".module.team.SelectFromMyFriendActivity"/>
     </application>
 
 </manifest>

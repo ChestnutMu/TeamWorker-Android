@@ -1,6 +1,5 @@
 package cn.chestnut.mvvm.teamworker.module.massage.activity;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -23,7 +22,6 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 
 import java.io.UnsupportedEncodingException;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,11 +35,11 @@ import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
 import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
-import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
-import cn.chestnut.mvvm.teamworker.module.massage.adapter.ChatAdapter;
 import cn.chestnut.mvvm.teamworker.model.Message;
 import cn.chestnut.mvvm.teamworker.model.MessageUser;
 import cn.chestnut.mvvm.teamworker.model.MessageVo;
+import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
+import cn.chestnut.mvvm.teamworker.module.massage.adapter.ChatAdapter;
 import cn.chestnut.mvvm.teamworker.socket.SendProtocol;
 import cn.chestnut.mvvm.teamworker.utils.EmojiUtil;
 import cn.chestnut.mvvm.teamworker.utils.EntityUtil;
@@ -73,15 +71,18 @@ public class ChatActivity extends BaseActivity {
 
     private BroadcastReceiver receiver;
 
+    private int chatType;//0标识首次聊天，1标识非首次聊天
+
     private static final long MILLISECOND_OF_TWO_HOUR = 60 * 60 * 1000;
 
     @Override
     protected void setBaseTitle(TextView titleView) {
-        String chatName = getIntent().getStringExtra("chatName");
-        if (StringUtil.isStringNotNull(chatName)) {
-            titleView.setText(chatName);
+        chatType = getIntent().getIntExtra("chatType", 0);
+        if (chatType == 0) {
+            titleView.setText(getIntent().getStringExtra("nickname"));//首次聊天
         } else {
-            titleView.setText(getIntent().getStringExtra("title"));
+            String chatName = getIntent().getStringExtra("chatName");//非首次聊天
+            titleView.setText(chatName);
         }
     }
 
@@ -109,8 +110,14 @@ public class ChatActivity extends BaseActivity {
         messageDaoUtils = new MessageDaoUtils();
         messageVoList.addAll(messageDaoUtils.transferMessageVo(
                 messageDaoUtils.queryMessageByChatId(chatId)));
+
         senderIdList = new ArrayList<>();
-        senderIdList.addAll(messageDaoUtils.queryMessageUserIdByChatId(chatId, userId));
+        if(chatType == 0){//首次聊天
+
+        }else {
+            senderIdList.addAll(messageDaoUtils.queryMessageUserIdByChatId(chatId, userId));
+        }
+
         long updateTime = PreferenceUtil.getInstances(this).getPreferenceLong("updateTime");
         if (updateTime != 0 && updateTime > System.currentTimeMillis()) {
             // TODO: 2018/1/21 重写接口，参数改为一个List

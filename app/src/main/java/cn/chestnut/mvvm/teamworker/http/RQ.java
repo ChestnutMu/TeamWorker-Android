@@ -300,6 +300,7 @@ public class RQ {
 
                     } catch (Exception error) {
                         try {
+                            error.printStackTrace();
                             String errorMessage;
 
                             if (error instanceof ConnectException) {

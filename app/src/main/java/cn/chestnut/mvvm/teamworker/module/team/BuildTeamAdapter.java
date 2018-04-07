@@ -6,6 +6,7 @@ import java.util.List;
 
 import cn.chestnut.mvvm.teamworker.databinding.ItemBuildTeamBinding;
 import cn.chestnut.mvvm.teamworker.main.adapter.BaseRecyclerViewAdapter;
+import cn.chestnut.mvvm.teamworker.model.MyFriend;
 import cn.chestnut.mvvm.teamworker.model.PhoneDirectoryPerson;
 
 /**
@@ -16,14 +17,14 @@ import cn.chestnut.mvvm.teamworker.model.PhoneDirectoryPerson;
  * Email: xiaoting233zhang@126.com
  */
 
-public class BuildTeamAdapter extends BaseRecyclerViewAdapter<PhoneDirectoryPerson, ItemBuildTeamBinding> {
+public class BuildTeamAdapter extends BaseRecyclerViewAdapter<MyFriend, ItemBuildTeamBinding> {
 
-    public BuildTeamAdapter(List<PhoneDirectoryPerson> mItems) {
+    public BuildTeamAdapter(List<MyFriend> mItems) {
         super(mItems);
     }
 
     @Override
-    protected void handleViewHolder(ItemBuildTeamBinding binding, PhoneDirectoryPerson obj, final int position) {
+    protected void handleViewHolder(ItemBuildTeamBinding binding, MyFriend obj, final int position) {
         binding.ivDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

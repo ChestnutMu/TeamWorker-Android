@@ -3,17 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
         <variable
             name="userInformation"
             type="cn.chestnut.mvvm.teamworker.model.User" />
-    </data>
-
-    <data>
-
-        <variable
-            name="R"
-            type="cn.chestnut.mvvm.teamworker.R" />
     </data>
 
     <LinearLayout
@@ -49,10 +41,10 @@
                 android:id="@+id/iv_sex"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
-                android:layout_alignTop="@+id/tv_nickname"
+                android:layout_alignBottom="@+id/tv_nickname"
                 android:layout_marginLeft="16dp"
                 android:layout_toRightOf="@+id/tv_nickname"
-                android:src='@{userInformation.sex.equals("女")?R.mipmap.icon_woman:R.mipmap.icon_man}' />
+                app:load_sex_image="@{userInformation.sex}" />
 
             <TextView
                 android:id="@+id/tv_account"
@@ -61,7 +53,18 @@
                 android:layout_alignBottom="@+id/iv_avatar"
                 android:layout_marginLeft="32dp"
                 android:layout_toRightOf="@id/iv_avatar"
-                android:text="昵称："
+                android:text="账号："
+                android:textColor="@color/text_gray"
+                android:textSize="@dimen/text_size_small" />
+
+            <TextView
+                android:id="@+id/tv_account1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/tv_account"
+                android:layout_marginLeft="8dp"
+                android:layout_toRightOf="@id/tv_account"
+                android:text="@{userInformation.account}"
                 android:textColor="@color/text_gray"
                 android:textSize="@dimen/text_size_small" />
         </RelativeLayout>
