@@ -10,23 +10,23 @@ import java.util.List;
  * Email: xiaoting233zhang@126.com
  */
 
-public class DepartmentVo {
+public class TeamVo {
 
-    private Department department;
+    private Team team;
 
     private List<String> userIds;
 
-    public DepartmentVo(Department department, List<String> userIds) {
-        this.department = department;
+    public TeamVo(Team team, List<String> userIds) {
+        this.team = team;
         this.userIds = userIds;
     }
 
-    public Department getDepartment() {
-        return department;
+    public Team getTeam() {
+        return team;
     }
 
-    public void setDepartment(Department department) {
-        this.department = department;
+    public void setTeam(Team team) {
+        this.team = team;
     }
 
     public List<String> getUserIds() {

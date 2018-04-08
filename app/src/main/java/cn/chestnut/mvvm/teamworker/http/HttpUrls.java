@@ -11,6 +11,8 @@ package cn.chestnut.mvvm.teamworker.http;
 public class HttpUrls {
     //---------域名------------
     public static final String HTTPHOST = "http://192.168.199.241";
+
+//    public static final String HTTPHOST = "http://172.18.210.125";
 //    public static final String HTTPHOST = "http://http://13.230.251.164";
 
     public static final String GET_PHOTO = "http://p2fnlgaq8.bkt.clouddn.com/";
@@ -77,10 +79,14 @@ public class HttpUrls {
     public static final String GET_NOT_SEND_MESSAGES_BY_USER_ID = "/message/getNotSendMessagesByUserId";
 
 
-    //-----------------------部门接口------------------------------------------------------
-    //创建一个部门
+    //-----------------------团队接口------------------------------------------------------
+    //创建一个团队
     public static final String BUILD_TEAM = "/department/buildTeam";
 
+    //获取我所属的团队
+    public static final String GET_MY_TEAMS = "/department/getMyTeams";
+
+    //-----------------------部门接口------------------------------------------------------
     //创建一个部门
     public static final String ADD_DEPARTMENT = "/department/addDepartment";
 
@@ -125,5 +131,9 @@ public class HttpUrls {
 
     //审批请假
     public static final String APPROVE_WORK_OFF = "/workoff/approveWorkOff";
+
+    //-------------------------中国地区接口-----------------------------------------------------------
+    //获取省或市或县
+    public static final String GET_ADDRESSES = "/address/getAddresses";
 
 }

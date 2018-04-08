@@ -101,6 +101,7 @@ public class MyFriendActivity extends BaseActivity {
     }
 
     private void getMyFriends() {
+        showProgressDialog(this);
         RequestManager.getInstance(this).executeRequest(HttpUrls.GET_MY_FRIENDS, null, new AppCallBack<ApiResponse<List<MyFriend>>>() {
             @Override
             public void next(ApiResponse<List<MyFriend>> response) {
@@ -119,12 +120,12 @@ public class MyFriendActivity extends BaseActivity {
 
             @Override
             public void error(Throwable error) {
-
+                hideProgressDialog();
             }
 
             @Override
             public void complete() {
-
+                hideProgressDialog();
             }
         });
     }

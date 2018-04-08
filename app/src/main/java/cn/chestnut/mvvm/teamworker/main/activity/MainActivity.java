@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.RemoteViews;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,7 @@ public class MainActivity extends BaseActivity {
 
     private ActivityMainBinding binding;
 
-    private TabCustomBinding tabBinding;
+    private List<TabCustomBinding> tabBindingList;
 
     //Tab 文字
     private final int[] TAB_TITLES = new int[]{R.string.fragment_message, R.string.fragment_work, R.string.fragment_mine};
@@ -89,6 +90,12 @@ public class MainActivity extends BaseActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getNotSendRequestCountByUserId();
+    }
+
     protected void initData() {
         PermissionsUtil.checkAndRequestPermissions(this);
         receiver = new BroadcastReceiver() {
@@ -103,6 +110,7 @@ public class MainActivity extends BaseActivity {
 
     protected void initView() {
         setTitleBarVisible(false);//设置BaseActivity定义的标题栏不可见
+        tabBindingList = new ArrayList<>(COUNT);
         setTabs(binding.tabLayout, this.getLayoutInflater(), TAB_TITLES, TAB_IMGS);
         mAdapter = new MyViewPagerAdapter(getSupportFragmentManager());
         binding.viewPager.setOffscreenPageLimit(3);
@@ -134,7 +142,8 @@ public class MainActivity extends BaseActivity {
     private void setTabs(TabLayout tabLayout, LayoutInflater inflater, int[] tabTitlees, int[] tabImgs) {
         for (int i = 0; i < tabImgs.length; i++) {
             TabLayout.Tab tab = tabLayout.newTab();
-            tabBinding = DataBindingUtil.inflate(inflater, R.layout.tab_custom, null, false);
+            TabCustomBinding tabBinding = DataBindingUtil.inflate(inflater, R.layout.tab_custom, null, false);
+            tabBindingList.add(tabBinding);
             tab.setCustomView(tabBinding.getRoot());
             tabBinding.tvTab.setText(tabTitlees[i]);
             tabBinding.imgTab.setImageResource(tabImgs[i]);
@@ -170,9 +179,10 @@ public class MainActivity extends BaseActivity {
             public void next(ApiResponse<Integer> response) {
                 if (response.isSuccess()) {
                     if (response.getData() > 0) {
-                        tabBinding.tvBadge.setVisibility(View.VISIBLE);
-                        tabBinding.tvBadge.setText(response.getData());
-                        LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(new Intent(Constant.ActionConstant.ACTION_SHOW_BADGE));
+                        tabBindingList.get(1).tvBadge.setVisibility(View.VISIBLE);
+                        tabBindingList.get(1).tvBadge.setText(response.getData());
+                    }else {
+                        tabBindingList.get(1).tvBadge.setVisibility(View.INVISIBLE);
                     }
                 }
             }

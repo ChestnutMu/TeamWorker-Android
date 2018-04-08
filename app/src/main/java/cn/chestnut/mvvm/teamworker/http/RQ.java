@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.Interceptor;
@@ -307,6 +308,8 @@ public class RQ {
                                 errorMessage = "服务器连接失败！";
                             } else if (error instanceof SocketTimeoutException) {
                                 errorMessage = "连接超时!";
+                            } else if (error instanceof JsonParseException) {
+                                errorMessage = "数据解析异常!";
                             } else {
                                 errorMessage = "请求异常!";
                             }

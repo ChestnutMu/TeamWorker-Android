@@ -2,6 +2,7 @@ package cn.chestnut.mvvm.teamworker.module.user;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,6 +66,7 @@ public class NewFriendActivity extends BaseActivity {
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         binding.recyclerView.setLayoutManager(manager);
         binding.recyclerView.setAdapter(adapter);
+        binding.recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
     }
 
     protected void addListener() {
@@ -78,8 +80,8 @@ public class NewFriendActivity extends BaseActivity {
         });
         adapter.setAcceptFriendRequestListener(new NewFriendAdapter.AcceptFriendRequestListener() {
             @Override
-            public void acceptFriendRequest(String userId,String requestId) {
-                addUserRelation(userId,requestId);
+            public void acceptFriendRequest(String userId, String requestId) {
+                addUserRelation(userId, requestId);
             }
         });
     }
@@ -109,13 +111,14 @@ public class NewFriendActivity extends BaseActivity {
         });
     }
 
-    private void addUserRelation(final String userId,String requestId) {
+    private void addUserRelation(final String userId, String requestId) {
         Map params = new HashMap<String, String>(1);
         params.put("userId", userId);
-        params.put("requestId",requestId);
+        params.put("requestId", requestId);
         RequestManager.getInstance(this).executeRequest(HttpUrls.ADD_USER_RELATION, params, new AppCallBack<ApiResponse<User>>() {
             @Override
             public void next(ApiResponse<User> response) {
+                getNewFriendRequest();
                 showToast(response.getMessage());
             }
 

@@ -1,8 +1,9 @@
-package cn.chestnut.mvvm.teamworker.module.massage.adapter;
+package cn.chestnut.mvvm.teamworker.module.mine;
 
 import java.util.List;
 
 import cn.chestnut.mvvm.teamworker.main.adapter.BaseRecyclerViewAdapter;
+import cn.chestnut.mvvm.teamworker.model.Address;
 import cn.chestnut.mvvm.teamworker.model.Team;
 
 /**
@@ -13,9 +14,9 @@ import cn.chestnut.mvvm.teamworker.model.Team;
  * Email: xiaoting233zhang@126.com
  */
 
-public class DepartmentAdapter extends BaseRecyclerViewAdapter {
+public class SelectRegionAdapter extends BaseRecyclerViewAdapter {
 
-    public DepartmentAdapter(List<Team> mItems) {
+    public SelectRegionAdapter(List<Address> mItems) {
         super(mItems);
     }
 

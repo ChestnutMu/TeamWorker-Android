@@ -74,7 +74,6 @@ public class MessageFragment extends BaseFragment {
     private LinkedList<MessageVo> messageList;
     private String userId;
     private MessageDaoUtils messageDaoUtils;
-    private List<AddAction> addActionList;
     private BroadcastReceiver receiver;
 
     private static final long MILLISECOND_OF_TWO_HOUR = 60 * 60 * 1000;
@@ -99,7 +98,7 @@ public class MessageFragment extends BaseFragment {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addActionList = new ArrayList<>(3);
+                List<AddAction> addActionList = new ArrayList<>(3);
                 AddAction scanQR = new AddAction(getResources().getDrawable(R.mipmap.icon_qr_scan), "扫描二维码");
                 AddAction addChat = new AddAction(getResources().getDrawable(R.mipmap.icon_add_chat), "发起聊天");
                 AddAction addFriend = new AddAction(getResources().getDrawable(R.mipmap.icon_add_friend), "添加朋友");
@@ -111,6 +110,7 @@ public class MessageFragment extends BaseFragment {
 
                 final PopupMineAddBinding popupBinding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.popup_mine_add, null, false);
                 BaseListViewAdapter adapter = new BaseListViewAdapter<>(R.layout.item_mine_add, BR.addAction, addActionList);
+                popupBinding.lvMineAdd.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                 popupBinding.lvMineAdd.setAdapter(adapter);
                 final PopupWindow popupWindow = new PopupWindow(popupBinding.getRoot(), ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 popupWindow.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#F8F8F8")));

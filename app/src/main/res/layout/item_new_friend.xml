@@ -40,7 +40,7 @@
             android:layout_alignBottom="@id/iv_avatar"
             android:layout_marginLeft="16dp"
             android:layout_toRightOf="@id/iv_avatar"
-            android:text="账号："
+            android:text="验证消息："
             android:textColor="@color/text_gray"
             android:textSize="@dimen/text_size_small" />
 
@@ -51,7 +51,7 @@
             android:layout_alignBottom="@id/iv_avatar"
             android:layout_marginLeft="3dp"
             android:layout_toRightOf="@id/tv_account1"
-            android:text="@{request.requesterAccount}"
+            android:text="@{request.authenticationMessage}"
             android:textColor="@color/text_gray"
             android:textSize="@dimen/text_size_small" />
 

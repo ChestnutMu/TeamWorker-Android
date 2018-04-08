@@ -33,10 +33,9 @@ import cn.chestnut.mvvm.teamworker.http.HttpUrls;
 import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
-import cn.chestnut.mvvm.teamworker.model.Department;
-import cn.chestnut.mvvm.teamworker.model.DepartmentVo;
+import cn.chestnut.mvvm.teamworker.model.Team;
+import cn.chestnut.mvvm.teamworker.model.TeamVo;
 import cn.chestnut.mvvm.teamworker.model.MyFriend;
-import cn.chestnut.mvvm.teamworker.model.PhoneDirectoryPerson;
 import cn.chestnut.mvvm.teamworker.utils.GlideLoader;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.StringUtil;
@@ -271,21 +270,21 @@ public class BuildTeamActivity extends BaseActivity {
     }
 
     private void buildTeam() {
-        Department department = new Department();
-        department.setDepartmentName(binding.etTeamName.getText().toString());
+        Team team = new Team();
+        team.setTeamName(binding.etTeamName.getText().toString());
         if (StringUtil.isStringNotNull(pictureKey)) {
-            department.setDepartmentBadge(pictureKey);
+            team.setTeamBadge(pictureKey);
         }
-        department.setDepartmentIndustry(binding.etTeamIndustry.getText().toString());
-        department.setDepartmentRegion(binding.tvRegion.getText().toString());
-        department.setPersonnelScale(binding.tvPersonnelScale.getText().toString());
+        team.setTeamIndustry(binding.etTeamIndustry.getText().toString());
+        team.setTeamRegion(binding.tvRegion.getText().toString());
+        team.setPersonnelScale(binding.tvPersonnelScale.getText().toString());
 
-        buildTeam(department, userIdList);
+        buildTeam(team, userIdList);
     }
 
-    private void buildTeam(Department department, List<String> userIdList) {
-        DepartmentVo departmentVo = new DepartmentVo(department, userIdList);
-        RequestManager.getInstance(this).executeRequest(HttpUrls.BUILD_TEAM, departmentVo, new AppCallBack<ApiResponse<String>>() {
+    private void buildTeam(Team team, List<String> userIdList) {
+        TeamVo teamVo = new TeamVo(team, userIdList);
+        RequestManager.getInstance(this).executeRequest(HttpUrls.BUILD_TEAM, teamVo, new AppCallBack<ApiResponse<String>>() {
             @Override
             public void next(ApiResponse<String> response) {
                 if (response.isSuccess()) {

@@ -34,11 +34,11 @@ public class NewFriendAdapter extends BaseRecyclerViewAdapter<NewFriendRequest, 
         final NewFriendRequest request = mItems.get(position);
         if (request.getAccepted()) {
             binding.tvAccept.setBackground(context.getResources().getDrawable(R.drawable.bg_tv_is_accepted));
-            binding.tvAccept.setTextColor(context.getResources().getColor(R.color.white));
+            binding.tvAccept.setTextColor(context.getResources().getColor(R.color.dark_gray));
             binding.tvAccept.setClickable(false);
         } else {
             binding.tvAccept.setBackground(context.getResources().getDrawable(R.drawable.bg_tv_to_accept));
-            binding.tvAccept.setTextColor(context.getResources().getColor(R.color.appTheme));
+            binding.tvAccept.setTextColor(context.getResources().getColor(R.color.white));
             binding.tvAccept.setClickable(true);
             binding.tvAccept.setOnClickListener(new View.OnClickListener() {
                 @Override

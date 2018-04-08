@@ -45,7 +45,7 @@ import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.adapter.BaseListViewAdapter;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
-import cn.chestnut.mvvm.teamworker.model.Department;
+import cn.chestnut.mvvm.teamworker.model.Team;
 import cn.chestnut.mvvm.teamworker.model.User;
 import cn.chestnut.mvvm.teamworker.model.WorkOff;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
@@ -337,16 +337,16 @@ public class AskForWorkOffActivity extends BaseActivity {
     }
 
     private void selectDepartment() {
-        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_DEPARTMENT_BY_USERID, null, new AppCallBack<ApiResponse<List<Department>>>() {
+        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_DEPARTMENT_BY_USERID, null, new AppCallBack<ApiResponse<List<Team>>>() {
             @Override
-            public void next(ApiResponse<List<Department>> response) {
+            public void next(ApiResponse<List<Team>> response) {
                 if (response.isSuccess()) {
-                    final List<Department> departmentList = response.getData();
-                    int departmentSize = departmentList.size();
+                    final List<Team> teamList = response.getData();
+                    int departmentSize = teamList.size();
                     if (departmentSize > 0) {
                         String[] departmentName = new String[departmentSize];
                         for (int i = 0; i < departmentSize; i++) {
-                            departmentName[i] = departmentList.get(i).getDepartmentName();
+                            departmentName[i] = teamList.get(i).getTeamName();
                         }
                         new AlertDialog.Builder(AskForWorkOffActivity.this)
                                 .setTitle("请选择部门")
@@ -354,7 +354,7 @@ public class AskForWorkOffActivity extends BaseActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.cancel();
-                                        selectApprover(departmentList.get(which).getDepartmentId());
+                                        selectApprover(teamList.get(which).getTeamId());
                                     }
                                 }).show();
                     }

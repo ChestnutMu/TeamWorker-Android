@@ -1,9 +1,12 @@
 package cn.chestnut.mvvm.teamworker.module.user;
 
+import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -48,6 +51,29 @@ public class RequestFriendActivity extends BaseActivity {
                 requestFriend();
             }
         });
+
+        //点击软键盘上的回车键进行搜索操作
+        binding.etApplicationContent.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+                    requestFriend();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        //点击输入框外则隐藏软键盘
+        binding.llParent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InputMethodManager imm = (InputMethodManager)
+                        getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+            }
+        });
+
     }
 
     private void requestFriend() {

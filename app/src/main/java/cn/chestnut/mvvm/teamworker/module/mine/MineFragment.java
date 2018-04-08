@@ -116,6 +116,7 @@ public class MineFragment extends BaseFragment {
                 getActivity().startActivity(new Intent(getActivity(),MyFriendActivity.class));
             }
         });
+
     }
 
     /**

@@ -15,9 +15,7 @@ import com.aspsine.swipetoloadlayout.OnLoadMoreListener;
 import com.aspsine.swipetoloadlayout.OnRefreshListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.ActivitySelectReceiverBinding;
@@ -27,9 +25,8 @@ import cn.chestnut.mvvm.teamworker.http.HttpUrls;
 import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.module.massage.adapter.DepartmentAdapter;
-import cn.chestnut.mvvm.teamworker.model.Department;
+import cn.chestnut.mvvm.teamworker.model.Team;
 import cn.chestnut.mvvm.teamworker.model.User;
-import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -39,11 +36,12 @@ import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
  * Email: xiaoting233zhang@126.com
  */
 
+// TODO: 2018/4/8 修改为通知公司内员工或者好友
 public class SelectDepartmentActivity extends BaseActivity {
 
     private ActivitySelectReceiverBinding binding;
     private DepartmentAdapter departmentAdapter;
-    private ArrayList<Department> departmentList;
+    private ArrayList<Team> teamList;
     private int pageNum = 1;
     private int pageSize = 15;
 
@@ -77,12 +75,12 @@ public class SelectDepartmentActivity extends BaseActivity {
     }
 
     protected void initData() {
-        departmentList = new ArrayList<>();
+        teamList = new ArrayList<>();
         getAllDepartments(pageNum, pageSize);
     }
 
     protected void initView() {
-        departmentAdapter = new DepartmentAdapter(departmentList);
+        departmentAdapter = new DepartmentAdapter(teamList);
         binding.swipeTarget.setAdapter(departmentAdapter);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -94,8 +92,8 @@ public class SelectDepartmentActivity extends BaseActivity {
         binding.swipeToLoadLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (departmentList != null) {
-                    departmentList.clear();
+                if (teamList != null) {
+                    teamList.clear();
                     pageNum = 1;
                     getAllDepartments(pageNum, pageSize);
                 }
@@ -106,7 +104,7 @@ public class SelectDepartmentActivity extends BaseActivity {
             @Override
             public void onLoadMore() {
 
-                if (departmentList != null) {
+                if (teamList != null) {
                     pageNum++;
                     getAllDepartments(pageNum, pageSize);
                 }
@@ -117,7 +115,7 @@ public class SelectDepartmentActivity extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(SelectDepartmentActivity.this, SelectReceiverActivity.class);
-                intent.putExtra("departmentId", departmentList.get(position).getDepartmentId());
+                intent.putExtra("departmentId", teamList.get(position).getTeamId());
                 startActivityForResult(intent, request_code_select_person);
             }
         });
@@ -129,12 +127,12 @@ public class SelectDepartmentActivity extends BaseActivity {
      */
     private void getAllDepartments(int pageNum, int pageSize) {
         showProgressDialog(this);
-        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_DEPARTMENT_BY_USERID, null, new AppCallBack<ApiResponse<List<Department>>>() {
+        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_DEPARTMENT_BY_USERID, null, new AppCallBack<ApiResponse<List<Team>>>() {
 
             @Override
-            public void next(ApiResponse<List<Department>> response) {
+            public void next(ApiResponse<List<Team>> response) {
                 if (response.isSuccess()) {
-                    departmentList.addAll(response.getData());
+                    teamList.addAll(response.getData());
                     departmentAdapter.notifyDataSetChanged();
                 } else {
                     showToast(response.getMessage());

@@ -56,7 +56,7 @@ public class BaseListViewAdapter<T> extends BaseAdapter {
         } else {
             binding = DataBindingUtil.getBinding(convertView);
         }
-        binding.setVariable(itemId, objects.get(position));
+
         return binding.getRoot();
     }
 }

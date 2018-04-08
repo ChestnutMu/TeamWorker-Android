@@ -2,6 +2,10 @@ package cn.chestnut.mvvm.teamworker.model;
 
 import java.io.Serializable;
 
+import cn.chestnut.mvvm.teamworker.BR;
+import cn.chestnut.mvvm.teamworker.R;
+import cn.chestnut.mvvm.teamworker.main.adapter.BindingItem;
+
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
  * Author: Chestnut
@@ -10,7 +14,7 @@ import java.io.Serializable;
  * Email: xiaoting233zhang@126.com
  */
 
-public class Address implements Serializable {
+public class Address extends BindingItem implements Serializable {
 
     private String addressId;
 
@@ -71,5 +75,16 @@ public class Address implements Serializable {
 
     public void setEnd(Boolean end) {
         this.end = end;
+    }
+
+
+    @Override
+    public int getViewType() {
+        return R.layout.item_select_region;
+    }
+
+    @Override
+    public int getViewVariableId() {
+        return BR.address;
     }
 }

@@ -61,6 +61,8 @@ public class MyInformationActivity extends BaseActivity {
     private ProcessPhotoUtils processPhotoUtils;
     private String qiniuToken;
 
+    private int GET_REGION_REQUEST_CODE = 3;
+
     @Override
     protected void setBaseTitle(TextView titleView) {
         titleView.setText("个人信息");
@@ -93,6 +95,11 @@ public class MyInformationActivity extends BaseActivity {
             String filePath = processPhotoUtils.getMyPhotoFile().getPath();
             Log.d("filePath " + filePath);
             uploadPicture(filePath);
+        } else if (requestCode == GET_REGION_REQUEST_CODE && resultCode == RESULT_OK) {
+            binding.tvRegion.setText(data.getStringExtra("region"));
+            User user = new User();
+            user.setRegion(data.getStringExtra("region"));
+            updateMyinformation(user);
         }
     }
 
@@ -224,6 +231,13 @@ public class MyInformationActivity extends BaseActivity {
             }
         });
 
+        binding.llRegion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(new Intent(MyInformationActivity.this, SelectRegionActivity.class), GET_REGION_REQUEST_CODE);
+            }
+        });
+
     }
 
     /**
@@ -248,7 +262,7 @@ public class MyInformationActivity extends BaseActivity {
                     binding.tvBirthday.setText(response.getData().getBirthday());
                     binding.tvRegion.setText(response.getData().getRegion());
                     GlideLoader.displayImage(MyInformationActivity.this, HttpUrls.GET_PHOTO + response.getData().getAvatar(), binding.ivAvatar);
-                }else {
+                } else {
                     showToast(response.getMessage());
                 }
             }
@@ -293,7 +307,7 @@ public class MyInformationActivity extends BaseActivity {
                         GlideLoader glideLoader = new GlideLoader();
                         glideLoader.displayImage(MyInformationActivity.this, HttpUrls.GET_PHOTO + response.getData().getAvatar(), binding.ivAvatar);
                     }
-                }else {
+                } else {
                     showToast(response.getMessage());
                 }
                 Log.d("update_my_information" + response.getMessage());
@@ -350,7 +364,7 @@ public class MyInformationActivity extends BaseActivity {
                     if (response.isSuccess()) {
                         qiniuToken = response.getData();
                         uploadPicture(data, qiniuToken);
-                    }else {
+                    } else {
                         showToast(response.getMessage());
                     }
                 }
