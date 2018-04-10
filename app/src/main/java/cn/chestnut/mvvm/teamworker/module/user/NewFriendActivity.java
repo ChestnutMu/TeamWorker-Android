@@ -24,6 +24,7 @@ import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.model.NewFriendRequest;
 import cn.chestnut.mvvm.teamworker.model.User;
+import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 
 /**
@@ -42,6 +43,8 @@ public class NewFriendActivity extends BaseActivity {
 
     private NewFriendAdapter adapter;
 
+    private NewFriendRequestDaoUtils friendRequestDaoUtils;
+
     @Override
     protected void setBaseTitle(TextView titleView) {
         titleView.setText("新朋友");
@@ -56,7 +59,8 @@ public class NewFriendActivity extends BaseActivity {
     }
 
     protected void initData() {
-        getNewFriendRequest();
+        friendRequestDaoUtils = new NewFriendRequestDaoUtils();
+        getRequestByUserId();
     }
 
     protected void initView() {
@@ -80,61 +84,70 @@ public class NewFriendActivity extends BaseActivity {
         });
         adapter.setAcceptFriendRequestListener(new NewFriendAdapter.AcceptFriendRequestListener() {
             @Override
-            public void acceptFriendRequest(String userId, String requestId) {
-                addUserRelation(userId, requestId);
+            public void acceptFriendRequest(NewFriendRequest request, int position) {
+                acceptRequest(request, position);
             }
         });
     }
 
-    private void getNewFriendRequest() {
-        String userId = PreferenceUtil.getInstances(this).getPreferenceString("userId");
-        Map param = new HashMap<String, String>(1);
-        param.put("userId", userId);
-        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_REQUEST_BY_USERID, param, new AppCallBack<ApiResponse<List<NewFriendRequest>>>() {
-            @Override
-            public void next(ApiResponse<List<NewFriendRequest>> response) {
-                if (response.isSuccess()) {
-                    requestList.addAll(response.getData());
-                    adapter.notifyDataSetChanged();
-                }
-            }
-
-            @Override
-            public void error(Throwable error) {
-
-            }
-
-            @Override
-            public void complete() {
-
-            }
-        });
+    private void getFriendRequest() {
+        if (requestList.size() > 0) {
+            requestList.clear();
+        }
+        requestList.addAll(friendRequestDaoUtils.queryNewFriendRequestByUserId(
+                PreferenceUtil.getInstances(this).getPreferenceString("userId")));
+        adapter.notifyDataSetChanged();
     }
 
-    private void addUserRelation(final String userId, String requestId) {
+    private void acceptRequest(final NewFriendRequest request, final int position) {
         Map params = new HashMap<String, String>(1);
-        params.put("userId", userId);
-        params.put("requestId", requestId);
-        RequestManager.getInstance(this).executeRequest(HttpUrls.ADD_USER_RELATION, params, new AppCallBack<ApiResponse<User>>() {
+        params.put("newFriendRequestId", request.getNewFriendRequestId());
+        showProgressDialog(this);
+        RequestManager.getInstance(this).executeRequest(HttpUrls.ACCEPTED_REQUEST, params, new AppCallBack<ApiResponse<User>>() {
             @Override
             public void next(ApiResponse<User> response) {
-                getNewFriendRequest();
+                if (response.isSuccess()) {
+                    request.setAccepted(true);
+                    Log.d("接受了好友的请求,newFriendRequest.accepted=" + request.getAccepted());
+                    friendRequestDaoUtils.updateNewFriendRequest(request);
+                    adapter.notifyItemChanged(position);
+                }
                 showToast(response.getMessage());
             }
 
             @Override
             public void error(Throwable error) {
-
+                hideProgressDialog();
             }
 
             @Override
             public void complete() {
-
+                hideProgressDialog();
             }
         });
-        if (requestList.size() > 0) {
-            requestList.clear();
-        }
-        getNewFriendRequest();
+    }
+
+    private void getRequestByUserId() {
+        showProgressDialog(this);
+        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_REQUEST_BY_USERID, null, new AppCallBack<ApiResponse<List<NewFriendRequest>>>() {
+            @Override
+            public void next(ApiResponse<List<NewFriendRequest>> response) {
+                if (response.isSuccess()) {
+                    if (friendRequestDaoUtils.insertMultNewFriendRequest(response.getData())) {
+                        getFriendRequest();
+                    }
+                }
+            }
+
+            @Override
+            public void error(Throwable error) {
+                hideProgressDialog();
+            }
+
+            @Override
+            public void complete() {
+                hideProgressDialog();
+            }
+        });
     }
 }

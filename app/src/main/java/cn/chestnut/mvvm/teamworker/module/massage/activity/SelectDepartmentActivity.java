@@ -127,7 +127,7 @@ public class SelectDepartmentActivity extends BaseActivity {
      */
     private void getAllDepartments(int pageNum, int pageSize) {
         showProgressDialog(this);
-        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_DEPARTMENT_BY_USERID, null, new AppCallBack<ApiResponse<List<Team>>>() {
+        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_MY_TEAMS, null, new AppCallBack<ApiResponse<List<Team>>>() {
 
             @Override
             public void next(ApiResponse<List<Team>> response) {

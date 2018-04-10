@@ -28,13 +28,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="*"
-                        android:textColor="@color/redNewMsg"/>
+                        android:textColor="@color/redNewMsg" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="团队名称"
                         android:layout_marginLeft="3dp"
+                        android:text="团队名称"
                         android:textColor="@color/text_black"
                         android:textSize="@dimen/text_size_big" />
 
@@ -50,9 +50,9 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_marginTop="1dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
                     android:background="@color/white"
                     android:gravity="center_vertical"
                     android:padding="@dimen/team_worker_padding">
@@ -84,13 +84,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="*"
-                        android:textColor="@color/redNewMsg"/>
+                        android:textColor="@color/redNewMsg" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="行业"
                         android:layout_marginLeft="3dp"
+                        android:text="行业"
                         android:textColor="@color/text_black"
                         android:textSize="@dimen/text_size_big" />
 
@@ -106,7 +106,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/ll_personnel_scale"
+                    android:id="@+id/ll_team_desc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="1dp"
@@ -118,29 +118,26 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="*"
-                        android:textColor="@color/redNewMsg"/>
+                        android:textColor="@color/redNewMsg" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="人员规模"
                         android:layout_marginLeft="3dp"
+                        android:text="团队描述"
                         android:textColor="@color/text_black"
                         android:textSize="@dimen/text_size_big" />
 
-                    <TextView
-                        android:id="@+id/tv_personnel_scale"
+                    <EditText
+                        android:id="@+id/et_team_desc"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:background="@null"
                         android:gravity="right"
+                        android:hint="请输入团队名称"
                         android:textSize="@dimen/text_size_normal" />
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@mipmap/icon_arrow_grey" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -156,12 +153,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="*"
-                        android:textColor="@color/redNewMsg"/>
+                        android:textColor="@color/redNewMsg" />
 
                     <TextView
-                        android:layout_marginLeft="3dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
                         android:text="地区"
                         android:textColor="@color/text_black"
                         android:textSize="@dimen/text_size_big" />
@@ -220,6 +217,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="56dp"
+            android:layout_marginBottom="8dp"
             android:layout_alignParentBottom="true"
             android:background="@color/white"
             android:gravity="center">
@@ -230,7 +228,7 @@
                 android:layout_height="48dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:background="@drawable/bg_workoff_submit_btn"
+                android:background="@drawable/bg_corner_button_selector"
                 android:text="创建团队"
                 android:textColor="@color/white" />
         </LinearLayout>

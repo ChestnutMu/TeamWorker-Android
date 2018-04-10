@@ -8,12 +8,9 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.RemoteViews;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -30,11 +27,12 @@ import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
 import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
-import cn.chestnut.mvvm.teamworker.model.NewFriendRequest;
+import cn.chestnut.mvvm.teamworker.module.directory.DirectoryFragment;
 import cn.chestnut.mvvm.teamworker.module.massage.fragment.MessageFragment;
 import cn.chestnut.mvvm.teamworker.module.mine.MineFragment;
 import cn.chestnut.mvvm.teamworker.module.work.WorkFragment;
 import cn.chestnut.mvvm.teamworker.socket.ReceiverProtocol;
+import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PermissionsUtil;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 
@@ -53,11 +51,11 @@ public class MainActivity extends BaseActivity {
     private List<TabCustomBinding> tabBindingList;
 
     //Tab 文字
-    private final int[] TAB_TITLES = new int[]{R.string.fragment_message, R.string.fragment_work, R.string.fragment_mine};
+    private final int[] TAB_TITLES = new int[]{R.string.fragment_message, R.string.fragment_work, R.string.fragment_directory, R.string.fragment_mine};
     //Tab 图片
-    private final int[] TAB_IMGS = new int[]{R.drawable.tab_message_selector, R.drawable.tab_work_selector, R.drawable.tab_mine_selector};
+    private final int[] TAB_IMGS = new int[]{R.drawable.tab_message_selector, R.drawable.tab_work_selector, R.drawable.tab_directory_selector, R.drawable.tab_mine_selector};
     //Fragment 数组
-    private final Fragment[] TAB_FRAGMENTS = new Fragment[]{new MessageFragment(), new WorkFragment(), new MineFragment()};
+    private final Fragment[] TAB_FRAGMENTS = new Fragment[]{new MessageFragment(), new WorkFragment(), new DirectoryFragment(), new MineFragment()};
     //Tab 数目
     private final int COUNT = TAB_TITLES.length;
 
@@ -113,7 +111,7 @@ public class MainActivity extends BaseActivity {
         tabBindingList = new ArrayList<>(COUNT);
         setTabs(binding.tabLayout, this.getLayoutInflater(), TAB_TITLES, TAB_IMGS);
         mAdapter = new MyViewPagerAdapter(getSupportFragmentManager());
-        binding.viewPager.setOffscreenPageLimit(3);
+        binding.viewPager.setOffscreenPageLimit(4);
         binding.viewPager.setAdapter(mAdapter);
         binding.viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(binding.tabLayout));
         binding.tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -139,13 +137,13 @@ public class MainActivity extends BaseActivity {
     /**
      * @description: 设置添加Tab
      */
-    private void setTabs(TabLayout tabLayout, LayoutInflater inflater, int[] tabTitlees, int[] tabImgs) {
+    private void setTabs(TabLayout tabLayout, LayoutInflater inflater, int[] tabTitles, int[] tabImgs) {
         for (int i = 0; i < tabImgs.length; i++) {
             TabLayout.Tab tab = tabLayout.newTab();
             TabCustomBinding tabBinding = DataBindingUtil.inflate(inflater, R.layout.tab_custom, null, false);
             tabBindingList.add(tabBinding);
             tab.setCustomView(tabBinding.getRoot());
-            tabBinding.tvTab.setText(tabTitlees[i]);
+            tabBinding.tvTab.setText(tabTitles[i]);
             tabBinding.imgTab.setImageResource(tabImgs[i]);
             tabLayout.addTab(tab);
         }
@@ -174,14 +172,14 @@ public class MainActivity extends BaseActivity {
         String userId = PreferenceUtil.getInstances(this).getPreferenceString("userId");
         Map param = new HashMap<String, String>(1);
         param.put("userId", userId);
-        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_NOT_SEND_REQUEST_COUNT_BY_USERID, param, new AppCallBack<ApiResponse<Integer>>() {
+        RequestManager.getInstance(this).executeRequest(HttpUrls.COUNT_NOT_SEND_REQUEST_BY_USERID, param, new AppCallBack<ApiResponse<Integer>>() {
             @Override
             public void next(ApiResponse<Integer> response) {
                 if (response.isSuccess()) {
                     if (response.getData() > 0) {
                         tabBindingList.get(1).tvBadge.setVisibility(View.VISIBLE);
                         tabBindingList.get(1).tvBadge.setText(response.getData());
-                    }else {
+                    } else {
                         tabBindingList.get(1).tvBadge.setVisibility(View.INVISIBLE);
                     }
                 }
@@ -198,4 +196,6 @@ public class MainActivity extends BaseActivity {
             }
         });
     }
+
+
 }

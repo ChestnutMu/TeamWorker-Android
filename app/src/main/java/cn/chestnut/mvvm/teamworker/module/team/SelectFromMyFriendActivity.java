@@ -13,21 +13,20 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cn.chestnut.mvvm.teamworker.BR;
 import cn.chestnut.mvvm.teamworker.R;
-import cn.chestnut.mvvm.teamworker.databinding.ActivityMyFriendBinding;
 import cn.chestnut.mvvm.teamworker.databinding.ActivitySelectFromMyFriendBinding;
 import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
 import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
-import cn.chestnut.mvvm.teamworker.model.MyFriend;
-import cn.chestnut.mvvm.teamworker.module.mine.MyFriendActivity;
+import cn.chestnut.mvvm.teamworker.model.User;
 import cn.chestnut.mvvm.teamworker.module.mine.MyFriendAdapter;
-import cn.chestnut.mvvm.teamworker.module.user.UserInformationActivity;
 import cn.chestnut.mvvm.teamworker.widget.WordsIndexBar;
 
 /**
@@ -42,13 +41,11 @@ public class SelectFromMyFriendActivity extends BaseActivity {
 
     private ActivitySelectFromMyFriendBinding binding;
 
-    private List<MyFriend> myFriendList = new ArrayList<>();
+    private List<User> myFriendList = new ArrayList<>();
 
     private List<String> userIdList = new ArrayList<>();
 
     private MyFriendAdapter adapter;
-
-    public static int FROM_MY_FRIEND = 4;
 
     @Override
     protected void setBaseTitle(TextView titleView) {
@@ -71,7 +68,7 @@ public class SelectFromMyFriendActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        adapter = new MyFriendAdapter(R.layout.item_my_friend, BR.myFriend, myFriendList);
+        adapter = new MyFriendAdapter(R.layout.item_my_friend, BR.user, myFriendList);
         binding.lvMyFriend.setAdapter(adapter);
     }
 
@@ -102,10 +99,10 @@ public class SelectFromMyFriendActivity extends BaseActivity {
         binding.lvMyFriend.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MyFriend myFriend = myFriendList.get(position);
+                User user = myFriendList.get(position);
                 boolean isExist = false;
                 for (String userId : userIdList) {
-                    if (myFriend.getUserId().equals(userId)) {
+                    if (user.getUserId().equals(userId)) {
                         showToast("已选择的团队成员列表中已存在该好友");
                         isExist = true;
                         break;
@@ -122,15 +119,18 @@ public class SelectFromMyFriendActivity extends BaseActivity {
     }
 
     private void getMyFriends() {
-        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_MY_FRIENDS, null, new AppCallBack<ApiResponse<List<MyFriend>>>() {
+        Map<String, Integer> params = new HashMap<>(2);
+        params.put("pageNum", 1);
+        params.put("pageSize", 1000);
+        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_MY_FRIENDS, params, new AppCallBack<ApiResponse<List<User>>>() {
             @Override
-            public void next(ApiResponse<List<MyFriend>> response) {
+            public void next(ApiResponse<List<User>> response) {
                 if (response.isSuccess()) {
                     myFriendList.addAll(response.getData());
                 }
-                Collections.sort(myFriendList, new Comparator<MyFriend>() {
+                Collections.sort(myFriendList, new Comparator<User>() {
                     @Override
-                    public int compare(MyFriend lmf, MyFriend rmf) {
+                    public int compare(User lmf, User rmf) {
                         //根据拼音进行排序
                         return lmf.getPinyin().compareTo(rmf.getPinyin());
                     }

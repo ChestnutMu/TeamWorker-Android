@@ -52,7 +52,7 @@ public class RequestFriendActivity extends BaseActivity {
             }
         });
 
-        //点击软键盘上的回车键进行搜索操作
+        //点击软键盘上的回车键
         binding.etApplicationContent.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -78,8 +78,10 @@ public class RequestFriendActivity extends BaseActivity {
 
     private void requestFriend() {
         Map<String, String> params = new HashMap<>(1);
-        params.put("userId", getIntent().getStringExtra("userId"));
-        params.put("authenticationMessage", binding.etApplicationContent.getText().toString());
+        params.put("recipientId", getIntent().getStringExtra("userId"));
+        params.put("message", binding.etApplicationContent.getText().toString());
+
+        showProgressDialog(this);
         RequestManager.getInstance(this).executeRequest(HttpUrls.SEND_FRIEND_REQUEST, params, new AppCallBack<ApiResponse<User>>() {
             @Override
             public void next(ApiResponse<User> response) {
@@ -89,12 +91,12 @@ public class RequestFriendActivity extends BaseActivity {
 
             @Override
             public void error(Throwable error) {
-
+                hideProgressDialog();
             }
 
             @Override
             public void complete() {
-
+                hideProgressDialog();
             }
         });
     }

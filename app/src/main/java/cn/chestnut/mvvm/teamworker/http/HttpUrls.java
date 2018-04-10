@@ -10,10 +10,7 @@ package cn.chestnut.mvvm.teamworker.http;
 
 public class HttpUrls {
     //---------域名------------
-    public static final String HTTPHOST = "http://192.168.199.241";
-
-//    public static final String HTTPHOST = "http://172.18.210.125";
-//    public static final String HTTPHOST = "http://http://13.230.251.164";
+    public static final String HTTPHOST = "http://172.18.92.153";
 
     public static final String GET_PHOTO = "http://p2fnlgaq8.bkt.clouddn.com/";
 
@@ -29,19 +26,19 @@ public class HttpUrls {
 
     //------------------user接口--------------------------------------------------------
     //用户名密码登陆
-    public static final String LOGIN = "/user/login";
+    public static final String LOGIN = "/user/unauth/login";
 
     //token登陆
     public static final String REMEMBER_ME = "/user/rememberMe";
 
     //注册
-    public static final String ADD_USER = "/user/addUser";
+    public static final String REGISTER = "/user/unauth/register";
 
     //通过账号搜索用户
     public static final String SEARCH_USER = "/user/searchUser";
 
-    //是否我的好友
-    public static final String IS_MY_FRIEND = "/user/isMyFriend";
+    //获取用户信息(附带是否为我的好友信息：isMyFriend)
+    public static final String GET_USER_DETAIL = "/user/getUserDetail";
 
     //获取我的好友
     public static final String GET_MY_FRIENDS = "/user/getMyFriends";
@@ -49,20 +46,17 @@ public class HttpUrls {
     //发送好友申请
     public static final String SEND_FRIEND_REQUEST = "/user/sendFriendRequest";
 
-    //添加好友
-    public static final String ADD_USER_RELATION = "/user/addUserRelation";
-
     //接受好友请求
-    public static final String IS_ACCEPTED = "/user/isAccepted";
+    public static final String ACCEPTED_REQUEST = "/user/acceptedRequest";
 
-    //获取其收到的所有好友请求消息
+    //删除好友
+    public static final String DEL_FRIEND = "/user/delFriend";
+
+    //获取其还未接受成功的好友请求消息
     public static final String GET_REQUEST_BY_USERID = "/user/getRequestByUserId";
 
-    //获取其还未接收成功的好友请求消息
-    public static final String GET_NOT_SEND_REQUEST_BY_USERID = "/user/getNotSendRequestByUserId";
-
-    //获取其还未接收成功的好友请求消息数量
-    public static final String GET_NOT_SEND_REQUEST_COUNT_BY_USERID = "/user/getNotSendRequestCountByUserId";
+    //获取其还未接收成功的好友请求数量
+    public static final String COUNT_NOT_SEND_REQUEST_BY_USERID = "/user/countNotSendRequestByUserId";
 
     //获取用户个人信息
     public static final String GET_MY_INFORMATION = "/user/getMyInformation";
@@ -81,33 +75,25 @@ public class HttpUrls {
 
     //-----------------------团队接口------------------------------------------------------
     //创建一个团队
-    public static final String BUILD_TEAM = "/department/buildTeam";
+    public static final String BUILD_TEAM = "/team/buildTeam";
 
     //获取我所属的团队
-    public static final String GET_MY_TEAMS = "/department/getMyTeams";
+    public static final String GET_MY_TEAMS = "/team/getMyTeams";
 
-    //-----------------------部门接口------------------------------------------------------
-    //创建一个部门
-    public static final String ADD_DEPARTMENT = "/department/addDepartment";
+    //获取我所属的团队
+    public static final String GET_TEAM_RELATION = "/team/getTeamRelation";
 
-    //获取一个部门的所有成员
-    public static final String GET_USER_BY_DEPARTMENT = "/department/getUserByDepartment";
+    //获取团队人员
+    public static final String GET_TEAMERS = "/team/getTeamers";
 
-    //获取用户所属的部门
-    public static final String GET_DEPARTMENT_BY_USERID = "/department/getDepartmentByUserId";
+    //添加团队人员（只有团队owner和管理员可以添加）
+    public static final String ADD_TEAM_USER = "/team/addTeamUser";
 
-    //添加一条部门关系记录
-    public static final String ADD_DEPARTMENT_RELATION = "/department/addDepartmentRelation";
+    //删除团队人员（只有团队owner和管理员可以添加）
+    public static final String DEL_TEAM_USER = "/team/delTeamUser";
 
-    //添加多条部门关系记录
-    public static final String ADD_DEPARTMENT_RELATIONS = "/department/addDepartmentRelations";
-
-    //添加一条部门成员关系记录
-    public static final String ADD_DEPARTMENT_MEMBER_RELATION = "/department/addDepartmentMemberRelation";
-
-    //添加多条部门成员关系记录
-    public static final String ADD_DEPARTMENT_MEMBER_RELATIONS = "/department/addDepartmentMemberRelations";
-
+    //修改团队人员权限（只有团队owner可以修改）
+    public static final String AUTH_TEAM_USER = "/team/authTeamUser";
 
     //--------------------------------考勤接口-------------------------------------------------------
     //根据UID获取考勤记录

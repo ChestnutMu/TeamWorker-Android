@@ -1,4 +1,4 @@
-package cn.chestnut.mvvm.teamworker.module.work.adapter;
+package cn.chestnut.mvvm.teamworker.module.work;
 
 import android.content.Context;
 import android.view.Gravity;

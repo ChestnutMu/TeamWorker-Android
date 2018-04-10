@@ -266,8 +266,9 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
 
     private void clearUserInfo() {
         PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey("userId");
-        PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey("account");
+        PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey("telephone");
         PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey("token");
+        PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey("nickname");
     }
 
     /**

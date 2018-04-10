@@ -17,28 +17,18 @@ import cn.chestnut.mvvm.teamworker.utils.StringUtil;
  */
 
 public class MyFriend extends BindingItem implements Serializable{
-    //用户Id
     private String userId;
 
-    //账号
-    private String account;
-
-    //昵称
     private String nickname;
 
-    //头像
     private String avatar;
 
-    //手机号
     private String telephone;
 
-    //性别
     private String sex;
 
-    //生日
     private String birthday;
 
-    //地区
     private String region;
 
     public String getUserId() {
@@ -47,14 +37,6 @@ public class MyFriend extends BindingItem implements Serializable{
 
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public String getAccount() {
-        return account;
-    }
-
-    public void setAccount(String account) {
-        this.account = account;
     }
 
     public String getNickname() {
@@ -133,7 +115,7 @@ public class MyFriend extends BindingItem implements Serializable{
 
     @Override
     public int getViewVariableId() {
-        return BR.teamPerson;
+        return BR.user;
     }
 
 }

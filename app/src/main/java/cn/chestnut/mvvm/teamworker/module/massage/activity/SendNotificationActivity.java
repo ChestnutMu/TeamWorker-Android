@@ -80,9 +80,9 @@ public class SendNotificationActivity extends BaseActivity {
             User user = (User) data.getExtras().getSerializable("user");
             if (user != null) {
                 if (uidList.isEmpty()) {
-                    binding.tvReceivers.setText(user.getAccount());
+                    binding.tvReceivers.setText(user.getNickname());
                 } else {
-                    binding.tvReceivers.setText(binding.tvReceivers.getText() + "," + user.getAccount());
+                    binding.tvReceivers.setText(binding.tvReceivers.getText() + "," + user.getNickname());
                 }
                 uidList.add(user.getUserId());
             }

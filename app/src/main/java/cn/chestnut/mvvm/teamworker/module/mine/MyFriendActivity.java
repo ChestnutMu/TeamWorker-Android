@@ -12,7 +12,9 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cn.chestnut.mvvm.teamworker.BR;
 import cn.chestnut.mvvm.teamworker.R;
@@ -22,7 +24,7 @@ import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
 import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
-import cn.chestnut.mvvm.teamworker.model.MyFriend;
+import cn.chestnut.mvvm.teamworker.model.User;
 import cn.chestnut.mvvm.teamworker.module.user.UserInformationActivity;
 import cn.chestnut.mvvm.teamworker.widget.WordsIndexBar;
 
@@ -38,7 +40,7 @@ public class MyFriendActivity extends BaseActivity {
 
     private ActivityMyFriendBinding binding;
 
-    private List<MyFriend> myFriendList = new ArrayList<>();
+    private List<User> myFriendList = new ArrayList<>();
 
     private MyFriendAdapter adapter;
 
@@ -101,16 +103,19 @@ public class MyFriendActivity extends BaseActivity {
     }
 
     private void getMyFriends() {
+        Map<String, Integer> params = new HashMap<>(2);
+        params.put("pageNum", 1);
+        params.put("pageSize", 1000);
         showProgressDialog(this);
-        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_MY_FRIENDS, null, new AppCallBack<ApiResponse<List<MyFriend>>>() {
+        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_MY_FRIENDS, params, new AppCallBack<ApiResponse<List<User>>>() {
             @Override
-            public void next(ApiResponse<List<MyFriend>> response) {
+            public void next(ApiResponse<List<User>> response) {
                 if (response.isSuccess()) {
                     myFriendList.addAll(response.getData());
                 }
-                Collections.sort(myFriendList, new Comparator<MyFriend>() {
+                Collections.sort(myFriendList, new Comparator<User>() {
                     @Override
-                    public int compare(MyFriend lmf, MyFriend rmf) {
+                    public int compare(User lmf, User rmf) {
                         //根据拼音进行排序
                         return lmf.getPinyin().compareTo(rmf.getPinyin());
                     }

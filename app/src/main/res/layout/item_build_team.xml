@@ -4,8 +4,8 @@
 
     <data>
         <variable
-            name="teamPerson"
-            type="cn.chestnut.mvvm.teamworker.model.MyFriend" />
+            name="user"
+            type="cn.chestnut.mvvm.teamworker.model.User" />
     </data>
 
     <LinearLayout
@@ -19,14 +19,14 @@
             android:id="@+id/iv_avatar"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            app:load_url_image="@{teamPerson.avatar}" />
+            app:load_url_image="@{user.avatar}" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="12dp"
             android:layout_weight="1"
-            android:text="@{teamPerson.nickname}" />
+            android:text="@{user.nickname}" />
 
         <ImageView
             android:id="@+id/iv_delete"

@@ -1,14 +1,13 @@
 package cn.chestnut.mvvm.teamworker.main.common;
 
-import android.app.Application;
 import android.content.Context;
 import android.os.Build;
 import android.os.StrictMode;
 import android.support.annotation.RequiresApi;
 import android.support.multidex.MultiDex;
+import android.support.multidex.MultiDexApplication;
 
 import com.qiniu.android.common.AutoZone;
-import com.qiniu.android.common.FixedZone;
 import com.qiniu.android.storage.Configuration;
 import com.qiniu.android.storage.UploadManager;
 import com.socks.library.KLog;
@@ -25,7 +24,7 @@ import cn.chestnut.mvvm.teamworker.core.TeamWorkerMessageHandler;
  * Email: xiaoting233zhang@126.com
  */
 
-public class MyApplication extends Application {
+public class MyApplication extends MultiDexApplication {
 
     private static MyApplication application;
 

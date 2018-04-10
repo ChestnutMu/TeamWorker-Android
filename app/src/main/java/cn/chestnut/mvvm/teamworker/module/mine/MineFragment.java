@@ -113,7 +113,7 @@ public class MineFragment extends BaseFragment {
         binding.llMyFriend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().startActivity(new Intent(getActivity(),MyFriendActivity.class));
+                getActivity().startActivity(new Intent(getActivity(), MyFriendActivity.class));
             }
         });
 
@@ -131,7 +131,7 @@ public class MineFragment extends BaseFragment {
      */
     private void clesrUserInfo() {
         PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey("userId");
-        PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey("account");
+        PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey("telephone");
         PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey("token");
         PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey("nickname");
     }
@@ -163,7 +163,6 @@ public class MineFragment extends BaseFragment {
                     try {
                         binding.tvNickname.setText(EmojiUtil.emojiRecovery(response.getData().getNickname()));
                         GlideLoader.displayImage(getActivity(), HttpUrls.GET_PHOTO + response.getData().getAvatar(), binding.ivAvatar);
-
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }

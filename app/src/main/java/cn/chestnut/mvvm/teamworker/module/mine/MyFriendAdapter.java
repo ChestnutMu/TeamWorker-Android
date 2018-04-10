@@ -9,7 +9,7 @@ import java.util.List;
 
 import cn.chestnut.mvvm.teamworker.databinding.ItemMyFriendBinding;
 import cn.chestnut.mvvm.teamworker.main.adapter.BaseListViewAdapter;
-import cn.chestnut.mvvm.teamworker.model.MyFriend;
+import cn.chestnut.mvvm.teamworker.model.User;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -22,13 +22,13 @@ import cn.chestnut.mvvm.teamworker.model.MyFriend;
 public class MyFriendAdapter extends BaseListViewAdapter {
     private ItemMyFriendBinding binding;
 
-    private List<MyFriend> myFriendList;
+    private List<User> myFriendList;
 
     private int itemLayoutId;
 
     private int itemId;
 
-    public MyFriendAdapter(int itemLayoutId, int itemId, List<MyFriend> objects) {
+    public MyFriendAdapter(int itemLayoutId, int itemId, List<User> objects) {
         super(itemLayoutId, itemId, objects);
         this.itemLayoutId = itemLayoutId;
         this.itemId = itemId;

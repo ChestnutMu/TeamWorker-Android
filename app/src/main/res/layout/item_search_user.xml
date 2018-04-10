@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="user"
+            type="cn.chestnut.mvvm.teamworker.model.User" />
+    </data>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:padding="12dp">
+
+        <ImageView
+            android:id="@+id/iv_avatar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:load_url_image="@{user.avatar}" />
+
+        <TextView
+            android:id="@+id/tv_nickname1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/iv_avatar"
+            android:layout_marginLeft="12dp"
+            android:layout_toRightOf="@id/iv_avatar"
+            android:text="昵称："
+            android:textColor="@color/text_black" />
+
+        <TextView
+            android:id="@+id/tv_nickname2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/tv_nickname1"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@id/tv_nickname1"
+            android:text="@{user.nickname}"
+            android:textColor="@color/text_black" />
+
+        <TextView
+            android:id="@+id/tv_account1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/iv_avatar"
+            android:layout_marginLeft="12dp"
+            android:layout_toRightOf="@id/iv_avatar"
+            android:text="账号："
+            android:textSize="@dimen/text_size_normal" />
+
+        <TextView
+            android:id="@+id/tv_account2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/tv_account1"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@id/tv_account1"
+            android:text="@{user.telephone}"
+            android:textSize="@dimen/text_size_normal" />
+    </RelativeLayout>
+</layout>

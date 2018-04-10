@@ -5,6 +5,8 @@ import java.io.Serializable;
 import cn.chestnut.mvvm.teamworker.BR;
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.main.adapter.BindingItem;
+import cn.chestnut.mvvm.teamworker.module.team.BuildTeamAdapter;
+import cn.chestnut.mvvm.teamworker.utils.StringUtil;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -16,8 +18,6 @@ import cn.chestnut.mvvm.teamworker.main.adapter.BindingItem;
 
 public class User extends BindingItem implements Serializable {
     private String userId;
-
-    private String account;
 
     private String password;
 
@@ -35,14 +35,6 @@ public class User extends BindingItem implements Serializable {
 
     private String region;
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
     public String getUserId() {
         return userId;
     }
@@ -51,28 +43,24 @@ public class User extends BindingItem implements Serializable {
         this.userId = userId;
     }
 
-    public String getAccount() {
-        return account;
-    }
-
-    public void setAccount(String account) {
-        this.account = account;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getNickname() {
         return nickname;
     }
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public String getAbbreviation() {
+        return getAbbreviation(nickname);
+    }
+
+    public String getPinyin() {
+        return StringUtil.toPinyin(nickname);
+    }
+
+    public String getWordHeader() {
+        return getPinyin().substring(0, 1).toUpperCase();
     }
 
     public String getAvatar() {
@@ -115,8 +103,29 @@ public class User extends BindingItem implements Serializable {
         this.region = region;
     }
 
-    public boolean isWoman() {
-        return sex.equals("女");
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    private String getAbbreviation(String name) {
+        if (name.length() == 1) {
+            return name;
+        } else if (name.length() > 1) {
+            return name.substring(name.length() - 2, name.length());
+        }
+        return "";
     }
 
     @Override
@@ -127,5 +136,12 @@ public class User extends BindingItem implements Serializable {
     @Override
     public int getViewVariableId() {
         return BR.user;
+    }
+
+    public int getOtherViewType(int viewType) {
+        if (viewType == BuildTeamAdapter.BUILD_TEAM_VIEW_TYPE) {
+            return R.layout.item_build_team;
+        }
+        return R.layout.item_user;
     }
 }

@@ -11,7 +11,6 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,8 +31,7 @@ import cn.chestnut.mvvm.teamworker.BR;
 import cn.chestnut.mvvm.teamworker.Constant;
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.FragmentMessageBinding;
-import cn.chestnut.mvvm.teamworker.databinding.PopupMineAddBinding;
-import cn.chestnut.mvvm.teamworker.databinding.PopupSelectApproverBinding;
+import cn.chestnut.mvvm.teamworker.databinding.PopupAddActionBinding;
 import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
@@ -41,11 +39,8 @@ import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.activity.MainActivity;
 import cn.chestnut.mvvm.teamworker.main.adapter.BaseListViewAdapter;
 import cn.chestnut.mvvm.teamworker.main.common.BaseFragment;
-import cn.chestnut.mvvm.teamworker.model.User;
-import cn.chestnut.mvvm.teamworker.module.approval.AskForWorkOffActivity;
 import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
 import cn.chestnut.mvvm.teamworker.module.massage.activity.ChatActivity;
-import cn.chestnut.mvvm.teamworker.module.massage.activity.SendNotificationActivity;
 import cn.chestnut.mvvm.teamworker.module.massage.adapter.MessageAdapter;
 import cn.chestnut.mvvm.teamworker.model.Message;
 import cn.chestnut.mvvm.teamworker.model.MessageUser;
@@ -54,7 +49,6 @@ import cn.chestnut.mvvm.teamworker.module.user.SearchFriendActivity;
 import cn.chestnut.mvvm.teamworker.socket.SendProtocol;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
 import cn.chestnut.mvvm.teamworker.utils.EmojiUtil;
-import cn.chestnut.mvvm.teamworker.utils.GlideLoader;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 import cn.chestnut.mvvm.teamworker.utils.StringUtil;
@@ -98,51 +92,58 @@ public class MessageFragment extends BaseFragment {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<AddAction> addActionList = new ArrayList<>(3);
-                AddAction scanQR = new AddAction(getResources().getDrawable(R.mipmap.icon_qr_scan), "扫描二维码");
-                AddAction addChat = new AddAction(getResources().getDrawable(R.mipmap.icon_add_chat), "发起聊天");
-                AddAction addFriend = new AddAction(getResources().getDrawable(R.mipmap.icon_add_friend), "添加朋友");
-                addActionList.add(scanQR);
-                addActionList.add(addChat);
-                addActionList.add(addFriend);
-
-                CommonUtil.setBackgroundAlpha(0.5f, getActivity());
-
-                final PopupMineAddBinding popupBinding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.popup_mine_add, null, false);
-                BaseListViewAdapter adapter = new BaseListViewAdapter<>(R.layout.item_mine_add, BR.addAction, addActionList);
-                popupBinding.lvMineAdd.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-                popupBinding.lvMineAdd.setAdapter(adapter);
-                final PopupWindow popupWindow = new PopupWindow(popupBinding.getRoot(), ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                popupWindow.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#F8F8F8")));
-                popupWindow.setFocusable(true);
-                popupWindow.setOutsideTouchable(true);
-                popupWindow.showAsDropDown(add, 0, 0);
-
-                popupBinding.lvMineAdd.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        if (position == 0) {
-
-                        } else if (position == 1) {
-
-                        } else if (position == 2) {
-                            startActivity(new Intent(getActivity(), SearchFriendActivity.class));
-                        }
-                        popupWindow.dismiss();
-                    }
-                });
-                popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-                    @Override
-                    public void onDismiss() {
-                        CommonUtil.setBackgroundAlpha(1, getActivity());
-                    }
-                });
+                showActionPopup(add);
             }
         });
         search.setVisibility(View.VISIBLE);
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+            }
+        });
+    }
+
+    private void showActionPopup(View add) {
+        List<AddAction> addActionList = new ArrayList<>(3);
+        AddAction scanQR = new AddAction(getResources().getDrawable(R.mipmap.icon_qr_scan), "扫描二维码");
+        AddAction addChat = new AddAction(getResources().getDrawable(R.mipmap.icon_add_chat), "发起聊天");
+        AddAction addFriend = new AddAction(getResources().getDrawable(R.mipmap.icon_add_friend), "添加朋友");
+        addActionList.add(scanQR);
+        addActionList.add(addChat);
+        addActionList.add(addFriend);
+
+        CommonUtil.setBackgroundAlpha(0.5f, getActivity());
+
+        final PopupAddActionBinding popupBinding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.popup_add_action, null, false);
+        BaseListViewAdapter adapter = new BaseListViewAdapter(R.layout.item_add_action, BR.addAction, addActionList);
+        popupBinding.lvMineAdd.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        popupBinding.lvMineAdd.setAdapter(adapter);
+        final PopupWindow popupWindow = new PopupWindow(popupBinding.getRoot());
+        popupWindow.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+        popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        popupWindow.setFocusable(true);
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.showAsDropDown(add, 0, 0);
+
+        popupBinding.lvMineAdd.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0) {
+
+                } else if (position == 1) {
+
+                } else if (position == 2) {
+                    startActivity(new Intent(getActivity(), SearchFriendActivity.class));
+                }
+                popupWindow.dismiss();
+            }
+        });
+        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                CommonUtil.setBackgroundAlpha(1, getActivity());
             }
         });
     }
@@ -345,6 +346,5 @@ public class MessageFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        getActivity().unregisterReceiver(receiver);
     }
 }

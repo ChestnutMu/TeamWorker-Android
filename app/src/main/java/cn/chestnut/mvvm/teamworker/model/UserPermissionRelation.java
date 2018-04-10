@@ -14,7 +14,7 @@ public class UserPermissionRelation {
 
     private String departmentId;//user所在的子部门Id
 
-    private int permissionRange;//0 标识整个公司; 1 所在部门及其子部门；2 标识特定部门
+    private int permissionRange;//0 标识整个团队; 1 所在部门及其子部门；2 标识特定部门
 
     private String permissonId;
 

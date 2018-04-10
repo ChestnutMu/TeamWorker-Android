@@ -56,7 +56,7 @@
                 android:layout_height="48dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:background="@drawable/bg_workoff_submit_btn"
+                android:background="@drawable/bg_corner_button_selector"
                 android:text="发送好友请求"
                 android:textColor="@color/white" />
 

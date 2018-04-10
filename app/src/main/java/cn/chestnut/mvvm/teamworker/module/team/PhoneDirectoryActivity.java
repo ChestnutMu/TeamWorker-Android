@@ -40,8 +40,6 @@ public class PhoneDirectoryActivity extends BaseActivity {
 
     private List<PhoneDirectoryPerson> persons;
 
-    public static int FROM_PHONE_DIRECTORY = 3;
-
     @Override
     protected void setBaseTitle(TextView titleView) {
         titleView.setText("选择团队成员");

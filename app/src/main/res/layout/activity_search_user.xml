@@ -12,9 +12,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:background="@color/white"
-            android:gravity="bottom"
-            android:paddingTop="12dp"
-            android:padding="12dp">
+            android:gravity="center_vertical"
+            android:paddingBottom="8dp"
+            android:paddingLeft="@dimen/team_worker_padding"
+            android:paddingRight="@dimen/team_worker_padding"
+            android:paddingTop="@dimen/team_worker_padding">
 
             <ImageView
                 android:id="@+id/iv_search_friend"
@@ -40,11 +42,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:background="@drawable/bg_tv_search"
-                android:paddingBottom="3dp"
-                android:paddingLeft="12dp"
-                android:paddingRight="12dp"
-                android:paddingTop="3dp"
+                android:background="@drawable/bg_corner_button_selector"
+                android:paddingBottom="4dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="4dp"
                 android:text="搜索"
                 android:textColor="@color/white" />
 
@@ -56,5 +58,10 @@
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
             android:background="@color/appTheme" />
+
+        <ListView
+            android:id="@+id/lv_users"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"></ListView>
     </LinearLayout>
 </layout>

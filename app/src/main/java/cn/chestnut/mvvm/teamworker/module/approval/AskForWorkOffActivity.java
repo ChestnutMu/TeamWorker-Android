@@ -337,20 +337,20 @@ public class AskForWorkOffActivity extends BaseActivity {
     }
 
     private void selectDepartment() {
-        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_DEPARTMENT_BY_USERID, null, new AppCallBack<ApiResponse<List<Team>>>() {
+        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_MY_TEAMS, null, new AppCallBack<ApiResponse<List<Team>>>() {
             @Override
             public void next(ApiResponse<List<Team>> response) {
                 if (response.isSuccess()) {
                     final List<Team> teamList = response.getData();
-                    int departmentSize = teamList.size();
-                    if (departmentSize > 0) {
-                        String[] departmentName = new String[departmentSize];
-                        for (int i = 0; i < departmentSize; i++) {
-                            departmentName[i] = teamList.get(i).getTeamName();
+                    int teamSize = teamList.size();
+                    if (teamSize > 0) {
+                        String[] teamNames = new String[teamSize];
+                        for (int i = 0; i < teamSize; i++) {
+                            teamNames[i] = teamList.get(i).getTeamName();
                         }
                         new AlertDialog.Builder(AskForWorkOffActivity.this)
-                                .setTitle("请选择部门")
-                                .setItems(departmentName, new DialogInterface.OnClickListener() {
+                                .setTitle("请选择团队")
+                                .setItems(teamNames, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.cancel();
@@ -381,55 +381,55 @@ public class AskForWorkOffActivity extends BaseActivity {
         param.put("departmentId", departmentId);
         param.put("pageNum", 1);
         param.put("pageSize", 15);
-        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_USER_BY_DEPARTMENT, param, new AppCallBack<ApiResponse<List<User>>>() {
-            @Override
-            public void next(final ApiResponse<List<User>> response) {
-                if (response.isSuccess()) {
-                    // TODO: 2018/4/1 添加分页加载功能
-                    CommonUtil.setBackgroundAlpha(0.5f, AskForWorkOffActivity.this);
-
-                    PopupSelectApproverBinding popupBinding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.popup_select_approver, null, false);
-                    BaseListViewAdapter<User> adapter = new BaseListViewAdapter<>(R.layout.item_work_off_approver, BR.user, response.getData());
-                    popupBinding.lvWorkOffApprover.setAdapter(adapter);
-
-                    final PopupWindow popupWindow = new PopupWindow(popupBinding.getRoot(), ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    popupWindow.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#F8F8F8")));
-                    popupWindow.setFocusable(true);
-                    popupWindow.setOutsideTouchable(true);
-                    popupWindow.showAtLocation(binding.getRoot(), Gravity.CENTER, 0, 0);
-
-                    popupBinding.lvWorkOffApprover.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            User approver = response.getData().get(position);
-                            approverId = approver.getUserId();
-                            GlideLoader.displayImage(AskForWorkOffActivity.this, HttpUrls.GET_PHOTO + approver.getAvatar(), binding.ivApprover);
-                            popupWindow.dismiss();
-                        }
-                    });
-                    popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-                        @Override
-                        public void onDismiss() {
-                            CommonUtil.setBackgroundAlpha(1, AskForWorkOffActivity.this);
-                        }
-                    });
-
-
-                } else {
-                    showToast(response.getMessage());
-                }
-            }
-
-            @Override
-            public void error(Throwable error) {
-
-            }
-
-            @Override
-            public void complete() {
-
-            }
-        });
+//        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_USER_BY_DEPARTMENT, param, new AppCallBack<ApiResponse<List<User>>>() {
+//            @Override
+//            public void next(final ApiResponse<List<User>> response) {
+//                if (response.isSuccess()) {
+//                    // TODO: 2018/4/1 添加分页加载功能
+//                    CommonUtil.setBackgroundAlpha(0.5f, AskForWorkOffActivity.this);
+//
+//                    PopupSelectApproverBinding popupBinding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.popup_select_approver, null, false);
+//                    BaseListViewAdapter<User> adapter = new BaseListViewAdapter<>(R.layout.item_work_off_approver, BR.user, response.getData());
+//                    popupBinding.lvWorkOffApprover.setAdapter(adapter);
+//
+//                    final PopupWindow popupWindow = new PopupWindow(popupBinding.getRoot(), ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//                    popupWindow.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#F8F8F8")));
+//                    popupWindow.setFocusable(true);
+//                    popupWindow.setOutsideTouchable(true);
+//                    popupWindow.showAtLocation(binding.getRoot(), Gravity.CENTER, 0, 0);
+//
+//                    popupBinding.lvWorkOffApprover.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                        @Override
+//                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                            User approver = response.getData().get(position);
+//                            approverId = approver.getUserId();
+//                            GlideLoader.displayImage(AskForWorkOffActivity.this, HttpUrls.GET_PHOTO + approver.getAvatar(), binding.ivApprover);
+//                            popupWindow.dismiss();
+//                        }
+//                    });
+//                    popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+//                        @Override
+//                        public void onDismiss() {
+//                            CommonUtil.setBackgroundAlpha(1, AskForWorkOffActivity.this);
+//                        }
+//                    });
+//
+//
+//                } else {
+//                    showToast(response.getMessage());
+//                }
+//            }
+//
+//            @Override
+//            public void error(Throwable error) {
+//
+//            }
+//
+//            @Override
+//            public void complete() {
+//
+//            }
+//        });
     }
 
     private void applyWorkOff() {

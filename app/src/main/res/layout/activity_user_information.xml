@@ -53,7 +53,7 @@
                 android:layout_alignBottom="@+id/iv_avatar"
                 android:layout_marginLeft="32dp"
                 android:layout_toRightOf="@id/iv_avatar"
-                android:text="账号："
+                android:text="手机号码："
                 android:textColor="@color/text_gray"
                 android:textSize="@dimen/text_size_small" />
 
@@ -64,33 +64,10 @@
                 android:layout_alignBottom="@+id/tv_account"
                 android:layout_marginLeft="8dp"
                 android:layout_toRightOf="@id/tv_account"
-                android:text="@{userInformation.account}"
+                android:text="@{userInformation.telephone}"
                 android:textColor="@color/text_gray"
                 android:textSize="@dimen/text_size_small" />
         </RelativeLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:background="@color/white"
-            android:gravity="center_vertical"
-            android:padding="16dp">
-
-            <TextView
-                android:layout_width="64dp"
-                android:layout_height="wrap_content"
-                android:text="电话号码"
-                android:textColor="@color/text_black" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="24dp"
-                android:autoLink="phone"
-                android:text="@{userInformation.telephone}"
-                android:textSize="@dimen/text_size_normal" />
-        </LinearLayout>
 
         <View
             android:layout_width="match_parent"
@@ -154,7 +131,7 @@
                 android:layout_height="48dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:background="@drawable/bg_workoff_submit_btn"
+                android:background="@drawable/bg_corner_button_selector"
                 android:text="添加到通讯录"
                 android:textColor="@color/white" />
         </LinearLayout>

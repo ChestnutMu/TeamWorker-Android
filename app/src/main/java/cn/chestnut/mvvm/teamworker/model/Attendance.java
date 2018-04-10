@@ -16,6 +16,10 @@ public class Attendance {
 
     private String userId;
 
+    private String teamId;
+
+    private String picture;//照片
+
     private String altitude;//经度
 
     private String latitude;//纬度
@@ -27,6 +31,22 @@ public class Attendance {
     private Long punchInTime;//上班打卡时间
 
     private Long punchOutTime;//下班打卡时间
+
+    public String getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(String teamId) {
+        this.teamId = teamId;
+    }
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
 
     public String getAttendanceId() {
         return attendanceId;
@@ -95,15 +115,13 @@ public class Attendance {
     public String showPunchInTime() {
         if (punchInTime != null) {
             return FormatDateUtil.timeParseDetail(punchInTime);
-        }
-        else return "";
+        } else return "";
     }
 
     public String showPunchOutTime() {
         if (punchOutTime != null) {
             return FormatDateUtil.timeParseDetail(punchOutTime);
-        }
-        else return "";
+        } else return "";
     }
 
 }

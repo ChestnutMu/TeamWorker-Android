@@ -6,8 +6,7 @@ import java.util.List;
 
 import cn.chestnut.mvvm.teamworker.databinding.ItemBuildTeamBinding;
 import cn.chestnut.mvvm.teamworker.main.adapter.BaseRecyclerViewAdapter;
-import cn.chestnut.mvvm.teamworker.model.MyFriend;
-import cn.chestnut.mvvm.teamworker.model.PhoneDirectoryPerson;
+import cn.chestnut.mvvm.teamworker.model.User;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -17,22 +16,36 @@ import cn.chestnut.mvvm.teamworker.model.PhoneDirectoryPerson;
  * Email: xiaoting233zhang@126.com
  */
 
-public class BuildTeamAdapter extends BaseRecyclerViewAdapter<MyFriend, ItemBuildTeamBinding> {
+public class BuildTeamAdapter extends BaseRecyclerViewAdapter<User, ItemBuildTeamBinding> {
 
-    public BuildTeamAdapter(List<MyFriend> mItems) {
+    public static int BUILD_TEAM_VIEW_TYPE = 7;
+
+    private RemoveMemberListener removeMemberListener;
+
+    public BuildTeamAdapter(List<User> mItems) {
         super(mItems);
     }
 
     @Override
-    protected void handleViewHolder(ItemBuildTeamBinding binding, MyFriend obj, final int position) {
+    protected void handleViewHolder(ItemBuildTeamBinding binding, User obj, final int position) {
         binding.ivDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mItems.remove(position);
-                BuildTeamAdapter.this.notifyItemRemoved(position);
-                BuildTeamAdapter.this.notifyDataSetChanged();
+                removeMemberListener.removeMember(position);
             }
         });
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        return mItems.get(position).getOtherViewType(BUILD_TEAM_VIEW_TYPE);
+    }
+
+    interface RemoveMemberListener {
+        void removeMember(int position);
+    }
+
+    public void setRemoveMemberListener(RemoveMemberListener removeMemberListener) {
+        this.removeMemberListener = removeMemberListener;
+    }
 }

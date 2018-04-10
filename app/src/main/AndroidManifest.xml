@@ -8,9 +8,10 @@
         android:normalScreens="true"
         android:smallScreens="true"
         android:xlargeScreens="true" />
+
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
     <!--用于进行网络定位-->
@@ -86,15 +87,21 @@
         <activity
             android:name=".module.team.BuildTeamActivity"
             android:windowSoftInputMode="stateHidden" />
-        <activity android:name=".module.work.WorkNotificationActivity"/>
-        <activity android:name=".module.team.PhoneDirectoryActivity"/>
-        <activity android:name=".module.user.SearchFriendActivity"/>
-        <activity android:name=".module.user.UserInformationActivity"/>
-        <activity android:name=".module.user.RequestFriendActivity"/>
-        <activity android:name=".module.user.NewFriendActivity"/>
-        <activity android:name=".module.mine.MyFriendActivity"/>
-        <activity android:name=".module.team.SelectFromMyFriendActivity"/>
-        <activity android:name=".module.mine.SelectRegionActivity"/>
+        <activity android:name=".module.work.WorkNotificationActivity" />
+        <activity android:name=".module.team.PhoneDirectoryActivity" />
+        <activity android:name=".module.user.SearchFriendActivity" />
+        <activity android:name=".module.user.UserInformationActivity" />
+        <activity android:name=".module.user.RequestFriendActivity" />
+        <activity android:name=".module.user.NewFriendActivity" />
+        <activity android:name=".module.mine.MyFriendActivity" />
+        <activity android:name=".module.team.SelectFromMyFriendActivity" />
+        <activity android:name=".module.mine.SelectRegionActivity" />
+        <activity android:name=".module.team.TeamManagementActivity" />
+        <activity android:name=".module.team.TeamMemberActivity" />
+        <activity android:name=".module.team.PullUserIntoTeamActivity" />
+        <activity android:name=".module.team.SelectFromSearchUserActivity"/>
+        <activity android:name=".module.team.InvitedUserInformationActivity"/>
+        <activity android:name=".module.team.PermissionActivity"/>
     </application>
 
 </manifest>

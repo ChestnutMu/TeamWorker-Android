@@ -72,7 +72,7 @@ public class PhoneDirectoryPerson extends BindingItem implements Serializable {
 
     @Override
     public int getViewVariableId() {
-        return BR.teamPerson;
+        return BR.user;
     }
 
 }

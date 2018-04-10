@@ -51,8 +51,47 @@
                     android:layout_marginLeft="8dp"
                     android:layout_weight="1"
                     android:textColor="@color/white"
-                    android:hint="请输入用户名"
-                    android:maxLength="10"
+                    android:hint="请输入手机号"
+                    android:maxLength="11"
+                    android:singleLine="true"
+                    android:textColorHint="@color/text_gray" />
+                
+                <TextView
+                    android:id="@+id/tv_send_sms"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" 
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="发送验证码"
+                    android:textColor="@color/white"
+                    android:background="@drawable/bg_corner_button_selector"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:tint="@color/white"
+                    android:layout_marginTop="8dp"
+                    android:src="@mipmap/icon_sms" />
+
+                <EditText
+                    android:id="@+id/et_verification_code"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:textColor="@color/white"
+                    android:hint="请输入验证码"
+                    android:inputType="number"
+                    android:maxLength="6"
                     android:singleLine="true"
                     android:textColorHint="@color/text_gray" />
             </LinearLayout>
@@ -116,7 +155,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="64dp"
-                android:background="@drawable/bg_login_stroke_radius"
+                android:background="@drawable/bg_corner_button_selector"
                 android:gravity="center"
                 android:paddingBottom="10dp"
                 android:paddingTop="10dp"

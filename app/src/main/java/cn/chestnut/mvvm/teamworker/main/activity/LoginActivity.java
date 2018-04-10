@@ -24,6 +24,8 @@ import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.model.User;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
+import cn.chestnut.mvvm.teamworker.utils.Log;
+import cn.chestnut.mvvm.teamworker.utils.MD5;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 import cn.chestnut.mvvm.teamworker.utils.StringUtil;
 
@@ -80,6 +82,7 @@ public class LoginActivity extends BaseActivity {
                 return false;
             }
         });
+
         binding.etPassword.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -127,47 +130,42 @@ public class LoginActivity extends BaseActivity {
      * token验证登录
      */
     private void checkRememberLogin() {
-        String userId = PreferenceUtil.getInstances(this).getPreferenceString("userId");
-        String token = PreferenceUtil.getInstances(this).getPreferenceString("token");
-        if (StringUtil.isEmpty(userId) || StringUtil.isEmpty(token)) {
-            return;
-        }
-        Map<String, Object> params = new HashMap<>();
-        params.put("userId", userId);
-        params.put("token", token);
-        showProgressDialog(this);
-        RequestManager.getInstance(this).executeRequest(HttpUrls.REMEMBER_ME, params, new AppCallBack<ApiResponse<User>>() {
-            @Override
-            public void next(ApiResponse<User> response) {
-                if (response.isSuccess()) {
-                    PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("userId", response.getData().getUserId());
-                    PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("account", response.getData().getAccount());
-                    PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("token", response.getData().getToken());
-                    PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("nickname", response.getData().getNickname());
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    finish();
-                    startActivity(intent);
-                    userLogin();
-                } else {
-                    showToast(response.getMessage());
+        if (StringUtil.isStringNotNull(PreferenceUtil.getInstances(this).getPreferenceString("token"))) {
+            showProgressDialog(this);
+            RequestManager.getInstance(this).executeRequest(HttpUrls.REMEMBER_ME, null, new AppCallBack<ApiResponse<User>>() {
+                @Override
+                public void next(ApiResponse<User> response) {
+                    if (response.isSuccess()) {
+                        PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("userId", response.getData().getUserId());
+                        PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("telephone", response.getData().getTelephone());
+                        PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("token", response.getData().getToken());
+                        PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("nickname", response.getData().getNickname());
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        finish();
+                        startActivity(intent);
+                        userLogin();
+                    } else {
+                        showToast(response.getMessage());
+                    }
                 }
-            }
 
-            @Override
-            public void error(Throwable error) {
-                hideProgressDialog();
-            }
+                @Override
+                public void error(Throwable error) {
+                    hideProgressDialog();
+                }
 
-            @Override
-            public void complete() {
-                hideProgressDialog();
-            }
-        });
+                @Override
+                public void complete() {
+                    hideProgressDialog();
+                }
+            });
+        }
     }
 
     private void login() {
         String account = binding.etAccount.getText().toString();
         String password = binding.etPassword.getText().toString();
+        password = MD5.MD5(password);
         if (StringUtil.isStringNotNull(account) && StringUtil.isStringNotNull(password)) {
             login(account, password);
         } else {
@@ -178,9 +176,9 @@ public class LoginActivity extends BaseActivity {
     /**
      * 账号密码登陆
      */
-    private void login(String account, String password) {
+    private void login(String telephone, String password) {
         Map<String, Object> params = new HashMap<>();
-        params.put("account", account);
+        params.put("telephone", telephone);
         params.put("password", password);
         showProgressDialog(this);
         RequestManager.getInstance(this).executeRequest(HttpUrls.LOGIN, params, new AppCallBack<ApiResponse<User>>() {
@@ -189,8 +187,9 @@ public class LoginActivity extends BaseActivity {
             public void next(ApiResponse<User> response) {
                 if (response.isSuccess()) {
                     PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("userId", response.getData().getUserId());
-                    PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("account", response.getData().getAccount());
+                    PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("telephone", response.getData().getTelephone());
                     PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("token", response.getData().getToken());
+                    PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("nickname", response.getData().getNickname());
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
                     finish();

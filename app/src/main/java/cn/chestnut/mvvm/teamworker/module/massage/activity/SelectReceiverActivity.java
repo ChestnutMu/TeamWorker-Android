@@ -62,7 +62,7 @@ public class SelectReceiverActivity extends BaseActivity {
     protected void initData() {
         userList = new ArrayList<>();
         departmentId = getIntent().getStringExtra("departmentId");
-        getUserByDepartment(departmentId, pageNum, pageSize);
+//        getUserByDepartment(departmentId, pageNum, pageSize);
     }
 
     protected void initView() {
@@ -81,7 +81,7 @@ public class SelectReceiverActivity extends BaseActivity {
                 if (userList != null) {
                     userList.clear();
                     pageNum = 1;
-                    getUserByDepartment(departmentId, pageNum, pageSize);
+//                    getUserByDepartment(departmentId, pageNum, pageSize);
                 }
                 binding.swipeToLoadLayout.setRefreshing(false);
             }
@@ -91,7 +91,7 @@ public class SelectReceiverActivity extends BaseActivity {
             public void onLoadMore() {
                 if (userList != null) {
                     pageNum++;
-                    getUserByDepartment(departmentId, pageNum, pageSize);
+//                    getUserByDepartment(departmentId, pageNum, pageSize);
                 }
                 binding.swipeToLoadLayout.setLoadingMore(false);
             }
@@ -108,38 +108,38 @@ public class SelectReceiverActivity extends BaseActivity {
     }
 
 
-    /**
-     * 获取所有部门
-     */
-    private void getUserByDepartment(String departmentId, int pageNum, int pageSize) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("departmentId", departmentId);
-        params.put("pageNum", pageNum);
-        params.put("pageSize", pageSize);
-        showProgressDialog(this);
-        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_USER_BY_DEPARTMENT, params, new AppCallBack<ApiResponse<List<User>>>() {
-
-            @Override
-            public void next(ApiResponse<List<User>> response) {
-                if (response.isSuccess()) {
-                    userList.addAll(response.getData());
-                    userAdapter.notifyDataSetChanged();
-                } else {
-                    showToast(response.getMessage());
-                }
-            }
-
-            @Override
-            public void error(Throwable error) {
-                hideProgressDialog();
-            }
-
-            @Override
-            public void complete() {
-                hideProgressDialog();
-            }
-
-        });
-
-    }
+//    /**
+//     * 获取所有部门
+//     */
+//    private void getUserByDepartment(String departmentId, int pageNum, int pageSize) {
+//        Map<String, Object> params = new HashMap<>();
+//        params.put("departmentId", departmentId);
+//        params.put("pageNum", pageNum);
+//        params.put("pageSize", pageSize);
+//        showProgressDialog(this);
+//        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_USER_BY_DEPARTMENT, params, new AppCallBack<ApiResponse<List<User>>>() {
+//
+//            @Override
+//            public void next(ApiResponse<List<User>> response) {
+//                if (response.isSuccess()) {
+//                    userList.addAll(response.getData());
+//                    userAdapter.notifyDataSetChanged();
+//                } else {
+//                    showToast(response.getMessage());
+//                }
+//            }
+//
+//            @Override
+//            public void error(Throwable error) {
+//                hideProgressDialog();
+//            }
+//
+//            @Override
+//            public void complete() {
+//                hideProgressDialog();
+//            }
+//
+//        });
+//
+//    }
 }

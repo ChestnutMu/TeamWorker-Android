@@ -3,6 +3,7 @@
 
     <string name="fragment_message">消息</string>
     <string name="fragment_work">工作</string>
+    <string name="fragment_directory">通讯录</string>
     <string name="fragment_mine">我的</string>
 
     <string name="work_wait">待办</string>

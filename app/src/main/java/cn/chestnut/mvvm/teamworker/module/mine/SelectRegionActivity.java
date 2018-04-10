@@ -51,8 +51,6 @@ public class SelectRegionActivity extends BaseActivity {
 
     private int pageNum = 1;
 
-    private int maxCount = 0;
-
     private int level = 0;//0标识省, 1标识市, 2标识区
 
     private String province;
@@ -180,10 +178,10 @@ public class SelectRegionActivity extends BaseActivity {
                 if (response.isSuccess()) {
                     if (response.getData().size() > 0) {
                         addressList.addAll(response.getData());
-                        adapter.notifyDataSetChanged();
                     } else if (pageNum > 1) {
                         showToast("数据已加载完全");
                     }
+                    adapter.notifyDataSetChanged();
                 }
             }
 

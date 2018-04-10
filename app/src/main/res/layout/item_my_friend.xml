@@ -4,8 +4,8 @@
 
     <data>
         <variable
-            name="myFriend"
-            type="cn.chestnut.mvvm.teamworker.model.MyFriend" />
+            name="user"
+            type="cn.chestnut.mvvm.teamworker.model.User" />
     </data>
 
     <LinearLayout
@@ -21,7 +21,7 @@
             android:paddingLeft="10dp"
             android:background="#ebebeb"
             android:gravity="center_vertical"
-            android:text="@{myFriend.wordHeader}"
+            android:text="@{user.wordHeader}"
             android:textSize="@dimen/text_size_small" />
 
         <LinearLayout
@@ -34,7 +34,7 @@
                 android:id="@+id/iv_avatar"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                app:load_url_image="@{myFriend.avatar}" />
+                app:load_url_image="@{user.avatar}" />
 
             <!--显示联系人信息-->
             <TextView
@@ -42,7 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:text="@{myFriend.nickname}"
+                android:text="@{user.nickname}"
                 android:textSize="@dimen/text_size_normal" />
         </LinearLayout>
     </LinearLayout>

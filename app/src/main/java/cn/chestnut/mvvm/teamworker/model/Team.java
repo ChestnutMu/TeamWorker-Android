@@ -21,9 +21,13 @@ public class Team extends BindingItem {
 
     private String teamIndustry;
 
-    private String personnelScale;
+    private String teamDesc;
 
     private String teamRegion;
+
+    private long createTime;
+
+    private long updateTime;
 
     public String getTeamId() {
         return teamId;
@@ -57,12 +61,28 @@ public class Team extends BindingItem {
         this.teamIndustry = teamIndustry;
     }
 
-    public String getPersonnelScale() {
-        return personnelScale;
+    public String getTeamDesc() {
+        return teamDesc;
     }
 
-    public void setPersonnelScale(String personnelScale) {
-        this.personnelScale = personnelScale;
+    public void setTeamDesc(String teamDesc) {
+        this.teamDesc = teamDesc;
+    }
+
+    public long getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
+    }
+
+    public long getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(long updateTime) {
+        this.updateTime = updateTime;
     }
 
     public String getTeamRegion() {

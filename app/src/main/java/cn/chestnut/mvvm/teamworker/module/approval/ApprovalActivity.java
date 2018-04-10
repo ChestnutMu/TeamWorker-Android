@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.ActivityApprovalBinding;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
-import cn.chestnut.mvvm.teamworker.module.work.adapter.GridViewAdapter;
+import cn.chestnut.mvvm.teamworker.module.work.GridViewAdapter;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
