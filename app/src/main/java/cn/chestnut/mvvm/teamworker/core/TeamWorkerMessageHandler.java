@@ -12,14 +12,35 @@ import android.support.v4.content.LocalBroadcastManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.greenrobot.greendao.async.AsyncOperation;
+import org.greenrobot.greendao.async.AsyncOperationListener;
+import org.greenrobot.greendao.async.AsyncSession;
+import org.greenrobot.greendao.query.QueryBuilder;
+
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import cn.chestnut.mvvm.teamworker.Constant;
+import cn.chestnut.mvvm.teamworker.db.ChatDao;
+import cn.chestnut.mvvm.teamworker.db.ChatMessageDao;
+import cn.chestnut.mvvm.teamworker.http.ApiResponse;
+import cn.chestnut.mvvm.teamworker.http.AppCallBack;
+import cn.chestnut.mvvm.teamworker.http.HttpUrls;
+import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
+import cn.chestnut.mvvm.teamworker.model.Chat;
+import cn.chestnut.mvvm.teamworker.model.ChatMessage;
+import cn.chestnut.mvvm.teamworker.model.User;
+import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
 import cn.chestnut.mvvm.teamworker.socket.ReceiverProtocol;
 import cn.chestnut.mvvm.teamworker.socket.TeamWorkerClient;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
+import cn.chestnut.mvvm.teamworker.utils.EmojiUtil;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 
@@ -46,12 +67,17 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
      **/
     private final static int SESSION_TIMEOUT = -3;
 
+    public Gson gson = new Gson();
+
     private static TeamWorkerMessageHandler TeamWorkerMessageHandler;
 
     private ArrayList<OnHandlerSessionListener> mSessionListeners;
+    /*本地数据操作异步工具类*/
+    private AsyncSession asyncSession;
 
     private TeamWorkerMessageHandler() {
         super();
+        asyncSession = MessageDaoUtils.getDaoSession().startAsyncSession();
     }
 
     synchronized public static TeamWorkerMessageHandler getInstance() {
@@ -109,6 +135,13 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
                 return;
             case ReceiverProtocol.RECEIVE_NEW_FRIEND_REQUEST:
                 handleFriendQuest(response);
+                break;
+            case ReceiverProtocol.MSG_SEND_CHAT_MESSAGE:
+                handleChatMessage(response);
+                break;
+            case ReceiverProtocol.MSG_SEND_CHAT_MANY_MESSAGE:
+                handleManyChatMessage(response);
+                break;
             default:
                 break;
         }
@@ -117,6 +150,152 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
             for (OnHandlerSessionListener listener : mSessionListeners) {
                 notifySessionListeners(msgId, response, listener);
             }
+    }
+
+    /**
+     * 处理单条聊天室消息
+     *
+     * @param response
+     */
+    private void handleChatMessage(Object response) {
+        final ChatMessage newMessage = gson.fromJson(
+                response.toString(), new TypeToken<ChatMessage>() {
+                }.getType());
+        if (asyncSession == null)
+            asyncSession = MessageDaoUtils.getDaoSession().startAsyncSession();
+        try {
+            newMessage.setMessage(EmojiUtil.emojiRecovery(newMessage.getMessage()));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        asyncSession.runInTx(new Runnable() {
+            @Override
+            public void run() {
+                asyncSession.insert(newMessage);
+                checkHasChatAndUpdate(newMessage.getChatId());
+            }
+        });
+    }
+
+    private void checkHasChatAndUpdate(String chatId) {
+        Set<String> chatList = new HashSet<>();
+        chatList.add(chatId);
+        checkHasChatAndUpdate(chatList);
+    }
+
+    /**
+     * 处理多条聊天室消息
+     *
+     * @param response
+     */
+
+    private void handleManyChatMessage(Object response) {
+        final List<ChatMessage> newMessageList = gson.fromJson(
+                response.toString(), new TypeToken<List<ChatMessage>>() {
+                }.getType());
+        if (asyncSession == null)
+            asyncSession = MessageDaoUtils.getDaoSession().startAsyncSession();
+        asyncSession.runInTx(new Runnable() {
+            @Override
+            public void run() {
+                Set<String> chatList = new HashSet<>();
+                for (ChatMessage chatMessage : newMessageList) {
+                    try {
+                        chatMessage.setMessage(EmojiUtil.emojiRecovery(chatMessage.getMessage()));
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    asyncSession.insert(chatMessage);
+                    chatList.add(chatMessage.getChatId());
+                }
+                checkHasChatAndUpdate(chatList);
+            }
+        });
+    }
+
+    private void checkHasChatAndUpdate(Set<String> chatList) {
+        final List<String> newChatList = new ArrayList<>();
+        for (String chatId : chatList) {
+            boolean isUpdate = PreferenceUtil.getInstances(MyApplication.getInstance()).
+                    getPreferenceBoolean(Constant.PreferenceKey.CHAT_INFO_WAITING + chatId);
+            if (!isUpdate) {
+                PreferenceUtil.getInstances(MyApplication.getInstance()).
+                        savePreferenceBoolean(Constant.PreferenceKey.CHAT_INFO_WAITING + chatId, true);
+                newChatList.add(chatId);
+            }
+        }
+        asyncSession.setListenerMainThread(new AsyncOperationListener() {
+
+            @Override
+            public void onAsyncOperationCompleted(AsyncOperation operation) {
+                if (operation.isFailed()) {
+                    Log.d("获取数据异常");
+                    return;
+                }
+                Log.d("operation.getType()= " + operation.getType());
+                if (operation.getType() == AsyncOperation.OperationType.QueryList) {
+                    Object obj = operation.getResult();
+                    Log.d("获取数据 obj = " + obj);
+
+                    handleData(obj, newChatList);
+                }
+            }
+        });
+        asyncSession.queryList(QueryBuilder.internalCreate(MessageDaoUtils.getDaoSession().getDao(Chat.class))
+                .where(ChatDao.Properties.ChatId.in(newChatList))
+                .build());
+    }
+
+    private void handleData(Object obj, List<String> chatList) {
+        if (obj != null && obj instanceof List) {
+            Log.d("obtainDataFromLocalDatabase: " + obj);
+            List<Chat> data = (List<Chat>) obj;
+            if (!data.isEmpty()) {
+                for (Chat chat : data) {
+                    PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey(Constant.PreferenceKey.CHAT_INFO_WAITING + chat.getChatId());
+                    chatList.remove(chat.getChatId());
+                }
+                getChatFromServer(chatList);
+            } else {
+                getChatFromServer(chatList);
+            }
+        } else {
+            getChatFromServer(chatList);
+        }
+    }
+
+    private void getChatFromServer(final List<String> chatList) {
+        if (chatList.isEmpty()) return;
+        Map<String, Object> param = new HashMap<>(1);
+        param.put("chatList", gson.toJson(chatList));
+        RequestManager.getInstance(MyApplication.getInstance()).executeRequest(HttpUrls.GET_CHAT_LIST, param, new AppCallBack<ApiResponse<List<Chat>>>() {
+            @Override
+            public void next(ApiResponse<List<Chat>> response) {
+                if (response.isSuccess()) {
+                    for (Chat chat : response.getData()) {
+                        asyncSession.insertOrReplace(chat);
+                        PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey(Constant.PreferenceKey.CHAT_INFO_WAITING + chat.getChatId());
+                    }
+                } else {
+                    for (String chatId : chatList) {
+                        PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey(Constant.PreferenceKey.CHAT_INFO_WAITING + chatId);
+                    }
+                    Log.d(response.getMessage());
+                }
+            }
+
+            @Override
+            public void error(Throwable error) {
+                for (String chatId : chatList) {
+                    PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey(Constant.PreferenceKey.CHAT_INFO_WAITING + chatId);
+                }
+            }
+
+            @Override
+            public void complete() {
+
+            }
+        });
     }
 
     private void notifySessionListeners(int msgId, Object response, OnHandlerSessionListener listener) {

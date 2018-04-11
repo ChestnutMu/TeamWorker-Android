@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="message"
-            type="cn.chestnut.mvvm.teamworker.model.MessageVo" />
+            type="cn.chestnut.mvvm.teamworker.model.ChatMessage" />
     </data>
 
     <LinearLayout
@@ -26,20 +29,35 @@
                 android:id="@+id/iv_left_avatar"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:src="@mipmap/ic_launcher" />
+                app:load_url_image="@{message.chatMessageAvatar}" />
 
-            <TextView
+            <LinearLayout
                 android:id="@+id/tv_left_content"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="48dp"
                 android:layout_marginRight="48dp"
                 android:layout_weight="1"
-                android:autoLink="all"
-                android:text="@{message.message.content}"
-                android:background="@drawable/chat_bubble_left"
-                android:gravity="center_vertical"
-                android:textColor="@color/text_black"
-                android:textSize="@dimen/text_size_small" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/iv_left_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@{message.chatMessageName}"
+                    android:textColor="@color/text_gray"
+                    android:textSize="@dimen/text_size_more_small" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:autoLink="all"
+                    android:background="@drawable/chat_bubble_left"
+                    android:text="@{message.message}"
+                    android:textColor="@color/text_black"
+                    android:textSize="@dimen/text_size_small" />
+            </LinearLayout>
+
 
         </LinearLayout>
 
@@ -52,24 +70,40 @@
             android:padding="5dp"
             android:visibility="gone">
 
-            <TextView
+            <LinearLayout
                 android:id="@+id/tv_right_content"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="48dp"
-                android:layout_weight="1"
-                android:autoLink="all"
-                android:background="@drawable/chat_bubble_right"
-                android:gravity="center_vertical"
-                android:text="@{message.message.content}"
-                android:textColor="@color/text_black"
-                android:textSize="@dimen/text_size_small" />
+                android:layout_marginStart="48dp"
+                android:layout_weight="1">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="发送中..."
+                    android:textColor="@color/text_gray"
+                    android:textSize="@dimen/text_size_more_small"
+                    android:visibility="@{message.done?View.GONE:View.VISIBLE}" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:autoLink="all"
+                    android:background="@drawable/chat_bubble_right"
+                    android:gravity="center_vertical"
+                    android:text="@{message.message}"
+                    android:textColor="@color/text_black"
+                    android:textSize="@dimen/text_size_small" />
+            </LinearLayout>
+
 
             <ImageView
                 android:id="@+id/iv_right_avatar"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:src="@mipmap/ic_launcher" />
+                app:load_url_image="@{message.chatMessageAvatar}" />
         </LinearLayout>
     </LinearLayout>
 </layout>

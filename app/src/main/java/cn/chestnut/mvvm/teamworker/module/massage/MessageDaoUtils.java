@@ -8,10 +8,12 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import cn.chestnut.mvvm.teamworker.db.DaoSession;
 import cn.chestnut.mvvm.teamworker.db.MessageDao;
 import cn.chestnut.mvvm.teamworker.model.Message;
 import cn.chestnut.mvvm.teamworker.model.MessageUser;
 import cn.chestnut.mvvm.teamworker.model.MessageVo;
+import cn.chestnut.mvvm.teamworker.model.User;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.sqlite.DaoManager;
 
@@ -27,6 +29,10 @@ public class MessageDaoUtils {
 
     public MessageDaoUtils() {
         mManager = DaoManager.getInstance();
+    }
+
+    public static DaoSession getDaoSession() {
+        return DaoManager.getInstance().getDaoSession();
     }
 
     /**
@@ -331,7 +337,6 @@ public class MessageDaoUtils {
     }
 
     /**
-     *
      * @param messages
      * @param messageUser
      * @return
@@ -345,5 +350,19 @@ public class MessageDaoUtils {
             result.add(messageVo);
         }
         return result;
+    }
+
+
+
+    /**
+     * 根据userId查询用户信息
+     *
+     * @return
+     */
+    public User queryUserByUserId(String userId) {
+        Query query = mManager.getDaoSession().getUserDao().queryBuilder().where(
+                new WhereCondition.StringCondition(
+                        "USER_ID = '" + userId + "'")).build();
+        return (User) query.unique();
     }
 }

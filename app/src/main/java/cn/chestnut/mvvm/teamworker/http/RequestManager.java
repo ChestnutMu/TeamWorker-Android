@@ -1,6 +1,7 @@
 package cn.chestnut.mvvm.teamworker.http;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.google.gson.Gson;
 
@@ -19,20 +20,20 @@ import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 
 public class RequestManager {
     static RequestManager requestManager;
-    private Activity activity;
+    private Context mContext;
     private Gson gson = new Gson();
 
-    public static RequestManager getInstance(Activity activity) {
+    public static RequestManager getInstance(Context mContext) {
         if (requestManager == null) {
             requestManager = new RequestManager();
         }
-        requestManager.activity = activity;
+        requestManager.mContext = mContext;
         return requestManager;
     }
 
     public static void clearActivity() {
-        if (requestManager != null && requestManager.activity != null) {
-            requestManager.activity = null;
+        if (requestManager != null && requestManager.mContext != null) {
+            requestManager.mContext = null;
         }
     }
 
@@ -44,8 +45,8 @@ public class RequestManager {
      */
     public <T> void executeRequest(final String api, Map<String, Object> params, final AppCallBack<ApiResponse<T>> callBack) {
         Map<String, String> headers = new HashMap<>();
-        headers.put("uid", PreferenceUtil.getInstances(activity).getPreferenceString("userId"));
-        headers.put("token", PreferenceUtil.getInstances(activity).getPreferenceString("token"));
+        headers.put("uid", PreferenceUtil.getInstances(mContext).getPreferenceString("userId"));
+        headers.put("token", PreferenceUtil.getInstances(mContext).getPreferenceString("token"));
         RQ.post(HttpUrls.getUrls(api), headers, gson.toJson(params), callBack);
 //        RQ.post(HttpUrls.getUrls(api), gson.toJson(params), callBack);
     }
@@ -58,8 +59,8 @@ public class RequestManager {
      */
     public <T> void executeRequest(final String api, Object params, final AppCallBack<ApiResponse<T>> callBack) {
         Map<String, String> headers = new HashMap<>();
-        headers.put("uid", PreferenceUtil.getInstances(activity).getPreferenceString("userId"));
-        headers.put("token", PreferenceUtil.getInstances(activity).getPreferenceString("token"));
+        headers.put("uid", PreferenceUtil.getInstances(mContext).getPreferenceString("userId"));
+        headers.put("token", PreferenceUtil.getInstances(mContext).getPreferenceString("token"));
         RQ.post(HttpUrls.getUrls(api), headers, gson.toJson(params), callBack);
 //        RQ.post(HttpUrls.getUrls(api), gson.toJson(params), callBack);
     }

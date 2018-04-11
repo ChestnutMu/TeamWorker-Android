@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
         <variable
-            name="message"
-            type="cn.chestnut.mvvm.teamworker.model.MessageVo" />
+            name="chat"
+            type="cn.chestnut.mvvm.teamworker.model.Chat" />
     </data>
 
     <LinearLayout
@@ -20,7 +21,7 @@
             android:id="@+id/iv_avatar"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@mipmap/ic_launcher" />
+            app:load_url_image="@{chat.chatPic}" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -32,35 +33,24 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/tv_title"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@{message.showSenderName()}"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@{chat.chatName}"
                     android:textColor="@color/text_black" />
 
                 <TextView
                     android:id="@+id/tv_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{message.showTime()}"
+                    android:text="@{chat.showTime()}"
                     android:textColor="@color/text_gray"
                     android:textSize="@dimen/text_size_small" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/tv_content"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="@{message.message.content}"
-                android:textColor="@color/text_gray"
-                android:textSize="@dimen/text_size_small" />
         </LinearLayout>
     </LinearLayout>
 

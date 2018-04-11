@@ -9,7 +9,9 @@ import java.net.URISyntaxException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import cn.chestnut.mvvm.teamworker.core.MessageHandler;
+import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
 import cn.chestnut.mvvm.teamworker.utils.Log;
+import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -143,7 +145,11 @@ public class TeamWorkerSocket {
         } else {
             this.messageHandler = messageHandler;
             try {
-                String uri = ip + ":" + port;
+                String userId = PreferenceUtil.getInstances(MyApplication.getInstance()).getPreferenceString("userId");
+                String token = PreferenceUtil.getInstances(MyApplication.getInstance()).getPreferenceString("token");
+                String uri = ip + ":" + port + "?socketAuthorizationU=" + userId
+                        + "&socketAuthorizationT=" + token + "&socketAuthorizationI="
+                        + token;
                 Log.d("URI " + uri);
                 this.mSocket = IO.socket(uri);
             } catch (URISyntaxException e) {

@@ -1,5 +1,9 @@
 package cn.chestnut.mvvm.teamworker.model;
 
+import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Unique;
+
 import java.io.Serializable;
 
 import cn.chestnut.mvvm.teamworker.BR;
@@ -7,6 +11,7 @@ import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.main.adapter.BindingItem;
 import cn.chestnut.mvvm.teamworker.module.team.BuildTeamAdapter;
 import cn.chestnut.mvvm.teamworker.utils.StringUtil;
+import org.greenrobot.greendao.annotation.Generated;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -15,11 +20,15 @@ import cn.chestnut.mvvm.teamworker.utils.StringUtil;
  * Description：用户Bean
  * Email: xiaoting233zhang@126.com
  */
-
+@Entity
 public class User extends BindingItem implements Serializable {
-    private String userId;
 
-    private String password;
+    private static final long serialVersionUID = 9003416166273698372L;
+    @Id(autoincrement = true)
+    private Long id;
+
+    @Unique
+    private String userId;
 
     private String token;
 
@@ -34,6 +43,33 @@ public class User extends BindingItem implements Serializable {
     private String birthday;
 
     private String region;
+
+    @Generated(hash = 490298201)
+    public User(Long id, String userId, String token, String nickname,
+            String avatar, String telephone, String sex, String birthday,
+            String region) {
+        this.id = id;
+        this.userId = userId;
+        this.token = token;
+        this.nickname = nickname;
+        this.avatar = avatar;
+        this.telephone = telephone;
+        this.sex = sex;
+        this.birthday = birthday;
+        this.region = region;
+    }
+
+    @Generated(hash = 586692638)
+    public User() {
+    }
+    
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getUserId() {
         return userId;
@@ -101,14 +137,6 @@ public class User extends BindingItem implements Serializable {
 
     public void setRegion(String region) {
         this.region = region;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getToken() {

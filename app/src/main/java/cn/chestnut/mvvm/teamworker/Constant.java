@@ -10,6 +10,24 @@ package cn.chestnut.mvvm.teamworker;
 
 
 public class Constant {
+
+    /**
+     * 聊天室类型 0双人聊天室 1多人聊天室
+     */
+    public class ChatType {
+        public static final int TYPE_CHAT_DOUBLE = 0;
+        public static final int TYPE_CHAT_MULTIPLAYER = 1;
+    }
+
+    //PreferenceUtil key
+    public class PreferenceKey {
+
+        public static final String USER_INFO_WAITING = "user_info_waiting:";//是否在更新用户信息
+
+        public static final String CHAT_INFO_WAITING = "chat_info_waiting:";//是否在更新聊天室信息
+
+    }
+
     //action 广播标志类
     public class ActionConstant {
 

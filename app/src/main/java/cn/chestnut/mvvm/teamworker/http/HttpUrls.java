@@ -72,6 +72,19 @@ public class HttpUrls {
     //获取用户还未接收的消息列表
     public static final String GET_NOT_SEND_MESSAGES_BY_USER_ID = "/message/getNotSendMessagesByUserId";
 
+    //创建聊天室
+    public static final String BUILD_CHAT = "/chat/buildChat";
+
+    //获取列表用户信息
+    public static final String GET_USER_LIST_INFO = "/user/getUserListInfo";
+
+    //聊天室发送消息
+    public static final String SEND_CHAT_MESSAGE = "/chat/sendChatMessage";
+
+    //聊天室发送消息
+    public static final String GET_CHAT_LIST = "/chat/getChatList";
+
+
 
     //-----------------------团队接口------------------------------------------------------
     //创建一个团队

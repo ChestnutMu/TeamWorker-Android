@@ -8,11 +8,6 @@ import org.greenrobot.greendao.annotation.Unique;
 
 import java.io.Serializable;
 
-import cn.chestnut.mvvm.teamworker.BR;
-import cn.chestnut.mvvm.teamworker.R;
-import cn.chestnut.mvvm.teamworker.main.adapter.BindingItem;
-import cn.chestnut.mvvm.teamworker.utils.FormatDateUtil;
-
 /**
  * Copyright (c) 2017, Chestnut All rights reserved
  * Author: Chestnut

@@ -67,7 +67,7 @@
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:paddingTop="4dp"
-            android:text='@{request.accepted? "已同意":"同意"}'
+            android:text="@{request.accepted?@string/accepted:@string/wait_accept}"
             android:textColor="@color/appTheme"
             android:textSize="@dimen/text_size_small" />
 

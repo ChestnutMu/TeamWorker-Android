@@ -1,5 +1,6 @@
 package cn.chestnut.mvvm.teamworker.http;
 
+import android.os.SystemClock;
 import android.text.TextUtils;
 
 import com.alibaba.fastjson.JSONObject;
@@ -282,6 +283,18 @@ public class RQ {
                             subscriber.onCompleted();
                             response.body().close();
                         } else {
+                            // 获取响应的输入流对象
+                            String dateStr = response.header("Date");
+                            System.out.println("dateStr " + dateStr);
+                            if (!TextUtils.isEmpty(dateStr)) {
+                                Date parse = HttpDate.parse(dateStr);
+                                if (parse != null) {
+                                    // 客户端请求过程一般大于比收到响应时间耗时，所以没有简单的除2 加上去，而是直接用该时间
+                                    MyApplication.responseTime = parse.getTime();
+                                    MyApplication.responseCurrentTime = SystemClock.elapsedRealtime();
+                                }
+                            }
+
                             String reslutTextOrg = response.body().string()
                                     .trim();
                             String reslut = "";

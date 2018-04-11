@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="com.android.databinding:baseLibrary:3.0.1@jar">
     <CLASSES>
-      <root url="jar://$APPLICATION_HOME_DIR$/gradle/m2repository/com/android/databinding/baseLibrary/3.0.1/baseLibrary-3.0.1.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.databinding/baseLibrary/3.0.1/cc0483d84342e82c261aeb5fd0ef2f876b587489/baseLibrary-3.0.1.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

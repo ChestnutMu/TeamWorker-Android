@@ -24,7 +24,7 @@ public class BaseListViewAdapter<T> extends BaseAdapter {
     private int itemLayoutId;
     private int itemId;
 
-    private List<T> objects;
+    protected List<T> objects;
 
     private ViewDataBinding binding;
 

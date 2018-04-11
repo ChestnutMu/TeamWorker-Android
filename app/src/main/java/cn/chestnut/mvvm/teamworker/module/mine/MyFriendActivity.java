@@ -64,7 +64,7 @@ public class MyFriendActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        adapter = new MyFriendAdapter(R.layout.item_my_friend, BR.myFriend, myFriendList);
+        adapter = new MyFriendAdapter(R.layout.item_my_friend, BR.user, myFriendList);
         binding.lvMyFriend.setAdapter(adapter);
     }
 
@@ -110,17 +110,17 @@ public class MyFriendActivity extends BaseActivity {
         RequestManager.getInstance(this).executeRequest(HttpUrls.GET_MY_FRIENDS, params, new AppCallBack<ApiResponse<List<User>>>() {
             @Override
             public void next(ApiResponse<List<User>> response) {
-                if (response.isSuccess()) {
+                if (response.isSuccess() && !response.getData().isEmpty()) {
                     myFriendList.addAll(response.getData());
+                    Collections.sort(myFriendList, new Comparator<User>() {
+                        @Override
+                        public int compare(User lmf, User rmf) {
+                            //根据拼音进行排序
+                            return lmf.getPinyin().compareTo(rmf.getPinyin());
+                        }
+                    });
+                    adapter.notifyDataSetChanged();
                 }
-                Collections.sort(myFriendList, new Comparator<User>() {
-                    @Override
-                    public int compare(User lmf, User rmf) {
-                        //根据拼音进行排序
-                        return lmf.getPinyin().compareTo(rmf.getPinyin());
-                    }
-                });
-                adapter.notifyDataSetChanged();
             }
 
             @Override

@@ -3,6 +3,7 @@ package cn.chestnut.mvvm.teamworker.main.common;
 import android.content.Context;
 import android.os.Build;
 import android.os.StrictMode;
+import android.os.SystemClock;
 import android.support.annotation.RequiresApi;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
@@ -27,6 +28,22 @@ import cn.chestnut.mvvm.teamworker.core.TeamWorkerMessageHandler;
 public class MyApplication extends MultiDexApplication {
 
     private static MyApplication application;
+
+
+    /*请求响应时间*/
+    public static long responseTime = SystemClock.elapsedRealtime();
+    /*获取请求响应时间的时间*/
+    public static long responseCurrentTime = SystemClock.elapsedRealtime();
+
+    /**
+     * 获取经过服务器校验后的时间
+     *
+     * @return
+     */
+    public static long currentServerTimeMillis() {
+        long currentServerTimeMillis = responseTime + SystemClock.elapsedRealtime() - responseCurrentTime;
+        return currentServerTimeMillis;
+    }
 
     public static MyApplication getInstance() {
         return application;

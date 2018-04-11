@@ -9,4 +9,8 @@
     <string name="work_wait">待办</string>
     <string name="work_notification">通知</string>
 
+    <string name="accepted">已同意</string>
+    <string name="wait_accept">同意</string>
+
+
 </resources>

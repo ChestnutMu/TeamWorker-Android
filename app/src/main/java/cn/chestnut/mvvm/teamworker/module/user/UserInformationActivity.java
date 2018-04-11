@@ -17,27 +17,40 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import org.greenrobot.greendao.async.AsyncOperation;
+import org.greenrobot.greendao.async.AsyncOperationListener;
+import org.greenrobot.greendao.async.AsyncSession;
+import org.greenrobot.greendao.query.QueryBuilder;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import cn.chestnut.mvvm.teamworker.BR;
+import cn.chestnut.mvvm.teamworker.Constant;
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.ActivityUserInformationBinding;
 import cn.chestnut.mvvm.teamworker.databinding.PopupUserInfoMenuBinding;
+import cn.chestnut.mvvm.teamworker.db.ChatDao;
 import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
 import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.adapter.BaseListViewAdapter;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
+import cn.chestnut.mvvm.teamworker.model.Chat;
 import cn.chestnut.mvvm.teamworker.model.UserFriend;
+import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
 import cn.chestnut.mvvm.teamworker.module.massage.activity.ChatActivity;
 import cn.chestnut.mvvm.teamworker.module.team.PullUserIntoTeamActivity;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -51,6 +64,8 @@ public class UserInformationActivity extends BaseActivity {
 
     private ActivityUserInformationBinding binding;
 
+    private String myUserId;
+
     private String userId;
 
     private UserFriend userFriend;
@@ -58,6 +73,9 @@ public class UserInformationActivity extends BaseActivity {
     private List<AddAction> addActionList;
 
     private BaseListViewAdapter adapter;
+
+    /*本地数据操作异步工具类*/
+    private AsyncSession asyncSession;
 
     @Override
     protected void setBaseTitle(TextView titleView) {
@@ -84,19 +102,20 @@ public class UserInformationActivity extends BaseActivity {
 
     protected void initData() {
         userId = getIntent().getStringExtra("userId");
+        myUserId = PreferenceUtil.getInstances(this).getPreferenceString("userId");
         addActionList = new ArrayList<>();
         getUserDetail();
     }
 
     protected void initView() {
         Log.d("userFriend:" + userFriend.isFriend());
-        if (userFriend.isFriend() || userId.equals(PreferenceUtil.getInstances(this).getPreferenceString("userId"))) {
+        if (userFriend.isFriend() || userId.equals(myUserId)) {
+            asyncSession = MessageDaoUtils.getDaoSession().startAsyncSession();
             binding.btnSubmit.setText("发送消息");
             binding.btnSubmit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(UserInformationActivity.this, ChatActivity.class);
-                    intent.putExtra("receiverId", userId);
+                    findChatAndGoTOChat();
                 }
             });
         } else {
@@ -111,6 +130,81 @@ public class UserInformationActivity extends BaseActivity {
             });
         }
         binding.setVariable(BR.userInformation, userFriend.getUser());
+    }
+
+    /**
+     * 从本地数据库找到chat，否则创建一个chat，跳转到ChatActivity
+     */
+    private void findChatAndGoTOChat() {
+        asyncSession.setListenerMainThread(new AsyncOperationListener() {
+
+            @Override
+            public void onAsyncOperationCompleted(AsyncOperation operation) {
+                if (operation.isFailed()) {
+                    Log.d("获取数据异常");
+                    //从服务器创建并保存到本地
+                    createChat();
+                    return;
+                }
+                Log.d("operation.getType()= " + operation.getType());
+                if (operation.getType() == AsyncOperation.OperationType.QueryUnique) {
+                    Object obj = operation.getResult();
+                    Log.d("获取数据 obj = " + obj);
+                    if (null == obj) {
+                        //从服务器创建并保存到本地
+                        createChat();
+                    } else {
+                        handleChat((Chat) obj);
+                    }
+                }
+            }
+        });
+        asyncSession.queryUnique(QueryBuilder.internalCreate(MessageDaoUtils.getDaoSession().getDao(Chat.class))
+                .where(ChatDao.Properties.UserId.eq(userFriend.getUser().getUserId()))
+                .build());
+    }
+
+    private void createChat() {
+        Map<String, Object> param = new HashMap<>(2);
+        param.put("chatType", Constant.ChatType.TYPE_CHAT_DOUBLE);
+        Set<String> userList = new HashSet<>(2);
+        userList.add(userId);
+        userList.add(myUserId);
+        param.put("userList", gson.toJson(userList));
+        RequestManager.getInstance(this).executeRequest(HttpUrls.BUILD_CHAT, param, new AppCallBack<ApiResponse<Chat>>() {
+            @Override
+            public void next(ApiResponse<Chat> response) {
+                if (response.isSuccess()) {
+                    Chat chat = response.getData();
+                    //保存到本地
+                    chat.setChatName(userFriend.getUser().getNickname());
+                    chat.setChatPic(userFriend.getUser().getAvatar());
+                    chat.setUserId(userFriend.getUser().getUserId());
+                    asyncSession.insert(chat);
+                    //跳转
+                    handleChat(chat);
+                } else {
+                    showToast(response.getMessage());
+                }
+            }
+
+            @Override
+            public void error(Throwable error) {
+
+            }
+
+            @Override
+            public void complete() {
+
+            }
+        });
+    }
+
+    private void handleChat(Chat chat) {
+        Intent intent = new Intent(this, ChatActivity.class);
+        intent.putExtra(ChatActivity.BUNDLE_CHAT, chat);
+        startActivity(intent);
+        finish();
     }
 
     private void showMenuPopup(View add) {
@@ -232,6 +326,12 @@ public class UserInformationActivity extends BaseActivity {
 
             }
         });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        asyncSession = null;
     }
 
     /**
