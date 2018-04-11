@@ -64,7 +64,7 @@ dependencies {
     //图片选择器
     compile 'com.jaikydota.imagespickers:imagespickers:1.0.6'
     //分包
-    compile 'com.android.support:multidex:1.0.1'
+    compile 'com.android.support:multidex:1.0.3'
     //LogCat工具类
     compile 'com.github.zhaokaiqiang.klog:library:1.6.0'
     //请求框架
