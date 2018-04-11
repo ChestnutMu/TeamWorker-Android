@@ -236,6 +236,7 @@ public class ChatActivity extends BaseActivity {
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
+            count++;
             messageList.add(newMessage);
             chatAdapter.notifyItemInserted(messageList.size());
             chatAdapter.notifyDataSetChanged();
@@ -257,6 +258,7 @@ public class ChatActivity extends BaseActivity {
                 currentList.add(chatMessage);
             }
         }
+        count += currentList.size();
         messageList.addAll(currentList);
         chatAdapter.notifyDataSetChanged();
     }
@@ -392,60 +394,29 @@ public class ChatActivity extends BaseActivity {
      * 更新用户信息
      */
     private void updateUerInfo() {
-        if (chat.getChatType() == Constant.ChatType.TYPE_CHAT_DOUBLE) {
-            asyncSession.setListenerMainThread(new AsyncOperationListener() {
+        final List<String> userList = gson.fromJson(chat.getUserList(), new TypeToken<List<String>>() {
+        }.getType());
+        asyncSession.setListenerMainThread(new AsyncOperationListener() {
 
-                @Override
-                public void onAsyncOperationCompleted(AsyncOperation operation) {
-                    if (operation.isFailed()) {
-                        Log.d("获取数据异常");
-                        //从服务器创建并保存到本地
-                        getUserInfoFromServer(chat.getUserId());
-                        return;
-                    }
-                    Log.d("operation.getType()= " + operation.getType());
-                    if (operation.getType() == AsyncOperation.OperationType.QueryUnique) {
-                        Object obj = operation.getResult();
-                        Log.d("获取数据 obj = " + obj);
-                        if (null == obj) {
-                            getUserInfoFromServer(chat.getUserId());
-                        } else {
-                            getUserInfoFromLocal((User) obj);
-                        }
-                    }
+            @Override
+            public void onAsyncOperationCompleted(AsyncOperation operation) {
+                if (operation.isFailed()) {
+                    Log.d("获取数据异常");
+                    //从服务器创建并保存到本地
+                    getUserInfoFromServer(userList);
+                    return;
                 }
-            });
-            asyncSession.queryUnique(QueryBuilder.internalCreate(MessageDaoUtils.getDaoSession().getDao(User.class))
-                    .where(UserDao.Properties.UserId.eq(chat.getUserId()))
-                    .build());
-        } else {
-            final List<String> userList = gson.fromJson(chat.getUserList(), new TypeToken<List<String>>() {
-            }.getType());
-            asyncSession.setListenerMainThread(new AsyncOperationListener() {
-
-                @Override
-                public void onAsyncOperationCompleted(AsyncOperation operation) {
-                    if (operation.isFailed()) {
-                        Log.d("获取数据异常");
-                        //从服务器创建并保存到本地
-                        getUserInfoFromServer(userList);
-                        return;
-                    }
-                    Log.d("operation.getType()= " + operation.getType());
-                    if (operation.getType() == AsyncOperation.OperationType.QueryList) {
-                        Object obj = operation.getResult();
-                        Log.d("获取数据 obj = " + obj);
-                        updateUserInfos(obj, userList);
-                    }
+                Log.d("operation.getType()= " + operation.getType());
+                if (operation.getType() == AsyncOperation.OperationType.QueryList) {
+                    Object obj = operation.getResult();
+                    Log.d("获取数据 obj = " + obj);
+                    updateUserInfos(obj, userList);
                 }
-            });
-            asyncSession.queryList(QueryBuilder.internalCreate(MessageDaoUtils.getDaoSession().getDao(User.class))
-                    .where(UserDao.Properties.UserId.in(userList))
-                    .build());
-
-
-        }
-
+            }
+        });
+        asyncSession.queryList(QueryBuilder.internalCreate(MessageDaoUtils.getDaoSession().getDao(User.class))
+                .where(UserDao.Properties.UserId.in(userList))
+                .build());
     }
 
     private void updateUserInfos(Object obj, List<String> userList) {

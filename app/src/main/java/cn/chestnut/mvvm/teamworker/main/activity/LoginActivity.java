@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
+import org.greenrobot.greendao.async.AsyncSession;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +26,7 @@ import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.model.User;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
+import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.MD5;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
@@ -41,6 +44,8 @@ public class LoginActivity extends BaseActivity {
 
     private ActivityLoginBinding binding;
 
+    private AsyncSession asyncSession;
+
     @Override
     protected void setBaseTitle(TextView titleView) {
         titleView.setText("登陆");
@@ -54,6 +59,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     protected void initView() {
+        asyncSession = MessageDaoUtils.getDaoSession().startAsyncSession();
         setTranslucentStatus(true);
         if (PreferenceUtil.getInstances(MyApplication.getInstance()).getPreferenceBoolean("isShowLoginConflict")) {
             showDoubleLoginDialog();
@@ -140,6 +146,7 @@ public class LoginActivity extends BaseActivity {
                         PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("telephone", response.getData().getTelephone());
                         PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("token", response.getData().getToken());
                         PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("nickname", response.getData().getNickname());
+                        asyncSession.insertOrReplace(response.getData());
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         finish();
                         startActivity(intent);

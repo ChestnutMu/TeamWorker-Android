@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.greenrobot.greendao.async.AsyncSession;
+
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +30,7 @@ import cn.chestnut.mvvm.teamworker.main.common.BaseFragment;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
 import cn.chestnut.mvvm.teamworker.module.checkattendance.CheckAttendanceActivity;
 import cn.chestnut.mvvm.teamworker.model.User;
+import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
 import cn.chestnut.mvvm.teamworker.module.mine.MyInformationActivity;
 import cn.chestnut.mvvm.teamworker.socket.TeamWorkerClient;
 import cn.chestnut.mvvm.teamworker.utils.EmojiUtil;
@@ -46,6 +49,8 @@ import cn.chestnut.mvvm.teamworker.utils.GlideLoader;
 public class MineFragment extends BaseFragment {
 
     private FragmentMineBinding binding;
+
+    private AsyncSession asyncSession;
 
     @Override
     protected void setBaseTitle(TextView titleView) {
@@ -66,6 +71,7 @@ public class MineFragment extends BaseFragment {
     }
 
     private void initView() {
+        asyncSession = MessageDaoUtils.getDaoSession().startAsyncSession();
         getMyInfomation();
     }
 
@@ -151,7 +157,6 @@ public class MineFragment extends BaseFragment {
      * 获取个人信息
      */
     private void getMyInfomation() {
-
         Map<String, Object> params = new HashMap<>();
         params.put("token", PreferenceUtil.getInstances(getActivity()).getPreferenceString("token"));
         params.put("userId", PreferenceUtil.getInstances(getActivity()).getPreferenceString("userId"));
@@ -161,6 +166,7 @@ public class MineFragment extends BaseFragment {
             public void next(ApiResponse<User> response) {
                 if (response.isSuccess()) {
                     try {
+                        asyncSession.insertOrReplace(response.getData());
                         binding.tvNickname.setText(EmojiUtil.emojiRecovery(response.getData().getNickname()));
                         GlideLoader.displayImage(getActivity(), HttpUrls.GET_PHOTO + response.getData().getAvatar(), binding.ivAvatar);
                     } catch (UnsupportedEncodingException e) {
@@ -180,5 +186,11 @@ public class MineFragment extends BaseFragment {
 
         });
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        asyncSession = null;
     }
 }
