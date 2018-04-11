@@ -16,6 +16,7 @@ import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.module.approval.ApprovalActivity;
 import cn.chestnut.mvvm.teamworker.module.checkattendance.CheckAttendanceActivity;
 import cn.chestnut.mvvm.teamworker.module.work.GridViewAdapter;
+import cn.chestnut.mvvm.teamworker.module.work.WorkFragment;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -79,8 +80,8 @@ public class TeamManagementActivity extends BaseActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (applicationDrawableList.get(position)) {
                     case R.mipmap.icon_member_manage:
-                        Intent intent1 = new Intent(TeamManagementActivity.this,TeamMemberActivity.class);
-                        intent1.putExtra("teamId",getIntent().getStringExtra("teamId"));
+                        Intent intent1 = new Intent(TeamManagementActivity.this, TeamMemberActivity.class);
+                        intent1.putExtra("teamId", getIntent().getStringExtra("teamId"));
                         startActivity(intent1);
                         break;
                     case R.mipmap.icon_attendance:
@@ -90,9 +91,14 @@ public class TeamManagementActivity extends BaseActivity {
                         startActivity(new Intent(TeamManagementActivity.this, ApprovalActivity.class));
                         break;
                     case R.mipmap.icon_permission:
-                        Intent intent2 = new Intent(TeamManagementActivity.this,PermissionActivity.class);
-                        intent2.putExtra("teamId",getIntent().getStringExtra("teamId"));
-                        startActivity(intent2);                        break;
+                        if (getIntent().getIntExtra("type", -1) == WorkFragment.TEAM_OWNER) {
+                            Intent intent2 = new Intent(TeamManagementActivity.this, PermissionActivity.class);
+                            intent2.putExtra("teamId", getIntent().getStringExtra("teamId"));
+                            startActivity(intent2);
+                        } else {
+                            showToast("只有团队所有者可以修改权限");
+                        }
+                        break;
                 }
             }
         });

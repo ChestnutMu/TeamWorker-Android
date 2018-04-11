@@ -73,11 +73,11 @@ public class WorkFragment extends BaseFragment {
 
     private String currentTeamId;
 
-    private static int NORMAL_MEMBER = 0;
+    public static int NORMAL_MEMBER = 0;
 
-    private static int MANAGER = 1;
+    public static int MANAGER = 1;
 
-    private static int TEAM_OWNER = 2;
+    public static int TEAM_OWNER = 2;
 
     private int userRoleType;//0普通人 1管理员 2团队所有者
 
@@ -310,7 +310,7 @@ public class WorkFragment extends BaseFragment {
      *
      * @param userRoleType
      */
-    private void showManagementPlatform(int userRoleType) {
+    private void showManagementPlatform(final int userRoleType) {
         if (userRoleType == TEAM_OWNER || userRoleType == MANAGER) {//如果用户在团队中的角色为"团队所有者"或管理员
             binding.llManagePlatform.setVisibility(View.VISIBLE);
             binding.llTeamManagement.setOnClickListener(new View.OnClickListener() {//团队管理
@@ -318,6 +318,7 @@ public class WorkFragment extends BaseFragment {
                 public void onClick(View v) {
                     Intent intent = new Intent(getActivity(), TeamManagementActivity.class);
                     intent.putExtra("teamId", currentTeamId);
+                    intent.putExtra("type", userRoleType);
                     startActivity(intent);
                 }
             });
