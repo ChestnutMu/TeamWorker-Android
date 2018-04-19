@@ -1,4 +1,4 @@
-package cn.chestnut.mvvm.teamworker.core;
+package cn.chestnut.mvvm.teamworker.socket.core;
 
 /**
  * Copyright (c) 2017, Chestnut All rights reserved

@@ -1,4 +1,4 @@
-package cn.chestnut.mvvm.teamworker.core;
+package cn.chestnut.mvvm.teamworker.socket.core;
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -27,7 +27,6 @@ import java.util.Set;
 
 import cn.chestnut.mvvm.teamworker.Constant;
 import cn.chestnut.mvvm.teamworker.db.ChatDao;
-import cn.chestnut.mvvm.teamworker.db.ChatMessageDao;
 import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
@@ -35,7 +34,6 @@ import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
 import cn.chestnut.mvvm.teamworker.model.Chat;
 import cn.chestnut.mvvm.teamworker.model.ChatMessage;
-import cn.chestnut.mvvm.teamworker.model.User;
 import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
 import cn.chestnut.mvvm.teamworker.socket.ReceiverProtocol;
 import cn.chestnut.mvvm.teamworker.socket.TeamWorkerClient;

@@ -15,7 +15,7 @@ import com.socks.library.KLog;
 import com.squareup.leakcanary.LeakCanary;
 
 import cn.chestnut.mvvm.teamworker.BuildConfig;
-import cn.chestnut.mvvm.teamworker.core.TeamWorkerMessageHandler;
+import cn.chestnut.mvvm.teamworker.socket.core.TeamWorkerMessageHandler;
 
 /**
  * Copyright (c) 2017, Chestnut All rights reserved

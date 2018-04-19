@@ -16,14 +16,12 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 
-import cn.chestnut.mvvm.teamworker.Constant;
 import cn.chestnut.mvvm.teamworker.R;
-import cn.chestnut.mvvm.teamworker.core.OnHandlerSessionListener;
-import cn.chestnut.mvvm.teamworker.core.TeamWorkerMessageHandler;
+import cn.chestnut.mvvm.teamworker.socket.core.OnHandlerSessionListener;
+import cn.chestnut.mvvm.teamworker.socket.core.TeamWorkerMessageHandler;
 import cn.chestnut.mvvm.teamworker.databinding.ActivityBaseBinding;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
 import cn.chestnut.mvvm.teamworker.http.RequestManager;
-import cn.chestnut.mvvm.teamworker.model.Chat;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
 import cn.chestnut.mvvm.teamworker.utils.GlideLoader;
 import cn.chestnut.mvvm.teamworker.utils.Log;
