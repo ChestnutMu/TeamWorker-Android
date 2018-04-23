@@ -44,6 +44,7 @@ public class Constant {
 
     //传值常量类
     public class BundleConstant {
+
         public static final String BUNDLE_GET_UPDATE_INFO = "bundle_get_message_info";//更新信息
 
     }

@@ -33,6 +33,7 @@ public class UserDao extends AbstractDao<User, Long> {
         public final static Property Sex = new Property(6, String.class, "sex", false, "SEX");
         public final static Property Birthday = new Property(7, String.class, "birthday", false, "BIRTHDAY");
         public final static Property Region = new Property(8, String.class, "region", false, "REGION");
+        public final static Property Friend = new Property(9, boolean.class, "friend", false, "FRIEND");
     }
 
 
@@ -56,7 +57,8 @@ public class UserDao extends AbstractDao<User, Long> {
                 "\"TELEPHONE\" TEXT," + // 5: telephone
                 "\"SEX\" TEXT," + // 6: sex
                 "\"BIRTHDAY\" TEXT," + // 7: birthday
-                "\"REGION\" TEXT);"); // 8: region
+                "\"REGION\" TEXT," + // 8: region
+                "\"FRIEND\" INTEGER NOT NULL );"); // 9: friend
     }
 
     /** Drops the underlying database table. */
@@ -113,6 +115,7 @@ public class UserDao extends AbstractDao<User, Long> {
         if (region != null) {
             stmt.bindString(9, region);
         }
+        stmt.bindLong(10, entity.getFriend() ? 1L: 0L);
     }
 
     @Override
@@ -163,6 +166,7 @@ public class UserDao extends AbstractDao<User, Long> {
         if (region != null) {
             stmt.bindString(9, region);
         }
+        stmt.bindLong(10, entity.getFriend() ? 1L: 0L);
     }
 
     @Override
@@ -181,7 +185,8 @@ public class UserDao extends AbstractDao<User, Long> {
             cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // telephone
             cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // sex
             cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // birthday
-            cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8) // region
+            cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // region
+            cursor.getShort(offset + 9) != 0 // friend
         );
         return entity;
     }
@@ -197,6 +202,7 @@ public class UserDao extends AbstractDao<User, Long> {
         entity.setSex(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
         entity.setBirthday(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
         entity.setRegion(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
+        entity.setFriend(cursor.getShort(offset + 9) != 0);
      }
     
     @Override
