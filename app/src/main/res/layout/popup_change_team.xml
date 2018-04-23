@@ -16,7 +16,7 @@
             android:text="选择团队工作台" />
 
         <ListView
-            android:id="@+id/lv_mine_add"
+            android:id="@+id/lv_team"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </LinearLayout>

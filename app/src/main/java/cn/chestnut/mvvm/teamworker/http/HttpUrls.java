@@ -115,12 +115,8 @@ public class HttpUrls {
     //根据UID获取考勤记录
     public static final String GET_ATTENDANCE = "/attendance/getAttendance";
 
-    //添加上班打卡记录
-    public static final String PUNCH_IN = "/attendance/punchIn";
-
-    //添加下班打卡记录
-    public static final String PUNCH_OUT = "/attendance/punchOut";
-
+    //添加考勤打卡记录
+    public static final String PUNCH_CLOCK = "/attendance/punchClock";
 
     //-------------------------第三方接口------------------------------------------------------------
     //获取七牛云token

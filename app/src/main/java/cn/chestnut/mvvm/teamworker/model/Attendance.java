@@ -1,5 +1,8 @@
 package cn.chestnut.mvvm.teamworker.model;
 
+import cn.chestnut.mvvm.teamworker.BR;
+import cn.chestnut.mvvm.teamworker.R;
+import cn.chestnut.mvvm.teamworker.main.adapter.BindingItem;
 import cn.chestnut.mvvm.teamworker.utils.FormatDateUtil;
 
 /**
@@ -10,43 +13,25 @@ import cn.chestnut.mvvm.teamworker.utils.FormatDateUtil;
  * Email: xiaoting233zhang@126.com
  */
 
-public class Attendance {
+public class Attendance extends BindingItem {
 
     private String attendanceId;
 
-    private String userId;
-
     private String teamId;
 
-    private String picture;//照片
+    private String userId;
 
-    private String altitude;//经度
+    private String punchInPicture;//上班照片
 
-    private String latitude;//纬度
+    private String punchOutPicture;//下班照片
 
     private String punchInAddress;//上班地址
 
     private String punchOutAddress;//下班地址
 
-    private Long punchInTime;//上班打卡时间
+    private long punchInTime;//上班打卡时间
 
-    private Long punchOutTime;//下班打卡时间
-
-    public String getTeamId() {
-        return teamId;
-    }
-
-    public void setTeamId(String teamId) {
-        this.teamId = teamId;
-    }
-
-    public String getPicture() {
-        return picture;
-    }
-
-    public void setPicture(String picture) {
-        this.picture = picture;
-    }
+    private long punchOutTime;//下班打卡时间
 
     public String getAttendanceId() {
         return attendanceId;
@@ -54,6 +39,14 @@ public class Attendance {
 
     public void setAttendanceId(String attendanceId) {
         this.attendanceId = attendanceId;
+    }
+
+    public String getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(String teamId) {
+        this.teamId = teamId;
     }
 
     public String getUserId() {
@@ -64,20 +57,20 @@ public class Attendance {
         this.userId = userId;
     }
 
-    public String getAltitude() {
-        return altitude;
+    public String getPunchInPicture() {
+        return punchInPicture;
     }
 
-    public void setAltitude(String altitude) {
-        this.altitude = altitude;
+    public void setPunchInPicture(String punchInPicture) {
+        this.punchInPicture = punchInPicture;
     }
 
-    public String getLatitude() {
-        return latitude;
+    public String getPunchOutPicture() {
+        return punchOutPicture;
     }
 
-    public void setLatitude(String latitude) {
-        this.latitude = latitude;
+    public void setPunchOutPicture(String punchOutPicture) {
+        this.punchOutPicture = punchOutPicture;
     }
 
     public String getPunchInAddress() {
@@ -96,32 +89,37 @@ public class Attendance {
         this.punchOutAddress = punchOutAddress;
     }
 
-    public Long getPunchInTime() {
+    public long getPunchInTime() {
         return punchInTime;
     }
 
-    public void setPunchInTime(Long punchInTime) {
+    public void setPunchInTime(long punchInTime) {
         this.punchInTime = punchInTime;
     }
 
-    public Long getPunchOutTime() {
+    public long getPunchOutTime() {
         return punchOutTime;
     }
 
-    public void setPunchOutTime(Long punchOutTime) {
+    public void setPunchOutTime(long punchOutTime) {
         this.punchOutTime = punchOutTime;
     }
 
     public String showPunchInTime() {
-        if (punchInTime != null) {
-            return FormatDateUtil.timeParseDetail(punchInTime);
-        } else return "";
+        return FormatDateUtil.timeParseDetail(getPunchInTime());
     }
 
     public String showPunchOutTime() {
-        if (punchOutTime != null) {
-            return FormatDateUtil.timeParseDetail(punchOutTime);
-        } else return "";
+        return FormatDateUtil.timeParseDetail(getPunchOutTime());
     }
 
+    @Override
+    public int getViewType() {
+        return R.layout.item_my_attendance;
+    }
+
+    @Override
+    public int getViewVariableId() {
+        return BR.attendance;
+    }
 }

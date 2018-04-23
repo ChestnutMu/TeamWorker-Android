@@ -15,6 +15,7 @@ import java.util.Map;
 
 import cn.chestnut.mvvm.teamworker.BR;
 import cn.chestnut.mvvm.teamworker.R;
+import cn.chestnut.mvvm.teamworker.databinding.ActivityPermissionBinding;
 import cn.chestnut.mvvm.teamworker.databinding.ActivityTeamMemberBinding;
 import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
@@ -34,7 +35,7 @@ import cn.chestnut.mvvm.teamworker.module.user.UserInformationActivity;
 
 public class PermissionActivity extends BaseActivity {
 
-    private ActivityTeamMemberBinding binding;
+    private ActivityPermissionBinding binding;
 
     private List<User> userList;
 
@@ -130,7 +131,11 @@ public class PermissionActivity extends BaseActivity {
         RequestManager.getInstance(this).executeRequest(HttpUrls.AUTH_TEAM_USER, params, new AppCallBack<ApiResponse<Object>>() {
             @Override
             public void next(ApiResponse<Object> response) {
-                showToast(response.getMessage());
+                if (response.isSuccess()) {
+                    showToast("修改团队成员权限成功");
+                } else {
+                    showToast("修改团队成员权限失败");
+                }
             }
 
             @Override

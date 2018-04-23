@@ -110,6 +110,7 @@ public class RegisterActivity extends BaseActivity {
         params.put("verificationCode", verificationCode);
         password = MD5.MD5(password);
         params.put("password", password);
+        showProgressDialog(this);
         RequestManager.getInstance(this).executeRequest(HttpUrls.REGISTER, params, new AppCallBack<ApiResponse<User>>() {
 
             @Override
@@ -122,10 +123,12 @@ public class RegisterActivity extends BaseActivity {
 
             @Override
             public void error(Throwable error) {
+                hideProgressDialog();
             }
 
             @Override
             public void complete() {
+                hideProgressDialog();
             }
         });
 

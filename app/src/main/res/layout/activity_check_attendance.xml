@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <data>
-
-        <variable
-            name="attendance"
-            type="cn.chestnut.mvvm.teamworker.model.Attendance" />
-    </data>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,7 +12,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="当前定位位置："
+            android:text="当前定位地址："
             android:textColor="@color/text_black"
             android:textSize="@dimen/text_size_big" />
 
@@ -33,30 +26,37 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="20dp">
+            android:layout_marginTop="16dp"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:paddingBottom="10dp"
+            android:paddingLeft="@dimen/team_worker_padding"
+            android:paddingTop="10dp">
 
-            <Button
-                android:id="@+id/up_work"
-                android:layout_width="0dp"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/bg_btn"
-                android:text="上班打卡"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_big" />
+                android:layout_marginLeft="3dp"
+                android:text="图片"
+                android:textColor="@color/text_black" />
 
-            <Button
-                android:id="@+id/down_work"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_btn"
-                android:text="下班打卡"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_big" />
-
+            <ImageView
+                android:id="@+id/iv_picture"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginLeft="12dp"
+                android:background="@mipmap/icon_plus" />
         </LinearLayout>
+
+        <Button
+            android:id="@+id/up_work"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:background="@drawable/bg_corner_button_selector"
+            android:text="打卡"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_big" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -66,71 +66,32 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="上班地址："
+                android:text="我的打卡记录"
                 android:textColor="@color/text_black"
                 android:textSize="@dimen/text_size_big" />
 
-            <TextView
+            <com.aspsine.swipetoloadlayout.SwipeToLoadLayout
+                android:id="@+id/swipeToLoadLayout"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginTop="5dp"
-                android:text="@{attendance.punchInAddress}" />
-        </LinearLayout>
+                android:layout_height="match_parent"
+                android:background="@color/white">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+                <include
+                    android:id="@id/swipe_refresh_header"
+                    layout="@layout/refresh_header_view_anim" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="下班地址："
-                android:textColor="@color/text_black"
-                android:textSize="@dimen/text_size_big" />
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/swipe_target"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:scrollbars="none" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginTop="5dp"
-                android:text="@{attendance.punchOutAddress}" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="上班打卡时间："
-                android:textColor="@color/text_black"
-                android:textSize="@dimen/text_size_big" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@{attendance.showPunchInTime()}" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="下班打卡时间："
-                android:textColor="@color/text_black"
-                android:textSize="@dimen/text_size_big" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@{attendance.showPunchOutTime()}" />
+                <cn.chestnut.mvvm.teamworker.widget.RefreshFooterView
+                    android:id="@+id/swipe_load_more_footer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.aspsine.swipetoloadlayout.SwipeToLoadLayout>
 
         </LinearLayout>
     </LinearLayout>

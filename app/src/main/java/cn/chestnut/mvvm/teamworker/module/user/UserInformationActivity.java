@@ -107,6 +107,7 @@ public class UserInformationActivity extends BaseActivity {
     protected void initData() {
         userId = getIntent().getStringExtra("userId");
         myUserId = PreferenceUtil.getInstances(this).getPreferenceString("userId");
+        adapter = new BaseListViewAdapter(R.layout.item_user_info_menu, BR.addAction, addActionList);
         addActionList = new ArrayList<>();
         getUserDetail();
     }
@@ -220,7 +221,6 @@ public class UserInformationActivity extends BaseActivity {
         CommonUtil.setBackgroundAlpha(0.5f, this);
 
         final PopupUserInfoMenuBinding popupBinding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.popup_user_info_menu, null, false);
-        adapter = new BaseListViewAdapter(R.layout.item_user_info_menu, BR.addAction, addActionList);
         popupBinding.lvMenu.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         popupBinding.lvMenu.setAdapter(adapter);
         final PopupWindow popupWindow = new PopupWindow(popupBinding.getRoot());

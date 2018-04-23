@@ -47,7 +47,7 @@ public class SelectRegionActivity extends BaseActivity {
 
     private String lastPrAddressId = "";
 
-    private int pageSize = 15;
+    private static int pageSize = 15;
 
     private int pageNum = 1;
 
@@ -100,6 +100,7 @@ public class SelectRegionActivity extends BaseActivity {
                 binding.swipeToLoadLayout.setRefreshing(false);
             }
         });
+
         binding.swipeToLoadLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
@@ -108,6 +109,7 @@ public class SelectRegionActivity extends BaseActivity {
                 binding.swipeToLoadLayout.setLoadingMore(false);
             }
         });
+
         adapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

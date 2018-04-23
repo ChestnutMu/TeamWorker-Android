@@ -9,14 +9,11 @@ import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,7 +24,6 @@ import cn.chestnut.mvvm.teamworker.BR;
 import cn.chestnut.mvvm.teamworker.Constant;
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.FragmentWorkBinding;
-import cn.chestnut.mvvm.teamworker.databinding.PopupAddActionBinding;
 import cn.chestnut.mvvm.teamworker.databinding.PopupChangeTeamBinding;
 import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
@@ -36,7 +32,7 @@ import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.adapter.BaseListViewAdapter;
 import cn.chestnut.mvvm.teamworker.main.common.BaseFragment;
 import cn.chestnut.mvvm.teamworker.model.Team;
-import cn.chestnut.mvvm.teamworker.module.approval.ApprovalActivity;
+import cn.chestnut.mvvm.teamworker.module.approval.AskForWorkOffActivity;
 import cn.chestnut.mvvm.teamworker.module.checkattendance.CheckAttendanceActivity;
 import cn.chestnut.mvvm.teamworker.module.team.TeamManagementActivity;
 import cn.chestnut.mvvm.teamworker.module.team.TeamMemberActivity;
@@ -57,23 +53,13 @@ public class WorkFragment extends BaseFragment {
 
     private FragmentWorkBinding binding;
 
-    private GridViewAdapter gridViewAdapter;
-
-    private ArrayList<String> applicationNameList;
-
-    private ArrayList<Integer> applicationDrawableList;
-
     private BroadcastReceiver receiver;
-
-    private ViewStub viewStub;
 
     private BaseListViewAdapter workMyTeamAdapter;
 
     private ArrayList<Team> teamList;
 
     private String currentTeamId;
-
-    public static int NORMAL_MEMBER = 0;
 
     public static int MANAGER = 1;
 
@@ -96,8 +82,12 @@ public class WorkFragment extends BaseFragment {
     @Override
     protected void addContainerView(ViewGroup viewGroup, LayoutInflater inflater) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_work, viewGroup, true);
+        initData();
+        initView();
+        addListener();
     }
 
+    //设置界面右上角的消息铃铛按钮和菜单按钮
     @Override
     public void setButton(TextView edit, ImageView add, ImageView search) {
         super.setButton(edit, add, search);
@@ -124,9 +114,6 @@ public class WorkFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         Log.d("DirectoryFragment onResume");
-        initData();
-        initView();
-        addListener();
         getNotSendRequestCountByUserId();
     }
 
@@ -137,17 +124,6 @@ public class WorkFragment extends BaseFragment {
         teamList = new ArrayList<>();
         getMyTeam();
 
-        applicationNameList = new ArrayList<>();
-        applicationNameList.add("考勤打卡");
-        applicationNameList.add("审批");
-        applicationNameList.add("考勤打卡");
-        applicationNameList.add("审批");
-
-        applicationDrawableList = new ArrayList<>();
-        applicationDrawableList.add(R.mipmap.icon_attendance);
-        applicationDrawableList.add(R.mipmap.icon_approval);
-        applicationDrawableList.add(R.mipmap.icon_attendance);
-        applicationDrawableList.add(R.mipmap.icon_approval);
 
         receiver = new BroadcastReceiver() {
             @Override
@@ -163,26 +139,39 @@ public class WorkFragment extends BaseFragment {
      * 初始化界面
      */
     private void initView() {
-        gridViewAdapter = new GridViewAdapter(getActivity(), applicationNameList, applicationDrawableList);
         workMyTeamAdapter = new BaseListViewAdapter<>(R.layout.item_work_team, BR.team, teamList);
-        binding.gvCommonApps.setAdapter(gridViewAdapter);
     }
 
     /**
      * 添加监听器
      */
     private void addListener() {
-        binding.gvCommonApps.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+        binding.llDecrusement.setOnClickListener(new View.OnClickListener() {//报销申请
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch (applicationDrawableList.get(position)) {
-                    case R.mipmap.icon_attendance:
-                        startActivity(new Intent(getActivity(), CheckAttendanceActivity.class));
-                        break;
-                    case R.mipmap.icon_approval:
-                        startActivity(new Intent(getActivity(), ApprovalActivity.class));
-                        break;
-                }
+            public void onClick(View v) {
+
+            }
+        });
+
+        binding.ivWorkoff.setOnClickListener(new View.OnClickListener() {//请假申请
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), AskForWorkOffActivity.class));
+            }
+        });
+
+        binding.llAttendance.setOnClickListener(new View.OnClickListener() {//考勤打卡
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), CheckAttendanceActivity.class));
+            }
+        });
+
+        binding.llWorkReport.setOnClickListener(new View.OnClickListener() {//工作汇报
+            @Override
+            public void onClick(View v) {
+
             }
         });
 
@@ -194,8 +183,8 @@ public class WorkFragment extends BaseFragment {
 
         final PopupChangeTeamBinding popupBinding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.popup_change_team, null, false);
         workMyTeamAdapter = new BaseListViewAdapter(R.layout.item_work_team, BR.team, teamList);
-        popupBinding.lvMineAdd.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        popupBinding.lvMineAdd.setAdapter(workMyTeamAdapter);
+        popupBinding.lvTeam.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        popupBinding.lvTeam.setAdapter(workMyTeamAdapter);
         final PopupWindow popupWindow = new PopupWindow(popupBinding.getRoot());
         popupWindow.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
         popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -204,7 +193,7 @@ public class WorkFragment extends BaseFragment {
         popupWindow.setOutsideTouchable(true);
         popupWindow.showAsDropDown(add, -150, 0);
 
-        popupBinding.lvMineAdd.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        popupBinding.lvTeam.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 currentTeamId = teamList.get(position).getTeamId();
@@ -250,59 +239,63 @@ public class WorkFragment extends BaseFragment {
         });
     }
 
+    //获取我所在的所有团队
     private void getMyTeam() {
-        RequestManager.getInstance(getActivity()).executeRequest(HttpUrls.GET_MY_TEAMS, null, new AppCallBack<ApiResponse<List<Team>>>() {
-            @Override
-            public void next(ApiResponse<List<Team>> response) {
-                if (response.isSuccess()) {
-                    if (teamList.size() > 0) {
-                        teamList.clear();
+        RequestManager.getInstance(getActivity()).executeRequest(HttpUrls.GET_MY_TEAMS, null,
+                new AppCallBack<ApiResponse<List<Team>>>() {
+                    @Override
+                    public void next(ApiResponse<List<Team>> response) {
+                        if (response.isSuccess()) {
+                            if (teamList.size() > 0) {
+                                teamList.clear();
+                            }
+                            teamList.addAll(response.getData());
+                            workMyTeamAdapter.notifyDataSetChanged();
+                            if (teamList.size() > 0) {
+                                currentTeamId = teamList.get(0).getTeamId();//默认设置当前所在的Team工作台
+                                updateView();
+                            }
+                        }
                     }
-                    teamList.addAll(response.getData());
-                    workMyTeamAdapter.notifyDataSetChanged();
-                    if (teamList.size() > 0) {
-                        currentTeamId = teamList.get(0).getTeamId();//默认设置当前所在的Team工作台
-                        updateView();
+
+                    @Override
+                    public void error(Throwable error) {
+
                     }
-                }
-            }
 
-            @Override
-            public void error(Throwable error) {
+                    @Override
+                    public void complete() {
 
-            }
-
-            @Override
-            public void complete() {
-
-            }
-        });
+                    }
+                });
     }
 
+    //获取用户在团队中的角色
     private void getTeamRelation() {
         Map<String, String> param = new HashMap<>(1);
         param.put("teamId", currentTeamId);
-        RequestManager.getInstance(getActivity()).executeRequest(HttpUrls.GET_TEAM_RELATION, param, new AppCallBack<ApiResponse<Map<String, String>>>() {
-            @Override
-            public void next(ApiResponse<Map<String, String>> response) {
-                if (response.isSuccess()) {
-                    userRoleType = Integer.parseInt(response.getData().get("type"));
-                    showManagementPlatform(userRoleType);
-                } else {
-                    showToast(response.getMessage());
-                }
-            }
+        RequestManager.getInstance(getActivity()).executeRequest(HttpUrls.GET_TEAM_RELATION, param,
+                new AppCallBack<ApiResponse<Map<String, String>>>() {
+                    @Override
+                    public void next(ApiResponse<Map<String, String>> response) {
+                        if (response.isSuccess()) {
+                            userRoleType = Integer.parseInt(response.getData().get("type"));
+                            showManagementPlatform(userRoleType);
+                        } else {
+                            showToast(response.getMessage());
+                        }
+                    }
 
-            @Override
-            public void error(Throwable error) {
+                    @Override
+                    public void error(Throwable error) {
 
-            }
+                    }
 
-            @Override
-            public void complete() {
+                    @Override
+                    public void complete() {
 
-            }
-        });
+                    }
+                });
     }
 
     /**
@@ -313,6 +306,7 @@ public class WorkFragment extends BaseFragment {
     private void showManagementPlatform(final int userRoleType) {
         if (userRoleType == TEAM_OWNER || userRoleType == MANAGER) {//如果用户在团队中的角色为"团队所有者"或管理员
             binding.llManagePlatform.setVisibility(View.VISIBLE);
+
             binding.llTeamManagement.setOnClickListener(new View.OnClickListener() {//团队管理
                 @Override
                 public void onClick(View v) {
@@ -322,23 +316,27 @@ public class WorkFragment extends BaseFragment {
                     startActivity(intent);
                 }
             });
-            binding.llTeamInfo.setOnClickListener(new View.OnClickListener() {
+
+            binding.llTeamInfo.setOnClickListener(new View.OnClickListener() {//团队资料
                 @Override
                 public void onClick(View v) {
 
                 }
             });
+
             binding.llOrganization.setOnClickListener(new View.OnClickListener() {//组织结构
                 @Override
                 public void onClick(View v) {
 
                 }
             });
+
             binding.llTeamMember.setOnClickListener(new View.OnClickListener() {//团队成员
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(new Intent(getActivity(), TeamMemberActivity.class));
                     intent.putExtra("teamId", currentTeamId);
+                    intent.putExtra("roleType", userRoleType);
                     startActivity(intent);
                 }
             });

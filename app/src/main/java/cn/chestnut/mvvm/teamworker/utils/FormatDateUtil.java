@@ -193,6 +193,26 @@ public class FormatDateUtil {
     }
 
     /**
+     * 获取今天时间的最小值，即00:00
+     *
+     * @return
+     */
+    public static long getTodayMinTimeMillis() {
+        Calendar mCalendar = Calendar.getInstance();
+        long currTime = System.currentTimeMillis();
+        mCalendar.setTime(new Date(currTime));
+
+        int year = mCalendar.get(Calendar.YEAR);
+        int month = mCalendar.get(Calendar.MONTH);
+        int day = mCalendar.get(Calendar.DAY_OF_MONTH);
+
+        mCalendar.set(year, month, day, 0, 0, 0);
+        long minToday = mCalendar.getTimeInMillis();
+
+        return minToday;
+    }
+
+    /**
      * 判断某个时间是否是昨天
      *
      * @param time
