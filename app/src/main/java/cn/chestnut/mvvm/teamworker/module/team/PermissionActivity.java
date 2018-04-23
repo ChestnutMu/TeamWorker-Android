@@ -74,9 +74,7 @@ public class PermissionActivity extends BaseActivity {
         binding.lvTeamMember.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(PermissionActivity.this, UserInformationActivity.class);
-                intent.putExtra("userId", userList.get(position).getUserId());
-                startActivity(intent);
+                UserInformationActivity.startActivity(PermissionActivity.this, userList.get(position).getUserId());
             }
         });
 

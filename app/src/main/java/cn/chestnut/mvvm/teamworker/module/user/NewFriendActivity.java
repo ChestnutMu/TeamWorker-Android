@@ -86,9 +86,7 @@ public class NewFriendActivity extends BaseActivity {
         adapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(NewFriendActivity.this, UserInformationActivity.class);
-                intent.putExtra("userId", requestList.get(position).getRequesterId());
-                startActivity(intent);
+                UserInformationActivity.startActivity(NewFriendActivity.this, requestList.get(position).getRequesterId());
             }
         });
         adapter.setAcceptFriendRequestListener(new NewFriendAdapter.AcceptFriendRequestListener() {

@@ -11,6 +11,7 @@ import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.main.adapter.BindingItem;
 import cn.chestnut.mvvm.teamworker.module.team.BuildTeamAdapter;
 import cn.chestnut.mvvm.teamworker.utils.StringUtil;
+
 import org.greenrobot.greendao.annotation.Generated;
 
 /**
@@ -44,10 +45,12 @@ public class User extends BindingItem implements Serializable {
 
     private String region;
 
-    @Generated(hash = 490298201)
+    private boolean friend = false;
+
+    @Generated(hash = 1076299761)
     public User(Long id, String userId, String token, String nickname,
-            String avatar, String telephone, String sex, String birthday,
-            String region) {
+                String avatar, String telephone, String sex, String birthday,
+                String region, boolean friend) {
         this.id = id;
         this.userId = userId;
         this.token = token;
@@ -57,12 +60,13 @@ public class User extends BindingItem implements Serializable {
         this.sex = sex;
         this.birthday = birthday;
         this.region = region;
+        this.friend = friend;
     }
 
     @Generated(hash = 586692638)
     public User() {
     }
-    
+
     public Long getId() {
         return id;
     }
@@ -147,6 +151,14 @@ public class User extends BindingItem implements Serializable {
         this.token = token;
     }
 
+    public boolean isFriend() {
+        return friend;
+    }
+
+    public void setFriend(boolean friend) {
+        this.friend = friend;
+    }
+
     private String getAbbreviation(String name) {
         if (name.length() == 1) {
             return name;
@@ -171,5 +183,9 @@ public class User extends BindingItem implements Serializable {
             return R.layout.item_build_team;
         }
         return R.layout.item_user;
+    }
+
+    public boolean getFriend() {
+        return this.friend;
     }
 }

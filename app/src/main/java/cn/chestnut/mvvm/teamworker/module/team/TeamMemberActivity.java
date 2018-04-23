@@ -98,9 +98,7 @@ public class TeamMemberActivity extends BaseActivity {
         binding.lvTeamMember.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(TeamMemberActivity.this, UserInformationActivity.class);
-                intent.putExtra("userId", userList.get(position).getUserId());
-                startActivity(intent);
+                UserInformationActivity.startActivity(TeamMemberActivity.this, userList.get(position).getUserId(), false, userList.get(position));
             }
         });
 

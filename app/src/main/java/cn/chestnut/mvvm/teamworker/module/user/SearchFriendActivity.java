@@ -96,9 +96,7 @@ public class SearchFriendActivity extends BaseActivity {
         binding.lvUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(SearchFriendActivity.this, UserInformationActivity.class);
-                intent.putExtra("userId", userList.get(position).getUserId());
-                startActivity(intent);
+                UserInformationActivity.startActivity(SearchFriendActivity.this, userList.get(position).getUserId(), false, userList.get(position));
             }
         });
     }
@@ -110,7 +108,7 @@ public class SearchFriendActivity extends BaseActivity {
         }
         Map<String, String> param = new HashMap<>(1);
         param.put("keyword", binding.etSearchFriend.getText().toString());
-        RequestManager.getInstance(this).executeRequest(HttpUrls.SEARCH_USER, param, new AppCallBack<ApiResponse<List<User >>>() {
+        RequestManager.getInstance(this).executeRequest(HttpUrls.SEARCH_USER, param, new AppCallBack<ApiResponse<List<User>>>() {
             @Override
             public void next(ApiResponse<List<User>> response) {
                 if (response.isSuccess()) {
