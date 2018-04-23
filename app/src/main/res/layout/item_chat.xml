@@ -29,7 +29,7 @@
                 android:id="@+id/iv_left_avatar"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                app:load_url_image="@{message.chatMessageAvatar}" />
+                app:load_url_image="@{message.avatar}" />
 
             <LinearLayout
                 android:id="@+id/tv_left_content"
@@ -44,7 +44,7 @@
                     android:id="@+id/iv_left_name"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="@{message.chatMessageName}"
+                    android:text="@{message.nickname}"
                     android:textColor="@color/text_gray"
                     android:textSize="@dimen/text_size_more_small" />
 
@@ -103,7 +103,7 @@
                 android:id="@+id/iv_right_avatar"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                app:load_url_image="@{message.chatMessageAvatar}" />
+                app:load_url_image="@{message.avatar}" />
         </LinearLayout>
     </LinearLayout>
 </layout>

@@ -50,12 +50,14 @@ public class ChatMessage extends BindingItem implements Serializable {
     /*是否发送消息成功*/
     private boolean done = true;
 
-    @Transient
-    private User user;
+    private String nickname;
 
-    @Generated(hash = 135691449)
+    private String avatar;
+
+    @Generated(hash = 1140521755)
     public ChatMessage(Long id, String chatMessageId, String chatId, String userId,
-                       String senderId, String message, long sendTime, boolean done) {
+            String senderId, String message, long sendTime, boolean done, String nickname,
+            String avatar) {
         this.id = id;
         this.chatMessageId = chatMessageId;
         this.chatId = chatId;
@@ -64,10 +66,28 @@ public class ChatMessage extends BindingItem implements Serializable {
         this.message = message;
         this.sendTime = sendTime;
         this.done = done;
+        this.nickname = nickname;
+        this.avatar = avatar;
     }
 
     @Generated(hash = 2271208)
     public ChatMessage() {
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     public Long getId() {
@@ -136,30 +156,6 @@ public class ChatMessage extends BindingItem implements Serializable {
 
     public boolean getDone() {
         return this.done;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public String getChatMessageName() {
-        if (user == null) {
-            return "";
-        } else {
-            return user.getNickname();
-        }
-    }
-
-    public String getChatMessageAvatar() {
-        if (user == null) {
-            return "";
-        } else {
-            return user.getAvatar();
-        }
     }
 
     @Override

@@ -4,7 +4,11 @@ import org.greenrobot.greendao.query.QueryBuilder;
 
 import cn.chestnut.mvvm.teamworker.db.DaoMaster;
 import cn.chestnut.mvvm.teamworker.db.DaoSession;
+import cn.chestnut.mvvm.teamworker.main.activity.LoginActivity;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
+import cn.chestnut.mvvm.teamworker.utils.Log;
+import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
+import cn.chestnut.mvvm.teamworker.utils.StringUtil;
 
 /**
  * Copyright (c) 2017, Chestnut All rights reserved
@@ -17,40 +21,24 @@ import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
 public class DaoManager {
     private static final String DB_NAME = "teamworker2018";
 
-    //多线程中要被共享的使用volatile关键字修饰
-    private volatile static DaoManager daoManager;
-    private static DaoMaster sDaoMaster;
+    private volatile static DaoMaster sDaoMaster;
     private static DaoMaster.DevOpenHelper sHelper;
     private static DaoSession sDaoSession;
-
-    private DaoManager() {
-    }
-
-    /**
-     * 单例模式获得操作数据库对象
-     *
-     * @return
-     */
-    public static DaoManager getInstance() {
-        if (daoManager == null) {
-            synchronized (DaoManager.class) {
-                if (daoManager == null)
-                    daoManager = new DaoManager();
-            }
-        }
-        return daoManager;
-
-    }
 
     /**
      * 判断是否有存在数据库，如果没有则创建
      *
      * @return
      */
-    public DaoMaster getDaoMaster() {
+    private synchronized static DaoMaster getDaoMaster() {
+        Log.d("getDaoMaster 获取DaoMaster DaoMaster是否null" + (sDaoMaster == null));
         if (sDaoMaster == null) {
-            DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(MyApplication.getInstance(), DB_NAME, null);
-            sDaoMaster = new DaoMaster(helper.getWritableDatabase());
+            String userId = PreferenceUtil.getInstances(MyApplication.getInstance()).getPreferenceString("userId");
+            Log.d("getDaoMaster userId  = " + userId);
+            if (StringUtil.isEmpty(userId)) return null;
+            Log.d("getDaoMaster 初始化DevOpenHelper DevOpenHelper是否null" + (sHelper == null));
+            sHelper = new DaoMaster.DevOpenHelper(MyApplication.getInstance(), DB_NAME + userId, null);
+            sDaoMaster = new DaoMaster(sHelper.getWritableDatabase());
         }
         return sDaoMaster;
     }
@@ -60,7 +48,8 @@ public class DaoManager {
      *
      * @return
      */
-    public DaoSession getDaoSession() {
+    public static DaoSession getDaoSession() {
+        Log.d("getDaoSession 获取DaoSession DaoSession是否null" + (sDaoSession == null));
         if (sDaoSession == null) {
             if (sDaoMaster == null) {
                 sDaoMaster = getDaoMaster();
@@ -73,7 +62,7 @@ public class DaoManager {
     /**
      * 打开输出日志，默认关闭
      */
-    public void setDebug() {
+    public static void setDebug() {
         QueryBuilder.LOG_SQL = true;
         QueryBuilder.LOG_VALUES = true;
     }
@@ -81,19 +70,20 @@ public class DaoManager {
     /**
      * 关闭所有的操作，数据库开启后，使用完毕要关闭
      */
-    public void closeConnection() {
+    public static void closeConnection() {
         closeHelper();
         closeDaoSession();
+        sDaoMaster = null;
     }
 
-    public void closeHelper() {
+    private static void closeHelper() {
         if (sHelper != null) {
             sHelper.close();
             sHelper = null;
         }
     }
 
-    public void closeDaoSession() {
+    private static void closeDaoSession() {
         if (sDaoSession != null) {
             sDaoSession.clear();
             sDaoSession = null;

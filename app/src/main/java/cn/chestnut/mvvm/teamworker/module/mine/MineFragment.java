@@ -37,6 +37,7 @@ import cn.chestnut.mvvm.teamworker.utils.EmojiUtil;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 import cn.chestnut.mvvm.teamworker.utils.GlideLoader;
+import cn.chestnut.mvvm.teamworker.utils.sqlite.DaoManager;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -71,7 +72,7 @@ public class MineFragment extends BaseFragment {
     }
 
     private void initView() {
-        asyncSession = MessageDaoUtils.getDaoSession().startAsyncSession();
+        asyncSession = DaoManager.getDaoSession().startAsyncSession();
         getMyInfomation();
     }
 
@@ -94,9 +95,7 @@ public class MineFragment extends BaseFragment {
                         .setPositiveButton("确定退出", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                closeService();
-                                clesrUserInfo();
-                                goLogin();
+                                logout();
                             }
                         })
                         .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -123,6 +122,13 @@ public class MineFragment extends BaseFragment {
             }
         });
 
+    }
+
+    private void logout() {
+        closeService();
+        clesrUserInfo();
+        DaoManager.closeConnection();
+        goLogin();
     }
 
     /**
@@ -157,34 +163,13 @@ public class MineFragment extends BaseFragment {
      * 获取个人信息
      */
     private void getMyInfomation() {
-        Map<String, Object> params = new HashMap<>();
-        params.put("token", PreferenceUtil.getInstances(getActivity()).getPreferenceString("token"));
-        params.put("userId", PreferenceUtil.getInstances(getActivity()).getPreferenceString("userId"));
-        RequestManager.getInstance(getActivity()).executeRequest(HttpUrls.GET_MY_INFORMATION, params, new AppCallBack<ApiResponse<User>>() {
-
-            @Override
-            public void next(ApiResponse<User> response) {
-                if (response.isSuccess()) {
-                    try {
-                        asyncSession.insertOrReplace(response.getData());
-                        binding.tvNickname.setText(EmojiUtil.emojiRecovery(response.getData().getNickname()));
-                        GlideLoader.displayImage(getActivity(), HttpUrls.GET_PHOTO + response.getData().getAvatar(), binding.ivAvatar);
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void error(Throwable error) {
-                Log.e(error.toString());
-            }
-
-            @Override
-            public void complete() {
-            }
-
-        });
+        try {
+            binding.tvNickname.setText(EmojiUtil.emojiRecovery(PreferenceUtil.getInstances(getContext()).getPreferenceString("nickname")));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        GlideLoader.displayImage(getActivity(), HttpUrls.GET_PHOTO +
+                PreferenceUtil.getInstances(getContext()).getPreferenceString("avatar"), binding.ivAvatar);
 
     }
 

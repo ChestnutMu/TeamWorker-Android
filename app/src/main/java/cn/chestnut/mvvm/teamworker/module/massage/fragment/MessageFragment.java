@@ -21,15 +21,15 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
 import org.greenrobot.greendao.async.AsyncOperation;
 import org.greenrobot.greendao.async.AsyncOperationListener;
 import org.greenrobot.greendao.async.AsyncSession;
 import org.greenrobot.greendao.query.QueryBuilder;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -39,29 +39,22 @@ import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.FragmentMessageBinding;
 import cn.chestnut.mvvm.teamworker.databinding.PopupAddActionBinding;
 import cn.chestnut.mvvm.teamworker.db.ChatDao;
-import cn.chestnut.mvvm.teamworker.db.ChatMessageDao;
 import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
 import cn.chestnut.mvvm.teamworker.http.RequestManager;
-import cn.chestnut.mvvm.teamworker.main.activity.MainActivity;
 import cn.chestnut.mvvm.teamworker.main.adapter.BaseListViewAdapter;
 import cn.chestnut.mvvm.teamworker.main.common.BaseFragment;
+import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
 import cn.chestnut.mvvm.teamworker.model.Chat;
-import cn.chestnut.mvvm.teamworker.model.ChatMessage;
-import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
+import cn.chestnut.mvvm.teamworker.model.UserInfo;
 import cn.chestnut.mvvm.teamworker.module.massage.activity.ChatActivity;
 import cn.chestnut.mvvm.teamworker.module.massage.adapter.MessageAdapter;
-import cn.chestnut.mvvm.teamworker.model.Message;
-import cn.chestnut.mvvm.teamworker.model.MessageUser;
-import cn.chestnut.mvvm.teamworker.model.MessageVo;
 import cn.chestnut.mvvm.teamworker.module.user.SearchFriendActivity;
-import cn.chestnut.mvvm.teamworker.socket.SendProtocol;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
-import cn.chestnut.mvvm.teamworker.utils.EmojiUtil;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
-import cn.chestnut.mvvm.teamworker.utils.StringUtil;
+import cn.chestnut.mvvm.teamworker.utils.sqlite.DaoManager;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -77,10 +70,8 @@ public class MessageFragment extends BaseFragment {
     private MessageAdapter chatAdapter;
     private List<Chat> chatList;
     private String userId;
-    private MessageDaoUtils messageDaoUtils;
     private BroadcastReceiver receiver;
-
-    private static final long MILLISECOND_OF_TWO_HOUR = 60 * 60 * 1000;
+    private Gson gson = new Gson();
 
     /*本地数据操作异步工具类*/
     private AsyncSession asyncSession;
@@ -167,49 +158,10 @@ public class MessageFragment extends BaseFragment {
     }
 
     private void initData() {
-        asyncSession = MessageDaoUtils.getDaoSession().startAsyncSession();
-//        receiver = new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                Message newMessage = (Message) intent.getSerializableExtra("newMessage");
-//                Log.d("MessageFragment收到一条新消息" + newMessage.toString());
-//                if (!newMessage.getSenderId().equals(userId)) {
-//                    try {
-//                        newMessage.setContent(EmojiUtil.emojiRecovery(newMessage.getContent()));
-//                        newMessage.setChatName(EmojiUtil.emojiRecovery(newMessage.getChatName()));
-//                    } catch (UnsupportedEncodingException e) {
-//                        e.printStackTrace();
-//                    }
-//                    messageDaoUtils.insertMessage(newMessage);
-//                }
-//                boolean listHasSender = false;//消息列表中是否已经有该发送者item
-//                for (int i = 0; i < chatList.size(); i++) {
-//                    if (chatList.get(i).getMessage().getChatId().equals(newMessage.getChatId())) {
-//                        chatList.remove(i);
-//                        MessageVo messageVo = new MessageVo();
-//                        messageVo.setMessage(newMessage);
-//                        chatList.add(0, messageVo);
-//                        messageAdapter.notifyDataSetChanged();
-//                        listHasSender = true;
-//                        break;
-//                    }
-//                }
-//                if (!listHasSender) {
-//                    MessageVo messageVo = new MessageVo();
-//                    messageVo.setMessage(newMessage);
-//                    chatList.add(0, messageVo);
-//                    messageAdapter.notifyItemInserted(0);
-//                    messageAdapter.notifyDataSetChanged();
-//                }
-//            }
-//        };
-//        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, new IntentFilter(Constant.ActionConstant.ACTION_GET_NEW_MESSAGE));
-
-//        messageDaoUtils = new MessageDaoUtils();
+        asyncSession = DaoManager.getDaoSession().startAsyncSession();
         userId = PreferenceUtil.getInstances(getActivity()).getPreferenceString("userId");
 
         chatList = new ArrayList<>();
-//        getNotSendMessagesByUserId();
     }
 
     private void initView() {
@@ -219,7 +171,20 @@ public class MessageFragment extends BaseFragment {
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         binding.recyclerView.setLayoutManager(manager);
         binding.recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+
         getChatFromLocal(true);
+
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d("更新界面 intent.getAction() = " + intent.getAction());
+                if (intent.getAction().equals(Constant.ActionConstant.UPDATE_MESSAGE_CHAT_LAYOUT)) {
+                    Log.d("更新界面");
+                    getChatFromLocal(true);
+                }
+            }
+        };
+        LocalBroadcastManager.getInstance(MyApplication.getInstance()).registerReceiver(receiver, new IntentFilter(Constant.ActionConstant.UPDATE_MESSAGE_CHAT_LAYOUT));
     }
 
     private void getChatFromLocal(final boolean isRefresh) {
@@ -234,7 +199,7 @@ public class MessageFragment extends BaseFragment {
             @Override
             public void onAsyncOperationCompleted(AsyncOperation operation) {
                 if (operation.isFailed()) {
-                    Log.d("获取数据异常");
+                    Log.d("getChatFromLocal 获取数据异常");
                     return;
                 }
                 Log.d("operation.getType()= " + operation.getType());
@@ -246,7 +211,7 @@ public class MessageFragment extends BaseFragment {
                 }
             }
         });
-        asyncSession.queryList(QueryBuilder.internalCreate(MessageDaoUtils.getDaoSession().getDao(Chat.class))
+        asyncSession.queryList(QueryBuilder.internalCreate(DaoManager.getDaoSession().getDao(Chat.class))
                 .orderDesc(ChatDao.Properties.UpdateTime)
                 .offset((pageNum - 1) * pageSize)
                 .limit(pageSize)
@@ -282,53 +247,21 @@ public class MessageFragment extends BaseFragment {
     }
 
     private void addListener() {
-//        messageAdapter.setOnUpdateMessageLayoutListener(new MessageAdapter.OnUpdateMessageLayoutListener() {
-//            @Override
-//            public void onUpdate(final MessageAdapter messageAdapter, MessageVo obj, final boolean isUpdate) {
-//                String chatUserId = obj.getMessage().getSenderId();
-//                if (chatUserId.equals(userId)) {
-//                    chatUserId = obj.getMessage().getReceiverId();
-//                }
-//                Map<String, Object> params = new HashMap<>();
-//                params.put("userId", chatUserId);
-//                RequestManager.getInstance(getActivity()).executeRequest(HttpUrls.GET_USER_INFO, params, new AppCallBack<ApiResponse<MessageUser>>() {
-//
-//                    @Override
-//                    public void next(ApiResponse<MessageUser> response) {
-//                        if (response.isSuccess()) {
-//                            try {
-//                                response.getData().setNickname(EmojiUtil.emojiRecovery(response.getData().getNickname()));
-//                            } catch (UnsupportedEncodingException e) {
-//                                e.printStackTrace();
-//                            }
-//                            if (isUpdate) {
-//                                //本地更新数据
-//                                messageDaoUtils.updateMessageUser(response.getData());
-//                            } else {
-//                                //本地插入数据
-//                                messageDaoUtils.insertMessageUser(response.getData());
-//                            }
-//                            //保存下一次需要更新的时间
-//                            PreferenceUtil.getInstances(getActivity()).savePreferenceLong("updateTime", MILLISECOND_OF_TWO_HOUR + System.currentTimeMillis());
-//                            messageAdapter.notifyDataSetChanged();
-//                        } else {
-//                            showToast(response.getMessage());
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void error(Throwable error) {
-//                    }
-//
-//                    @Override
-//                    public void complete() {
-//
-//                    }
-//
-//                });
-//            }
-//
-//        });
+        chatAdapter.setLayoutListener(new MessageAdapter.OnUpdateChatLayoutListener() {
+            @Override
+            public void onUpdate(Chat chat, String senderId, int position) {
+                UserInfo userInfo = MyApplication.userInfoMap.get(senderId);
+                if (userInfo == null) {
+                    getUserInfoFromServer(chat, senderId, position);
+                } else {
+                    chat.setUserId(userInfo.getUserId());
+                    chat.setChatName(userInfo.getNickname());
+                    chat.setChatPic(userInfo.getAvatar());
+                    asyncSession.insertOrReplace(chat);
+//                    chatAdapter.notifyItemChanged(position);
+                }
+            }
+        });
         chatAdapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -343,54 +276,57 @@ public class MessageFragment extends BaseFragment {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 Log.d("------->isSlideToBottom:" + recyclerView.canScrollVertically(1));
-                if (recyclerView.canScrollVertically(1)) {
+                if (!recyclerView.canScrollVertically(1)) {
                     getChatFromLocal(false);
                 }
             }
         });
     }
 
-    /**
-     * 获取未获取消息列表
-     */
-    private void getNotSendMessagesByUserId() {
-//        Map<String, Object> params = new HashMap<>();
-//        params.put("userId", userId);
-//        RequestManager.getInstance(getActivity()).executeRequest(HttpUrls.GET_NOT_SEND_MESSAGES_BY_USER_ID, params, new AppCallBack<ApiResponse<List<Message>>>() {
-//
-//            @Override
-//            public void next(ApiResponse<List<Message>> response) {
-//                if (response.isSuccess()) {
-//                    for (int i = 0; i < response.getData().size(); i++) {
-//                        try {
-//                            response.getData().get(i).setContent(EmojiUtil.emojiConvert(response.getData().get(i).getContent()));
-//                            response.getData().get(i).setChatName(EmojiUtil.emojiConvert(response.getData().get(i).getChatName()));
-//                        } catch (UnsupportedEncodingException e) {
-//                            e.printStackTrace();
-//                        }
-//                        ((MainActivity) getActivity()).executeRequest(SendProtocol.MSG_ISSEND_MESSAGE,
-//                                response.getData().get(i).getMessageId());
-//                    }
-//                    messageDaoUtils.insertMultMessage(response.getData());
-//                    chatList.clear();
-//                    chatList.addAll(messageDaoUtils.transferMessageVo(messageDaoUtils.queryTopMessageByUserId(userId)));
-//                    chatAdapter.notifyDataSetChanged();
-//                } else {
-//                    showToast(response.getMessage());
-//                }
-//            }
-//
-//            @Override
-//            public void error(Throwable error) {
-//            }
-//
-//            @Override
-//            public void complete() {
-//
-//            }
-//
-//        });
 
+    private void getUserInfoFromServer(final Chat chat, final String senderId, final int position) {
+        boolean isUpdate = PreferenceUtil.getInstances(MyApplication.getInstance()).
+                getPreferenceBoolean(Constant.PreferenceKey.USER_INFO_WAITING + senderId);
+        if (!isUpdate) {
+            PreferenceUtil.getInstances(MyApplication.getInstance()).
+                    savePreferenceBoolean(Constant.PreferenceKey.USER_INFO_WAITING + senderId, true);
+            Log.d("更新用户信息 userId = " + userId);
+        } else {
+            return;
+        }
+
+        List<String> userList = new ArrayList<>();
+        userList.add(senderId);
+        Map<String, Object> param = new HashMap<>(1);
+        param.put("userList", gson.toJson(userList));
+        RequestManager.getInstance(MyApplication.getInstance()).executeRequest(HttpUrls.GET_USER_LIST_INFO, param, new AppCallBack<ApiResponse<List<UserInfo>>>() {
+            @Override
+            public void next(final ApiResponse<List<UserInfo>> response) {
+                if (response.isSuccess()) {
+                    UserInfo userInfo = response.getData().get(0);
+                    MyApplication.userInfoMap.put(userInfo.getUserId(), userInfo);
+                    chat.setUserId(userInfo.getUserId());
+                    chat.setChatName(userInfo.getNickname());
+                    chat.setChatPic(userInfo.getAvatar());
+                    asyncSession.insertOrReplace(chat);
+                    asyncSession.insertOrReplace(userInfo);
+                    chatAdapter.notifyItemChanged(position);
+                    PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey(Constant.PreferenceKey.USER_INFO_WAITING + userInfo.getUserId());
+                } else {
+                    Log.d(response.getMessage());
+                }
+            }
+
+            @Override
+            public void error(Throwable error) {
+                PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey(Constant.PreferenceKey.USER_INFO_WAITING + senderId);
+            }
+
+            @Override
+            public void complete() {
+                PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey(Constant.PreferenceKey.USER_INFO_WAITING + senderId);
+            }
+        });
     }
 
     /**
@@ -432,5 +368,7 @@ public class MessageFragment extends BaseFragment {
     public void onDestroy() {
         super.onDestroy();
         asyncSession = null;
+        if (receiver != null)
+            LocalBroadcastManager.getInstance(MyApplication.getInstance()).unregisterReceiver(receiver);
     }
 }

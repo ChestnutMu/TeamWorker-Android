@@ -8,6 +8,7 @@ import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,14 +42,17 @@ import cn.chestnut.mvvm.teamworker.http.HttpUrls;
 import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.adapter.BaseListViewAdapter;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
+import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
 import cn.chestnut.mvvm.teamworker.model.Chat;
 import cn.chestnut.mvvm.teamworker.model.UserFriend;
+import cn.chestnut.mvvm.teamworker.model.UserInfo;
 import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
 import cn.chestnut.mvvm.teamworker.module.massage.activity.ChatActivity;
 import cn.chestnut.mvvm.teamworker.module.team.PullUserIntoTeamActivity;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
+import cn.chestnut.mvvm.teamworker.utils.sqlite.DaoManager;
 
 import static android.content.ContentValues.TAG;
 
@@ -110,7 +114,7 @@ public class UserInformationActivity extends BaseActivity {
     protected void initView() {
         Log.d("userFriend:" + userFriend.isFriend());
         if (userFriend.isFriend() || userId.equals(myUserId)) {
-            asyncSession = MessageDaoUtils.getDaoSession().startAsyncSession();
+            asyncSession = DaoManager.getDaoSession().startAsyncSession();
             binding.btnSubmit.setText("发送消息");
             binding.btnSubmit.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -141,7 +145,7 @@ public class UserInformationActivity extends BaseActivity {
             @Override
             public void onAsyncOperationCompleted(AsyncOperation operation) {
                 if (operation.isFailed()) {
-                    Log.d("获取数据异常");
+                    Log.d("UserInformationActivity 获取数据异常");
                     //从服务器创建并保存到本地
                     createChat();
                     return;
@@ -159,12 +163,13 @@ public class UserInformationActivity extends BaseActivity {
                 }
             }
         });
-        asyncSession.queryUnique(QueryBuilder.internalCreate(MessageDaoUtils.getDaoSession().getDao(Chat.class))
+        asyncSession.queryUnique(QueryBuilder.internalCreate(DaoManager.getDaoSession().getDao(Chat.class))
                 .where(ChatDao.Properties.UserId.eq(userFriend.getUser().getUserId()))
                 .build());
     }
 
     private void createChat() {
+        asyncSession.setListenerMainThread(null);
         Map<String, Object> param = new HashMap<>(2);
         param.put("chatType", Constant.ChatType.TYPE_CHAT_DOUBLE);
         Set<String> userList = new HashSet<>(2);
@@ -201,6 +206,10 @@ public class UserInformationActivity extends BaseActivity {
     }
 
     private void handleChat(Chat chat) {
+        Log.d("handleChat 更新信息界面");
+        Intent intentUpdate = new Intent(Constant.ActionConstant.UPDATE_MESSAGE_CHAT_LAYOUT);
+        LocalBroadcastManager.getInstance(MyApplication.getInstance()).sendBroadcast(intentUpdate);
+
         Intent intent = new Intent(this, ChatActivity.class);
         intent.putExtra(ChatActivity.BUNDLE_CHAT, chat);
         startActivity(intent);
@@ -287,6 +296,12 @@ public class UserInformationActivity extends BaseActivity {
                         addActionList.add(deleteFriend);
                     }
                     adapter.notifyDataSetChanged();
+                    UserInfo userInfo = new UserInfo();
+                    userInfo.setUserId(userFriend.getUser().getUserId());
+                    userInfo.setNickname(userFriend.getUser().getNickname());
+                    userInfo.setAvatar(userFriend.getUser().getAvatar());
+                    MyApplication.userInfoMap.put(userInfo.getUserId(), userInfo);
+                    MessageDaoUtils.checkUserInfoOrUpdateToLocal(asyncSession, userFriend.getUser());
                 }
             }
 

@@ -20,14 +20,12 @@ import org.greenrobot.greendao.query.QueryBuilder;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import cn.chestnut.mvvm.teamworker.Constant;
 import cn.chestnut.mvvm.teamworker.db.ChatDao;
-import cn.chestnut.mvvm.teamworker.db.ChatMessageDao;
 import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
@@ -35,14 +33,14 @@ import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
 import cn.chestnut.mvvm.teamworker.model.Chat;
 import cn.chestnut.mvvm.teamworker.model.ChatMessage;
-import cn.chestnut.mvvm.teamworker.model.User;
-import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
 import cn.chestnut.mvvm.teamworker.socket.ReceiverProtocol;
+import cn.chestnut.mvvm.teamworker.socket.SendProtocol;
 import cn.chestnut.mvvm.teamworker.socket.TeamWorkerClient;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
 import cn.chestnut.mvvm.teamworker.utils.EmojiUtil;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
+import cn.chestnut.mvvm.teamworker.utils.sqlite.DaoManager;
 
 /**
  * Copyright (c) 2017, Chestnut All rights reserved
@@ -74,10 +72,15 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
     private ArrayList<OnHandlerSessionListener> mSessionListeners;
     /*本地数据操作异步工具类*/
     private AsyncSession asyncSession;
+    private AsyncSession asyncSessionChat;
 
     private TeamWorkerMessageHandler() {
         super();
-        asyncSession = MessageDaoUtils.getDaoSession().startAsyncSession();
+//        String userId = PreferenceUtil.getInstances(MyApplication.getInstance()).getPreferenceString("userId");
+//        Log.d("userId = " + userId);
+//        if (StringUtil.isEmpty(userId)) return;
+//        asyncSession = MessageDaoUtils.getDaoSession().startAsyncSession();
+//        asyncSessionChat = MessageDaoUtils.getDaoSession().startAsyncSession();
     }
 
     synchronized public static TeamWorkerMessageHandler getInstance() {
@@ -161,26 +164,22 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
         final ChatMessage newMessage = gson.fromJson(
                 response.toString(), new TypeToken<ChatMessage>() {
                 }.getType());
+        send(SendProtocol.MSG_ISSEND_CHAT_MESSAGE, newMessage.getChatMessageId());
         if (asyncSession == null)
-            asyncSession = MessageDaoUtils.getDaoSession().startAsyncSession();
+            asyncSession = DaoManager.getDaoSession().startAsyncSession();
         try {
             newMessage.setMessage(EmojiUtil.emojiRecovery(newMessage.getMessage()));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        asyncSession.runInTx(new Runnable() {
-            @Override
-            public void run() {
-                asyncSession.insert(newMessage);
-                checkHasChatAndUpdate(newMessage.getChatId());
-            }
-        });
+        asyncSession.insert(newMessage);
+        checkHasChatAndUpdate(newMessage.getChatId(), newMessage);
     }
 
-    private void checkHasChatAndUpdate(String chatId) {
-        Set<String> chatList = new HashSet<>();
-        chatList.add(chatId);
-        checkHasChatAndUpdate(chatList);
+    private void checkHasChatAndUpdate(String chatId, ChatMessage newMessage) {
+        Map<String, ChatMessage> chatMap = new HashMap<>();
+        chatMap.put(chatId, newMessage);
+        checkHasChatAndUpdate(chatMap);
     }
 
     /**
@@ -194,42 +193,50 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
                 response.toString(), new TypeToken<List<ChatMessage>>() {
                 }.getType());
         if (asyncSession == null)
-            asyncSession = MessageDaoUtils.getDaoSession().startAsyncSession();
-        asyncSession.runInTx(new Runnable() {
-            @Override
-            public void run() {
-                Set<String> chatList = new HashSet<>();
-                for (ChatMessage chatMessage : newMessageList) {
-                    try {
-                        chatMessage.setMessage(EmojiUtil.emojiRecovery(chatMessage.getMessage()));
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
-                    asyncSession.insert(chatMessage);
-                    chatList.add(chatMessage.getChatId());
-                }
-                checkHasChatAndUpdate(chatList);
+            asyncSession = DaoManager.getDaoSession().startAsyncSession();
+        Map<String, ChatMessage> chatMap = new HashMap<>();
+        for (ChatMessage chatMessage : newMessageList) {
+            send(SendProtocol.MSG_ISSEND_CHAT_MESSAGE, chatMessage.getChatMessageId());
+            try {
+                chatMessage.setMessage(EmojiUtil.emojiRecovery(chatMessage.getMessage()));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
             }
-        });
+            asyncSession.insert(chatMessage);
+            ChatMessage temp = chatMap.get(chatMessage.getChatId());
+            if (temp == null || temp.getSendTime() < chatMessage.getSendTime())//设置最新的时间
+                chatMap.put(chatMessage.getChatId(), chatMessage);
+        }
+        checkHasChatAndUpdate(chatMap);
     }
 
-    private void checkHasChatAndUpdate(Set<String> chatList) {
+    private void checkHasChatAndUpdate(final Map<String, ChatMessage> chatMap) {
         final List<String> newChatList = new ArrayList<>();
-        for (String chatId : chatList) {
+        Set<String> chatSet = chatMap.keySet();
+        for (String chatId : chatSet) {
             boolean isUpdate = PreferenceUtil.getInstances(MyApplication.getInstance()).
                     getPreferenceBoolean(Constant.PreferenceKey.CHAT_INFO_WAITING + chatId);
+            Log.d("checkHasChatAndUpdate isUpdate = " + isUpdate + " chatId = " + chatId);
             if (!isUpdate) {
                 PreferenceUtil.getInstances(MyApplication.getInstance()).
                         savePreferenceBoolean(Constant.PreferenceKey.CHAT_INFO_WAITING + chatId, true);
                 newChatList.add(chatId);
             }
         }
-        asyncSession.setListenerMainThread(new AsyncOperationListener() {
+        if (newChatList.isEmpty()) {
+            //TODO 更新消息界面
+            updateMessageLayout();
+            return;
+        }
+        if (asyncSessionChat == null)
+            asyncSessionChat = DaoManager.getDaoSession().startAsyncSession();
+        asyncSessionChat.setListenerMainThread(new AsyncOperationListener() {
 
             @Override
             public void onAsyncOperationCompleted(AsyncOperation operation) {
                 if (operation.isFailed()) {
-                    Log.d("获取数据异常");
+                    Log.d("checkHasChatAndUpdate 获取数据异常");
+                    getChatFromServer(newChatList);
                     return;
                 }
                 Log.d("operation.getType()= " + operation.getType());
@@ -237,16 +244,16 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
                     Object obj = operation.getResult();
                     Log.d("获取数据 obj = " + obj);
 
-                    handleData(obj, newChatList);
+                    handleData(obj, newChatList, chatMap);
                 }
             }
         });
-        asyncSession.queryList(QueryBuilder.internalCreate(MessageDaoUtils.getDaoSession().getDao(Chat.class))
+        asyncSessionChat.queryList(QueryBuilder.internalCreate(DaoManager.getDaoSession().getDao(Chat.class))
                 .where(ChatDao.Properties.ChatId.in(newChatList))
                 .build());
     }
 
-    private void handleData(Object obj, List<String> chatList) {
+    private void handleData(Object obj, List<String> chatList, Map<String, ChatMessage> chatMap) {
         if (obj != null && obj instanceof List) {
             Log.d("obtainDataFromLocalDatabase: " + obj);
             List<Chat> data = (List<Chat>) obj;
@@ -254,6 +261,14 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
                 for (Chat chat : data) {
                     PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey(Constant.PreferenceKey.CHAT_INFO_WAITING + chat.getChatId());
                     chatList.remove(chat.getChatId());
+                    chat.setLastMessage(chatMap.get(chat.getChatId()).getMessage());
+                    chat.setUpdateTime(chatMap.get(chat.getChatId()).getSendTime());
+                    asyncSessionChat.insertOrReplace(chat);
+                }
+                if (chatList.isEmpty()) {
+                    //TODO 更新消息界面
+                    updateMessageLayout();
+                    return;
                 }
                 getChatFromServer(chatList);
             } else {
@@ -265,7 +280,6 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
     }
 
     private void getChatFromServer(final List<String> chatList) {
-        if (chatList.isEmpty()) return;
         Map<String, Object> param = new HashMap<>(1);
         param.put("chatList", gson.toJson(chatList));
         RequestManager.getInstance(MyApplication.getInstance()).executeRequest(HttpUrls.GET_CHAT_LIST, param, new AppCallBack<ApiResponse<List<Chat>>>() {
@@ -273,8 +287,10 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
             public void next(ApiResponse<List<Chat>> response) {
                 if (response.isSuccess()) {
                     for (Chat chat : response.getData()) {
-                        asyncSession.insertOrReplace(chat);
+                        asyncSessionChat.insertOrReplace(chat);
                         PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey(Constant.PreferenceKey.CHAT_INFO_WAITING + chat.getChatId());
+                        //TODO 更新消息界面
+                        updateMessageLayout();
                     }
                 } else {
                     for (String chatId : chatList) {
@@ -396,6 +412,7 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
     private void loginConflict() {
         Log.d("已在其他设备登录");
         closeService();
+        DaoManager.closeConnection();
         if (isForeground(MyApplication.getInstance())) {
             clearUserInfo();
             PreferenceUtil.getInstances(MyApplication.getInstance()).savePreferenceBoolean("isShowLoginConflict", true);
@@ -419,6 +436,16 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
         intent.putExtra("newMessage", newMessage);
         LocalBroadcastManager.getInstance(MyApplication.getInstance()).sendBroadcast(intent);
     }
+
+    /**
+     * 更新消息界面
+     */
+    private void updateMessageLayout() {
+        Log.d("updateMessageLayout 更新信息界面");
+        Intent intent = new Intent(Constant.ActionConstant.UPDATE_MESSAGE_CHAT_LAYOUT);
+        LocalBroadcastManager.getInstance(MyApplication.getInstance()).sendBroadcast(intent);
+    }
+
 
     /**
      * 处理收到的好友请求通知

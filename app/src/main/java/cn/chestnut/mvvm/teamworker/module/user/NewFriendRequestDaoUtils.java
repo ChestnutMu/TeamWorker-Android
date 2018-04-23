@@ -19,10 +19,8 @@ import cn.chestnut.mvvm.teamworker.utils.sqlite.DaoManager;
  * Email: xiaoting233zhang@126.com
  */
 public class NewFriendRequestDaoUtils {
-    private DaoManager mManager;
 
     public NewFriendRequestDaoUtils() {
-        mManager = DaoManager.getInstance();
     }
 
     /**
@@ -33,7 +31,7 @@ public class NewFriendRequestDaoUtils {
      */
     public boolean insertNewFriendRequest(NewFriendRequest newFriendRequest) {
         boolean flag;
-        flag = mManager.getDaoSession().getNewFriendRequestDao().insert(newFriendRequest) == -1 ? false : true;
+        flag = DaoManager.getDaoSession().getNewFriendRequestDao().insert(newFriendRequest) == -1 ? false : true;
         Log.i("insert Message :" + flag + "-->" + newFriendRequest.toString());
         return flag;
     }
@@ -47,11 +45,11 @@ public class NewFriendRequestDaoUtils {
     public boolean insertMultNewFriendRequest(final List<NewFriendRequest> newFriendRequestList) {
         boolean flag = false;
         try {
-            mManager.getDaoSession().runInTx(new Runnable() {
+            DaoManager.getDaoSession().runInTx(new Runnable() {
                 @Override
                 public void run() {
                     for (NewFriendRequest newFriendRequest : newFriendRequestList) {
-                        mManager.getDaoSession().insertOrReplace(newFriendRequest);
+                        DaoManager.getDaoSession().insertOrReplace(newFriendRequest);
                     }
                 }
             });
@@ -71,7 +69,7 @@ public class NewFriendRequestDaoUtils {
     public boolean updateNewFriendRequest(NewFriendRequest newFriendRequest) {
         boolean flag = false;
         try {
-            mManager.getDaoSession().update(newFriendRequest);
+            DaoManager.getDaoSession().update(newFriendRequest);
             flag = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -89,7 +87,7 @@ public class NewFriendRequestDaoUtils {
         boolean flag = false;
         try {
             //按照id删除
-            mManager.getDaoSession().delete(newFriendRequest);
+            DaoManager.getDaoSession().delete(newFriendRequest);
             flag = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -106,7 +104,7 @@ public class NewFriendRequestDaoUtils {
         boolean flag = false;
         try {
             //按照id删除
-            mManager.getDaoSession().deleteAll(NewFriendRequest.class);
+            DaoManager.getDaoSession().deleteAll(NewFriendRequest.class);
             flag = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -121,7 +119,7 @@ public class NewFriendRequestDaoUtils {
      * @return
      */
     public NewFriendRequest queryNewFriendRequestById(String requestId) {
-        Query<NewFriendRequest> query = mManager.getDaoSession().getNewFriendRequestDao().queryBuilder().where(
+        Query<NewFriendRequest> query = DaoManager.getDaoSession().getNewFriendRequestDao().queryBuilder().where(
                 new WhereCondition.StringCondition("NEW_FRIEND_REQUEST_ID = '" + requestId + "")
         ).build();
         List<NewFriendRequest> requestList = query.list();
@@ -136,7 +134,7 @@ public class NewFriendRequestDaoUtils {
      * 使用native sql进行查询操作
      */
     public List<NewFriendRequest> queryNewFriendRequestByNativeSql(String sql, String[] conditions) {
-        return mManager.getDaoSession().queryRaw(NewFriendRequest.class, sql, conditions);
+        return DaoManager.getDaoSession().queryRaw(NewFriendRequest.class, sql, conditions);
     }
 
     /**
@@ -145,7 +143,7 @@ public class NewFriendRequestDaoUtils {
      * @return
      */
     public List<NewFriendRequest> queryNewFriendRequestByUserId(String userId) {
-        Query<NewFriendRequest> query = mManager.getDaoSession().getNewFriendRequestDao().queryBuilder().where(
+        Query<NewFriendRequest> query = DaoManager.getDaoSession().getNewFriendRequestDao().queryBuilder().where(
                 new WhereCondition.StringCondition("RECIPIENT_ID = '" + userId + "' ORDER BY TIME DESC")
         ).build();
         List<NewFriendRequest> requestList = query.list();

@@ -14,8 +14,14 @@ import com.qiniu.android.storage.UploadManager;
 import com.socks.library.KLog;
 import com.squareup.leakcanary.LeakCanary;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import cn.chestnut.mvvm.teamworker.BuildConfig;
 import cn.chestnut.mvvm.teamworker.core.TeamWorkerMessageHandler;
+import cn.chestnut.mvvm.teamworker.model.User;
+import cn.chestnut.mvvm.teamworker.model.UserInfo;
 
 /**
  * Copyright (c) 2017, Chestnut All rights reserved
@@ -29,6 +35,8 @@ public class MyApplication extends MultiDexApplication {
 
     private static MyApplication application;
 
+    //存放用户信息
+    public static Map<String, UserInfo> userInfoMap = new ConcurrentHashMap<>();
 
     /*请求响应时间*/
     public static long responseTime = SystemClock.elapsedRealtime();

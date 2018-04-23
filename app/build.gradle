@@ -43,7 +43,7 @@ android {
 }
 
 greendao {
-    schemaVersion 3
+    schemaVersion 4
     daoPackage 'cn.chestnut.mvvm.teamworker.db'
     targetGenDir 'src/main/java'
 }

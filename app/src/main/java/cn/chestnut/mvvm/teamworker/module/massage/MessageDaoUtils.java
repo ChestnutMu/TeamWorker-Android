@@ -1,5 +1,9 @@
 package cn.chestnut.mvvm.teamworker.module.massage;
 
+import org.greenrobot.greendao.async.AsyncOperation;
+import org.greenrobot.greendao.async.AsyncOperationListener;
+import org.greenrobot.greendao.async.AsyncSession;
+import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.query.Query;
 import org.greenrobot.greendao.query.QueryBuilder;
 import org.greenrobot.greendao.query.WhereCondition;
@@ -8,12 +12,13 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import cn.chestnut.mvvm.teamworker.db.DaoSession;
 import cn.chestnut.mvvm.teamworker.db.MessageDao;
+import cn.chestnut.mvvm.teamworker.db.UserDao;
 import cn.chestnut.mvvm.teamworker.model.Message;
 import cn.chestnut.mvvm.teamworker.model.MessageUser;
 import cn.chestnut.mvvm.teamworker.model.MessageVo;
 import cn.chestnut.mvvm.teamworker.model.User;
+import cn.chestnut.mvvm.teamworker.model.UserInfo;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.sqlite.DaoManager;
 
@@ -25,14 +30,8 @@ import cn.chestnut.mvvm.teamworker.utils.sqlite.DaoManager;
  * Email: xiaoting233zhang@126.com
  */
 public class MessageDaoUtils {
-    private DaoManager mManager;
 
     public MessageDaoUtils() {
-        mManager = DaoManager.getInstance();
-    }
-
-    public static DaoSession getDaoSession() {
-        return DaoManager.getInstance().getDaoSession();
     }
 
     /**
@@ -43,7 +42,7 @@ public class MessageDaoUtils {
      */
     public boolean insertMessage(Message message) {
         boolean flag;
-        flag = mManager.getDaoSession().getMessageDao().insert(message) == -1 ? false : true;
+        flag = DaoManager.getDaoSession().getMessageDao().insert(message) == -1 ? false : true;
         Log.i("insert Message :" + flag + "-->" + message.toString());
         return flag;
     }
@@ -57,11 +56,11 @@ public class MessageDaoUtils {
     public boolean insertMultMessage(final List<Message> messageList) {
         boolean flag = false;
         try {
-            mManager.getDaoSession().runInTx(new Runnable() {
+            DaoManager.getDaoSession().runInTx(new Runnable() {
                 @Override
                 public void run() {
                     for (Message message : messageList) {
-                        mManager.getDaoSession().insertOrReplace(message);
+                        DaoManager.getDaoSession().insertOrReplace(message);
                     }
                 }
             });
@@ -81,11 +80,11 @@ public class MessageDaoUtils {
     public boolean insertMultMessageUser(final List<MessageUser> messageUserList) {
         boolean flag = false;
         try {
-            mManager.getDaoSession().runInTx(new Runnable() {
+            DaoManager.getDaoSession().runInTx(new Runnable() {
                 @Override
                 public void run() {
                     for (MessageUser messageUser : messageUserList) {
-                        mManager.getDaoSession().insertOrReplace(messageUser);
+                        DaoManager.getDaoSession().insertOrReplace(messageUser);
                     }
                 }
             });
@@ -104,7 +103,7 @@ public class MessageDaoUtils {
      */
     public boolean insertMessageUser(MessageUser messageUser) {
         boolean flag;
-        flag = mManager.getDaoSession().getMessageUserDao().insert(messageUser) == -1 ? false : true;
+        flag = DaoManager.getDaoSession().getMessageUserDao().insert(messageUser) == -1 ? false : true;
         Log.i("insert messageUser :" + flag + "-->" + messageUser.toString());
         return flag;
     }
@@ -118,7 +117,7 @@ public class MessageDaoUtils {
     public boolean updateMessage(Message message) {
         boolean flag = false;
         try {
-            mManager.getDaoSession().update(message);
+            DaoManager.getDaoSession().update(message);
             flag = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -135,7 +134,7 @@ public class MessageDaoUtils {
     public boolean updateMessageUser(MessageUser messageUser) {
         boolean flag = false;
         try {
-            mManager.getDaoSession().update(messageUser);
+            DaoManager.getDaoSession().update(messageUser);
             flag = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -153,7 +152,7 @@ public class MessageDaoUtils {
         boolean flag = false;
         try {
             //按照id删除
-            mManager.getDaoSession().delete(message);
+            DaoManager.getDaoSession().delete(message);
             flag = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -170,7 +169,7 @@ public class MessageDaoUtils {
         boolean flag = false;
         try {
             //按照id删除
-            mManager.getDaoSession().deleteAll(Message.class);
+            DaoManager.getDaoSession().deleteAll(Message.class);
             flag = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -184,7 +183,7 @@ public class MessageDaoUtils {
      * @return
      */
     public List<Message> queryAllMessage() {
-        return mManager.getDaoSession().loadAll(Message.class);
+        return DaoManager.getDaoSession().loadAll(Message.class);
     }
 
     /**
@@ -194,14 +193,14 @@ public class MessageDaoUtils {
      * @return
      */
     public Message queryMessageById(String key) {
-        return mManager.getDaoSession().load(Message.class, key);
+        return DaoManager.getDaoSession().load(Message.class, key);
     }
 
     /**
      * 使用native sql进行查询操作
      */
     public List<Message> queryMessageByNativeSql(String sql, String[] conditions) {
-        return mManager.getDaoSession().queryRaw(Message.class, sql, conditions);
+        return DaoManager.getDaoSession().queryRaw(Message.class, sql, conditions);
     }
 
     /**
@@ -210,7 +209,7 @@ public class MessageDaoUtils {
      * @return
      */
     public List<Message> queryMessageByQueryBuilder(String id) {
-        QueryBuilder<Message> queryBuilder = mManager.getDaoSession().queryBuilder(Message.class);
+        QueryBuilder<Message> queryBuilder = DaoManager.getDaoSession().queryBuilder(Message.class);
         return queryBuilder.where(MessageDao.Properties.ReceiverId.eq(id)).list();
     }
 
@@ -220,7 +219,7 @@ public class MessageDaoUtils {
      * @return
      */
     public List<Message> queryTopMessageByUserId(String userId) {
-        Query query = mManager.getDaoSession().getMessageDao().queryBuilder().where(
+        Query query = DaoManager.getDaoSession().getMessageDao().queryBuilder().where(
                 new WhereCondition.StringCondition(
                         "RECEIVER_ID = '" + userId + "' OR SENDER_ID = '" + userId +
                                 "' GROUP BY CHAT_ID")).build();
@@ -233,7 +232,7 @@ public class MessageDaoUtils {
      * @return
      */
     public Message queryTopMessageByChatId(String chatId) {
-        Query query = mManager.getDaoSession().getMessageDao().queryBuilder().where(
+        Query query = DaoManager.getDaoSession().getMessageDao().queryBuilder().where(
                 new WhereCondition.StringCondition(
                         "CHAT_ID = '" + chatId +
                                 "' ORDER BY TIME DESC")).offset(0).limit(1).build();
@@ -247,7 +246,7 @@ public class MessageDaoUtils {
      * @return
      */
     public List<Message> queryMessageByUserIdAndSenderId(String userId, String senderId) {
-        Query query = mManager.getDaoSession().getMessageDao().queryBuilder().where(
+        Query query = DaoManager.getDaoSession().getMessageDao().queryBuilder().where(
                 new WhereCondition.StringCondition(
                         "RECEIVER_ID = '" + userId +
                                 "' AND SENDER_ID = '" + senderId +
@@ -263,7 +262,7 @@ public class MessageDaoUtils {
      * @return
      */
     public MessageUser queryMessageUserByUserId(String userId) {
-        Query query = mManager.getDaoSession().getMessageUserDao().queryBuilder().where(
+        Query query = DaoManager.getDaoSession().getMessageUserDao().queryBuilder().where(
                 new WhereCondition.StringCondition(
                         "USER_ID = '" + userId + "'")).build();
         return (MessageUser) query.unique();
@@ -276,7 +275,7 @@ public class MessageDaoUtils {
      * @return
      */
     public List<Message> queryMessageByChatId(String chatId) {
-        Query query = mManager.getDaoSession().getMessageDao().queryBuilder().where(
+        Query query = DaoManager.getDaoSession().getMessageDao().queryBuilder().where(
                 new WhereCondition.StringCondition(
                         "CHAT_ID = '" + chatId + "' ORDER BY TIME ASC")).build();
         return query.list();
@@ -290,7 +289,7 @@ public class MessageDaoUtils {
      * @return
      */
     public List<String> queryMessageUserIdByChatId(String chatId, String userId) {
-        Query<Message> query = mManager.getDaoSession().getMessageDao().queryBuilder().where(
+        Query<Message> query = DaoManager.getDaoSession().getMessageDao().queryBuilder().where(
                 new WhereCondition.StringCondition("CHAT_ID = '" + chatId + "' GROUP BY SENDER_ID ")
         ).build();
         List<Message> messageList = query.list();
@@ -353,16 +352,110 @@ public class MessageDaoUtils {
     }
 
 
-
     /**
      * 根据userId查询用户信息
      *
      * @return
      */
     public User queryUserByUserId(String userId) {
-        Query query = mManager.getDaoSession().getUserDao().queryBuilder().where(
+        Query query = DaoManager.getDaoSession().getUserDao().queryBuilder().where(
                 new WhereCondition.StringCondition(
                         "USER_ID = '" + userId + "'")).build();
         return (User) query.unique();
+    }
+
+    public static void updateChatMessageUserInfo(AsyncSession asyncSession, final String userId, final String nickname, final String avatar) {
+        asyncSession.runInTx(new Runnable() {
+            @Override
+            public void run() {
+                Database db = DaoManager.getDaoSession().getDatabase();
+                db.execSQL("update CHAT_MESSAGE set NICKNAME = ? and AVATAR = ? where SENDER_ID = ? ", new String[]{nickname, avatar, userId});
+            }
+        });
+    }
+
+    public static void updateChatMessageUserInfoNickname(AsyncSession asyncSession, final String userId, final String nickname) {
+        asyncSession.runInTx(new Runnable() {
+            @Override
+            public void run() {
+                Database db = DaoManager.getDaoSession().getDatabase();
+                db.execSQL("update CHAT_MESSAGE set NICKNAME = ? where SENDER_ID = ? ", new String[]{nickname, userId});
+//                db.beginTransaction();
+//                db.close();
+            }
+        });
+    }
+
+    public static void updateChatMessageUserInfoAvatar(AsyncSession asyncSession, final String userId, final String avatar) {
+        asyncSession.runInTx(new Runnable() {
+            @Override
+            public void run() {
+                Database db = DaoManager.getDaoSession().getDatabase();
+                db.execSQL("update CHAT_MESSAGE set AVATAR = ? where SENDER_ID = ? ", new String[]{avatar, userId});
+            }
+        });
+    }
+
+    public static void checkUserInfoOrUpdateToLocal(final AsyncSession asyncSession, final User user) {
+        asyncSession.setListenerMainThread(new AsyncOperationListener() {
+
+            @Override
+            public void onAsyncOperationCompleted(AsyncOperation operation) {
+                if (operation.isFailed()) {
+                    Log.d("checkUserInfoOrUpdateToLocal 获取数据异常");
+                    //从服务器创建并保存到本地
+                    return;
+                }
+                Log.d("operation.getType()= " + operation.getType());
+                if (operation.getType() == AsyncOperation.OperationType.QueryUnique) {
+                    Object obj = operation.getResult();
+                    Log.d("获取数据 obj = " + obj);
+                    if (null == obj) {
+                        //保存到本地
+                        UserInfo userInfo = new UserInfo();
+                        userInfo.setUserId(user.getUserId());
+                        userInfo.setNickname(user.getNickname());
+                        userInfo.setAvatar(user.getAvatar());
+                        asyncSession.insertOrReplace(userInfo);
+                        asyncSession.insertOrReplace(user);
+                    } else {
+                        User oldUser = (User) obj;
+                        if (oldUser.getNickname() != null && !oldUser.getNickname().equals(user.getNickname())) {
+                            if (oldUser.getAvatar() != null && !oldUser.getAvatar().equals(user.getAvatar())) {
+                                //两个都不一样
+                                MessageDaoUtils.updateChatMessageUserInfo(asyncSession, user.getUserId(), user.getNickname(), user.getAvatar());
+                                UserInfo userInfo = new UserInfo();
+                                userInfo.setUserId(user.getUserId());
+                                userInfo.setNickname(user.getNickname());
+                                userInfo.setAvatar(user.getAvatar());
+                                asyncSession.insertOrReplace(userInfo);
+                                asyncSession.insertOrReplace(user);
+                            } else {
+                                //nickname不一样
+                                MessageDaoUtils.updateChatMessageUserInfoNickname(asyncSession, user.getUserId(), user.getNickname());
+                                UserInfo userInfo = new UserInfo();
+                                userInfo.setUserId(user.getUserId());
+                                userInfo.setNickname(user.getNickname());
+                                asyncSession.insertOrReplace(userInfo);
+                                asyncSession.insertOrReplace(user);
+                            }
+                        } else {
+                            if (oldUser.getAvatar() != null && !oldUser.getAvatar().equals(user.getAvatar())) {
+                                //avatar不一样
+                                MessageDaoUtils.updateChatMessageUserInfoAvatar(asyncSession, user.getUserId(), user.getAvatar());
+                                UserInfo userInfo = new UserInfo();
+                                userInfo.setUserId(user.getUserId());
+                                userInfo.setAvatar(user.getAvatar());
+                                asyncSession.insertOrReplace(userInfo);
+                                asyncSession.insertOrReplace(user);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        asyncSession.queryUnique(QueryBuilder.internalCreate(DaoManager.getDaoSession().getDao(User.class))
+                .where(UserDao.Properties.UserId.eq(user.getUserId()))
+                .build());
     }
 }

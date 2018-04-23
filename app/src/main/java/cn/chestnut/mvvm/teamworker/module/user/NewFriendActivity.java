@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.TextView;
 
+import org.greenrobot.greendao.async.AsyncSession;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,10 +24,13 @@ import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
 import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
+import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
 import cn.chestnut.mvvm.teamworker.model.NewFriendRequest;
 import cn.chestnut.mvvm.teamworker.model.User;
+import cn.chestnut.mvvm.teamworker.model.UserInfo;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
+import cn.chestnut.mvvm.teamworker.utils.sqlite.DaoManager;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -45,6 +50,9 @@ public class NewFriendActivity extends BaseActivity {
 
     private NewFriendRequestDaoUtils friendRequestDaoUtils;
 
+    /*本地数据操作异步工具类*/
+    private AsyncSession asyncSession;
+
     @Override
     protected void setBaseTitle(TextView titleView) {
         titleView.setText("新朋友");
@@ -59,6 +67,7 @@ public class NewFriendActivity extends BaseActivity {
     }
 
     protected void initData() {
+        asyncSession = DaoManager.getDaoSession().startAsyncSession();
         friendRequestDaoUtils = new NewFriendRequestDaoUtils();
         getRequestByUserId();
     }
@@ -100,13 +109,20 @@ public class NewFriendActivity extends BaseActivity {
     }
 
     private void acceptRequest(final NewFriendRequest request, final int position) {
-        Map params = new HashMap<String, String>(1);
+        Map<String, String> params = new HashMap<>(1);
         params.put("newFriendRequestId", request.getNewFriendRequestId());
         showProgressDialog(this);
         RequestManager.getInstance(this).executeRequest(HttpUrls.ACCEPTED_REQUEST, params, new AppCallBack<ApiResponse<User>>() {
             @Override
             public void next(ApiResponse<User> response) {
                 if (response.isSuccess()) {
+                    UserInfo userInfo = new UserInfo();
+                    userInfo.setUserId(response.getData().getUserId());
+                    userInfo.setNickname(response.getData().getNickname());
+                    userInfo.setAvatar(response.getData().getAvatar());
+                    asyncSession.insertOrReplace(response.getData());
+                    asyncSession.insertOrReplace(userInfo);
+                    MyApplication.userInfoMap.put(userInfo.getUserId(), userInfo);
                     request.setAccepted(true);
                     Log.d("接受了好友的请求,newFriendRequest.accepted=" + request.getAccepted());
                     friendRequestDaoUtils.updateNewFriendRequest(request);
@@ -149,5 +165,11 @@ public class NewFriendActivity extends BaseActivity {
                 hideProgressDialog();
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        asyncSession = null;
     }
 }

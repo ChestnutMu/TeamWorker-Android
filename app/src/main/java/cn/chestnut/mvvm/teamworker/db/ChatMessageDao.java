@@ -32,6 +32,8 @@ public class ChatMessageDao extends AbstractDao<ChatMessage, Long> {
         public final static Property Message = new Property(5, String.class, "message", false, "MESSAGE");
         public final static Property SendTime = new Property(6, long.class, "sendTime", false, "SEND_TIME");
         public final static Property Done = new Property(7, boolean.class, "done", false, "DONE");
+        public final static Property Nickname = new Property(8, String.class, "nickname", false, "NICKNAME");
+        public final static Property Avatar = new Property(9, String.class, "avatar", false, "AVATAR");
     }
 
 
@@ -54,7 +56,9 @@ public class ChatMessageDao extends AbstractDao<ChatMessage, Long> {
                 "\"SENDER_ID\" TEXT," + // 4: senderId
                 "\"MESSAGE\" TEXT," + // 5: message
                 "\"SEND_TIME\" INTEGER NOT NULL ," + // 6: sendTime
-                "\"DONE\" INTEGER NOT NULL );"); // 7: done
+                "\"DONE\" INTEGER NOT NULL ," + // 7: done
+                "\"NICKNAME\" TEXT," + // 8: nickname
+                "\"AVATAR\" TEXT);"); // 9: avatar
     }
 
     /** Drops the underlying database table. */
@@ -98,6 +102,16 @@ public class ChatMessageDao extends AbstractDao<ChatMessage, Long> {
         }
         stmt.bindLong(7, entity.getSendTime());
         stmt.bindLong(8, entity.getDone() ? 1L: 0L);
+ 
+        String nickname = entity.getNickname();
+        if (nickname != null) {
+            stmt.bindString(9, nickname);
+        }
+ 
+        String avatar = entity.getAvatar();
+        if (avatar != null) {
+            stmt.bindString(10, avatar);
+        }
     }
 
     @Override
@@ -135,6 +149,16 @@ public class ChatMessageDao extends AbstractDao<ChatMessage, Long> {
         }
         stmt.bindLong(7, entity.getSendTime());
         stmt.bindLong(8, entity.getDone() ? 1L: 0L);
+ 
+        String nickname = entity.getNickname();
+        if (nickname != null) {
+            stmt.bindString(9, nickname);
+        }
+ 
+        String avatar = entity.getAvatar();
+        if (avatar != null) {
+            stmt.bindString(10, avatar);
+        }
     }
 
     @Override
@@ -152,7 +176,9 @@ public class ChatMessageDao extends AbstractDao<ChatMessage, Long> {
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // senderId
             cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // message
             cursor.getLong(offset + 6), // sendTime
-            cursor.getShort(offset + 7) != 0 // done
+            cursor.getShort(offset + 7) != 0, // done
+            cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // nickname
+            cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9) // avatar
         );
         return entity;
     }
@@ -167,6 +193,8 @@ public class ChatMessageDao extends AbstractDao<ChatMessage, Long> {
         entity.setMessage(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
         entity.setSendTime(cursor.getLong(offset + 6));
         entity.setDone(cursor.getShort(offset + 7) != 0);
+        entity.setNickname(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
+        entity.setAvatar(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
      }
     
     @Override

@@ -56,10 +56,12 @@ public class Chat extends BindingItem implements Serializable {
     /*更新时间*/
     private long updateTime;
 
-    @Generated(hash = 1934052068)
-    public Chat(Long id, String chatId, String userList, String adminId,
-                String userId, String chatName, String chatPic, Integer chatType,
-                long createTime, long updateTime) {
+    private String lastMessage;
+
+    @Generated(hash = 335641571)
+    public Chat(Long id, String chatId, String userList, String adminId, String userId,
+            String chatName, String chatPic, Integer chatType, long createTime,
+            long updateTime, String lastMessage) {
         this.id = id;
         this.chatId = chatId;
         this.userList = userList;
@@ -70,6 +72,7 @@ public class Chat extends BindingItem implements Serializable {
         this.chatType = chatType;
         this.createTime = createTime;
         this.updateTime = updateTime;
+        this.lastMessage = lastMessage;
     }
 
     @Generated(hash = 519536279)
@@ -156,6 +159,13 @@ public class Chat extends BindingItem implements Serializable {
         this.updateTime = updateTime;
     }
 
+    public String getLastMessage() {
+        return lastMessage;
+    }
+
+    public void setLastMessage(String lastMessage) {
+        this.lastMessage = lastMessage;
+    }
 
     public String showTime() {
         return FormatDateUtil.getMessageTime(System.currentTimeMillis(), getUpdateTime());

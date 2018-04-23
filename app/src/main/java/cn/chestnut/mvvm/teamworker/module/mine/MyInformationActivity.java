@@ -20,6 +20,10 @@ import android.widget.TextView;
 import com.qiniu.android.http.ResponseInfo;
 import com.qiniu.android.storage.UpCompletionHandler;
 
+import org.greenrobot.greendao.async.AsyncOperation;
+import org.greenrobot.greendao.async.AsyncOperationListener;
+import org.greenrobot.greendao.async.AsyncSession;
+import org.greenrobot.greendao.query.QueryBuilder;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,6 +34,8 @@ import java.util.Map;
 
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.ActivityMyInformationBinding;
+import cn.chestnut.mvvm.teamworker.db.UserDao;
+import cn.chestnut.mvvm.teamworker.db.UserInfoDao;
 import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
@@ -37,12 +43,15 @@ import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
 import cn.chestnut.mvvm.teamworker.model.User;
+import cn.chestnut.mvvm.teamworker.model.UserInfo;
+import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
 import cn.chestnut.mvvm.teamworker.utils.EmojiUtil;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 import cn.chestnut.mvvm.teamworker.utils.StringUtil;
 import cn.chestnut.mvvm.teamworker.utils.photo.ProcessPhotoUtils;
 import cn.chestnut.mvvm.teamworker.utils.GlideLoader;
+import cn.chestnut.mvvm.teamworker.utils.sqlite.DaoManager;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -62,6 +71,8 @@ public class MyInformationActivity extends BaseActivity {
     private String qiniuToken;
 
     private int GET_REGION_REQUEST_CODE = 3;
+
+    private AsyncSession asyncSession;
 
     @Override
     protected void setBaseTitle(TextView titleView) {
@@ -99,18 +110,19 @@ public class MyInformationActivity extends BaseActivity {
             binding.tvRegion.setText(data.getStringExtra("region"));
             User user = new User();
             user.setRegion(data.getStringExtra("region"));
-            updateMyinformation(user);
+            updateMyinformation(user, 5);
         }
     }
 
     protected void initData() {
+        asyncSession = DaoManager.getDaoSession().startAsyncSession();
         token = PreferenceUtil.getInstances(this).getPreferenceString("token");
         userId = PreferenceUtil.getInstances(this).getPreferenceString("userId");
     }
 
 
     protected void initView() {
-        getMyInfomation(token, userId);
+        getMyInfomation(userId);
     }
 
     protected void addListener() {
@@ -140,7 +152,7 @@ public class MyInformationActivity extends BaseActivity {
                                 } catch (UnsupportedEncodingException e) {
                                     e.printStackTrace();
                                 }
-                                updateMyinformation(user);
+                                updateMyinformation(user, 1);
                             }
                         })
                         .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -171,7 +183,7 @@ public class MyInformationActivity extends BaseActivity {
                                 } else {
                                     User user = new User();
                                     user.setTelephone(editText.getText().toString());
-                                    updateMyinformation(user);
+                                    updateMyinformation(user, 2);
                                 }
                             }
                         })
@@ -198,7 +210,7 @@ public class MyInformationActivity extends BaseActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 User user = new User();
                                 user.setSex(items[which]);
-                                updateMyinformation(user);
+                                updateMyinformation(user, 3);
                                 dialog.dismiss();
                             }
                         })
@@ -220,7 +232,7 @@ public class MyInformationActivity extends BaseActivity {
                                 String birthday = year + "年" + rightMonth + "月" + dayOfMonth + "日";
                                 User user = new User();
                                 user.setBirthday(birthday);
-                                updateMyinformation(user);
+                                updateMyinformation(user, 4);
                             }
                         },
                         now.get(Calendar.YEAR),
@@ -243,49 +255,68 @@ public class MyInformationActivity extends BaseActivity {
     /**
      * 获取个人信息
      */
-    private void getMyInfomation(String token, String userId) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("token", token);
-        params.put("userId", userId);
-        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_MY_INFORMATION, params, new AppCallBack<ApiResponse<User>>() {
+    private void getMyInfomation(String userId) {
+        asyncSession.setListenerMainThread(new AsyncOperationListener() {
 
             @Override
-            public void next(ApiResponse<User> response) {
-                if (response.isSuccess()) {
+            public void onAsyncOperationCompleted(AsyncOperation operation) {
+                if (operation.isFailed()) {
+                    Log.d("MyInfomation asyncSession 获取数据异常");
+                    //从服务器创建并保存到本地
+                    return;
+                }
+                Log.d("MyInfomation asyncSession operation.getType()= " + operation.getType());
+                if (operation.getType() == AsyncOperation.OperationType.QueryUnique) {
+                    Object obj = operation.getResult();
+                    Log.d("MyInfomation asyncSession 获取数据 obj = " + obj);
+                    if (obj == null) return;
+                    User myUser = (User) obj;
                     try {
-                        binding.tvNickname.setText(EmojiUtil.emojiRecovery(response.getData().getNickname()));
+                        binding.tvNickname.setText(EmojiUtil.emojiRecovery(myUser.getNickname()));
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
-                    binding.tvTelephone.setText(response.getData().getTelephone());
-                    binding.tvSex.setText(response.getData().getSex());
-                    binding.tvBirthday.setText(response.getData().getBirthday());
-                    binding.tvRegion.setText(response.getData().getRegion());
-                    GlideLoader.displayImage(MyInformationActivity.this, HttpUrls.GET_PHOTO + response.getData().getAvatar(), binding.ivAvatar);
-                } else {
-                    showToast(response.getMessage());
+                    binding.tvTelephone.setText(myUser.getTelephone());
+                    binding.tvSex.setText(myUser.getSex());
+                    binding.tvBirthday.setText(myUser.getBirthday());
+                    binding.tvRegion.setText(myUser.getRegion());
+                    GlideLoader.displayImage(MyInformationActivity.this, HttpUrls.GET_PHOTO + myUser.getAvatar(), binding.ivAvatar);
                 }
             }
-
-            @Override
-            public void error(Throwable error) {
-                Log.e(error.toString());
-            }
-
-            @Override
-            public void complete() {
-            }
-
         });
-
+        asyncSession.queryUnique(QueryBuilder.internalCreate(DaoManager.getDaoSession().getDao(User.class))
+                .where(UserDao.Properties.UserId.in(userId))
+                .build());
     }
 
     /**
      * 修改个人信息
+     * 标记更新那个信息flag
      */
-    private void updateMyinformation(final User user) {
-        user.setUserId(userId);
-        RequestManager.getInstance(this).executeRequest(HttpUrls.UPDATE_MY_INFORMATION, user, new AppCallBack<ApiResponse<User>>() {
+    private void updateMyinformation(final User user, final int flag) {
+        Map<String, String> params = new HashMap<>();
+        switch (flag) {
+            case 0:
+                params.put("avatar", user.getAvatar());
+                break;
+            case 1:
+                params.put("nickname", user.getNickname());
+                break;
+            case 2:
+                params.put("telephone", user.getTelephone());
+                break;
+            case 3:
+                params.put("sex", user.getSex());
+                break;
+            case 4:
+                params.put("birthday", user.getBirthday());
+                break;
+            case 5:
+                params.put("region", user.getRegion());
+                break;
+        }
+        params.put("userId", userId);
+        RequestManager.getInstance(this).executeRequest(HttpUrls.UPDATE_MY_INFORMATION, params, new AppCallBack<ApiResponse<User>>() {
 
             @Override
             public void next(ApiResponse<User> response) {
@@ -306,6 +337,24 @@ public class MyInformationActivity extends BaseActivity {
                     if (StringUtil.isStringNotNull(user.getAvatar())) {
                         GlideLoader glideLoader = new GlideLoader();
                         glideLoader.displayImage(MyInformationActivity.this, HttpUrls.GET_PHOTO + response.getData().getAvatar(), binding.ivAvatar);
+                    }
+                    asyncSession.insertOrReplace(response.getData());
+                    if (flag == 1) {
+                        MessageDaoUtils.updateChatMessageUserInfoNickname(asyncSession, userId, response.getData().getNickname());
+                        PreferenceUtil.getInstances(MyInformationActivity.this).savePreferenceString("nickname", response.getData().getNickname());
+                        UserInfo userInfo = MyApplication.userInfoMap.get(userId);
+                        userInfo.setNickname(response.getData().getNickname());
+                        MyApplication.userInfoMap.put(userId, userInfo);
+                        asyncSession.insertOrReplace(userInfo);
+                    } else if (flag == 0) {
+                        PreferenceUtil.getInstances(MyInformationActivity.this).savePreferenceString("avatar", response.getData().getAvatar());
+                        MessageDaoUtils.updateChatMessageUserInfoAvatar(asyncSession, userId, user.getAvatar());
+                        UserInfo userInfo = MyApplication.userInfoMap.get(userId);
+                        userInfo.setAvatar(response.getData().getAvatar());
+                        MyApplication.userInfoMap.put(userId, userInfo);
+                        asyncSession.insertOrReplace(userInfo);
+                    } else if (flag == 2) {
+                        PreferenceUtil.getInstances(MyInformationActivity.this).savePreferenceString("telephone", response.getData().getTelephone());
                     }
                 } else {
                     showToast(response.getMessage());
@@ -342,7 +391,7 @@ public class MyInformationActivity extends BaseActivity {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                            updateMyinformation(user);
+                            updateMyinformation(user, 0);
                         } else {
                             Log.i("qiniu Upload Fail");
                             //如果失败，这里可以把info信息上报自己的服务器，便于后面分析上传错误原因
@@ -388,4 +437,9 @@ public class MyInformationActivity extends BaseActivity {
     }
 
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        asyncSession = null;
+    }
 }

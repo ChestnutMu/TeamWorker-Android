@@ -43,6 +43,9 @@ public class HttpUrls {
     //获取我的好友
     public static final String GET_MY_FRIENDS = "/user/getMyFriends";
 
+    //获取我的好友的信息
+    public static final String GET_USER_LIST_INFO_BY_PERSONAL = "/user/getUserListInfoByPersonal";
+
     //发送好友申请
     public static final String SEND_FRIEND_REQUEST = "/user/sendFriendRequest";
 

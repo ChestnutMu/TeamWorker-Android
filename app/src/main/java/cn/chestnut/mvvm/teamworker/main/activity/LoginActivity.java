@@ -15,6 +15,7 @@ import android.widget.TextView;
 import org.greenrobot.greendao.async.AsyncSession;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import cn.chestnut.mvvm.teamworker.R;
@@ -26,11 +27,13 @@ import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.model.User;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
+import cn.chestnut.mvvm.teamworker.model.UserInfo;
 import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.MD5;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 import cn.chestnut.mvvm.teamworker.utils.StringUtil;
+import cn.chestnut.mvvm.teamworker.utils.sqlite.DaoManager;
 
 /**
  * Copyright (c) 2017, Chestnut All rights reserved
@@ -59,7 +62,6 @@ public class LoginActivity extends BaseActivity {
     }
 
     protected void initView() {
-        asyncSession = MessageDaoUtils.getDaoSession().startAsyncSession();
         setTranslucentStatus(true);
         if (PreferenceUtil.getInstances(MyApplication.getInstance()).getPreferenceBoolean("isShowLoginConflict")) {
             showDoubleLoginDialog();
@@ -142,14 +144,78 @@ public class LoginActivity extends BaseActivity {
                 @Override
                 public void next(ApiResponse<User> response) {
                     if (response.isSuccess()) {
-                        PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("userId", response.getData().getUserId());
-                        PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("telephone", response.getData().getTelephone());
-                        PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("token", response.getData().getToken());
-                        PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("nickname", response.getData().getNickname());
-                        asyncSession.insertOrReplace(response.getData());
+                        loginSuccess(response);
+                    } else {
+                        showToast(response.getMessage());
+                    }
+                }
+
+                @Override
+                public void error(Throwable error) {
+                    hideProgressDialog();
+                }
+
+                @Override
+                public void complete() {
+                    hideProgressDialog();
+                }
+            });
+        }
+    }
+
+    private void loginSuccess(ApiResponse<User> response) {
+        final UserInfo userInfo = new UserInfo();
+        userInfo.setUserId(response.getData().getUserId());
+        userInfo.setNickname(response.getData().getNickname());
+        userInfo.setAvatar(response.getData().getAvatar());
+        MyApplication.userInfoMap.put(userInfo.getUserId(), userInfo);
+
+        String nickname = PreferenceUtil.getInstances(LoginActivity.this).getPreferenceString("nickname");
+        String avatar = PreferenceUtil.getInstances(LoginActivity.this).getPreferenceString("avatar");
+
+//        boolean isFristLogin = PreferenceUtil.getInstances(LoginActivity.this).getPreferenceBoolean("first_load_user_info:" + userInfo.getUserId());
+        boolean isFristLogin = false;
+
+        PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("userId", response.getData().getUserId());
+        asyncSession = DaoManager.getDaoSession().startAsyncSession();
+        if (userInfo.getNickname() != null && !userInfo.getNickname().equals(nickname)) {
+            if (userInfo.getAvatar() != null && !userInfo.getAvatar().equals(avatar)) {
+                //两个都不一样
+                MessageDaoUtils.updateChatMessageUserInfo(asyncSession, userInfo.getUserId(), userInfo.getNickname(), userInfo.getAvatar());
+            } else {
+                //nickname不一样
+                MessageDaoUtils.updateChatMessageUserInfoNickname(asyncSession, userInfo.getUserId(), userInfo.getNickname());
+            }
+        } else {
+            if (userInfo.getAvatar() != null && !userInfo.getAvatar().equals(avatar)) {
+                //avatar不一样
+                MessageDaoUtils.updateChatMessageUserInfoAvatar(asyncSession, userInfo.getUserId(), userInfo.getAvatar());
+            }
+        }
+        asyncSession.insertOrReplace(response.getData());
+        asyncSession.insertOrReplace(userInfo);
+
+        PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("telephone", response.getData().getTelephone());
+        PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("token", response.getData().getToken());
+        PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("nickname", response.getData().getNickname());
+        PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("avatar", response.getData().getAvatar());
+
+        if (!isFristLogin) {
+            showProgressDialog(this);
+            RequestManager.getInstance(this).executeRequest(HttpUrls.GET_USER_LIST_INFO_BY_PERSONAL, null, new AppCallBack<ApiResponse<List<UserInfo>>>() {
+                @Override
+                public void next(ApiResponse<List<UserInfo>> response) {
+                    if (response.isSuccess()) {
+                        PreferenceUtil.getInstances(LoginActivity.this).savePreferenceBoolean("first_load_user_info:" + userInfo.getUserId(), true);
+                        asyncSession.insertInTx(UserInfo.class, response.getData());
+
+                        for (UserInfo temp : response.getData()) {
+                            MyApplication.userInfoMap.put(temp.getUserId(), temp);
+                        }
+
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        finish();
                         startActivity(intent);
+                        finish();
                         userLogin();
                     } else {
                         showToast(response.getMessage());
@@ -166,6 +232,11 @@ public class LoginActivity extends BaseActivity {
                     hideProgressDialog();
                 }
             });
+        } else {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+            userLogin();
         }
     }
 
@@ -193,14 +264,7 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void next(ApiResponse<User> response) {
                 if (response.isSuccess()) {
-                    PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("userId", response.getData().getUserId());
-                    PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("telephone", response.getData().getTelephone());
-                    PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("token", response.getData().getToken());
-                    PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("nickname", response.getData().getNickname());
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                    userLogin();
+                    loginSuccess(response);
                 } else {
                     showToast(response.getMessage());
                 }

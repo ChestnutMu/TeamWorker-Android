@@ -3,9 +3,11 @@ package cn.chestnut.mvvm.teamworker.module.massage.activity;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -34,7 +36,7 @@ import cn.chestnut.mvvm.teamworker.Constant;
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.ActivityChatBinding;
 import cn.chestnut.mvvm.teamworker.db.ChatMessageDao;
-import cn.chestnut.mvvm.teamworker.db.UserDao;
+import cn.chestnut.mvvm.teamworker.db.UserInfoDao;
 import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
@@ -43,7 +45,7 @@ import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
 import cn.chestnut.mvvm.teamworker.model.Chat;
 import cn.chestnut.mvvm.teamworker.model.ChatMessage;
-import cn.chestnut.mvvm.teamworker.model.User;
+import cn.chestnut.mvvm.teamworker.model.UserInfo;
 import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
 import cn.chestnut.mvvm.teamworker.module.massage.adapter.ChatAdapter;
 import cn.chestnut.mvvm.teamworker.socket.ReceiverProtocol;
@@ -52,6 +54,7 @@ import cn.chestnut.mvvm.teamworker.utils.EntityUtil;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 import cn.chestnut.mvvm.teamworker.utils.StringUtil;
+import cn.chestnut.mvvm.teamworker.utils.sqlite.DaoManager;
 
 /**
  * Copyright (c) 2017, Chestnut All rights reserved
@@ -72,7 +75,7 @@ public class ChatActivity extends BaseActivity {
     private ChatAdapter chatAdapter;
     private List<ChatMessage> messageList;
 
-    private Map<String, User> userMap;
+    private Map<String, UserInfo> userMap;
 
     private String userId;
 
@@ -87,7 +90,7 @@ public class ChatActivity extends BaseActivity {
     private int pageNum = 1;
     private int pageSize = 20;
 
-    private long count = 0;
+    private volatile long count = 0;
 
     @Override
     protected void setBaseTitle(TextView titleView) {
@@ -110,13 +113,13 @@ public class ChatActivity extends BaseActivity {
     }
 
     protected void initData() {
-        asyncSession = MessageDaoUtils.getDaoSession().startAsyncSession();
-        asyncSessionMessage = MessageDaoUtils.getDaoSession().startAsyncSession();
+        asyncSession = DaoManager.getDaoSession().startAsyncSession();
+        asyncSessionMessage = DaoManager.getDaoSession().startAsyncSession();
         userId = PreferenceUtil.getInstances(this).getPreferenceString("userId");
         messageList = new ArrayList<>();
         userMap = new HashMap<>();
 
-        chatAdapter = new ChatAdapter(messageList, userId, userMap);
+        chatAdapter = new ChatAdapter(messageList, userId);
 
 //        receiver = new BroadcastReceiver() {
 //            @Override
@@ -132,7 +135,7 @@ public class ChatActivity extends BaseActivity {
 //                if (newMessage.getChatId().equals(chatId) && !newMessage.getSenderId().equals(userId)) {
 //                    MessageVo messageVo = new MessageVo();
 //                    messageVo.setMessage(newMessage);
-//                    messageVo.setMessageUser(messageDaoUtils.queryMessageUserByUserId(newMessage.getSenderId()));
+//                    messageVo.setMessageUser(DaoManager.queryMessageUserByUserId(newMessage.getSenderId()));
 //                    messageVoList.add(messageVo);
 //                    chatAdapter.notifyDataSetChanged();
 //                    executeRequest(SendProtocol.MSG_ISREAD_MESSAGE, newMessage.getMessageId());
@@ -147,13 +150,20 @@ public class ChatActivity extends BaseActivity {
         binding.rcRecord.setAdapter(chatAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         binding.rcRecord.setLayoutManager(linearLayoutManager);
-        updateUerInfo();
-        count = QueryBuilder.internalCreate(MessageDaoUtils.getDaoSession().getDao(ChatMessage.class))
+//        updateUerInfo();
+        count = QueryBuilder.internalCreate(DaoManager.getDaoSession().getDao(ChatMessage.class))
                 .where(ChatMessageDao.Properties.ChatId.eq(chat.getChatId())).buildCount().count();
         getMessageFromLocal(true);
     }
 
+    //防止多次加载数据
+    volatile boolean loading = false;
+
     private void getMessageFromLocal(final boolean isRefresh) {
+        if (!isRefresh) {
+            if (loading) return;
+            loading = true;
+        }
         if (isRefresh) {
             pageNum = 1;
             isMore = true;
@@ -165,22 +175,36 @@ public class ChatActivity extends BaseActivity {
             @Override
             public void onAsyncOperationCompleted(AsyncOperation operation) {
                 if (operation.isFailed()) {
-                    Log.d("获取数据异常");
+                    Log.d("ChatActivity asyncSessionMessage 获取数据异常");
+                    loading = false;
                     return;
                 }
-                Log.d("operation.getType()= " + operation.getType());
+                Log.d("ChatActivity asyncSessionMessage operation.getType()= " + operation.getType());
                 if (operation.getType() == AsyncOperation.OperationType.QueryList) {
                     Object obj = operation.getResult();
-                    Log.d("获取数据 obj = " + obj);
+                    Log.d("ChatActivity asyncSessionMessage 获取数据 obj = " + obj);
 
                     handleData(obj, isRefresh);
+                    loading = false;
                 }
             }
         });
-        asyncSessionMessage.queryList(QueryBuilder.internalCreate(MessageDaoUtils.getDaoSession().getDao(ChatMessage.class))
+        int starNum = (int) (count - pageNum * pageSize);
+        Log.d("(starNum) " + (starNum));
+        if (starNum < 0) {
+            Log.d("(pageSize + starNum) " + (pageSize + starNum));
+            asyncSessionMessage.queryList(QueryBuilder.internalCreate(DaoManager.getDaoSession().getDao(ChatMessage.class))
+                    .where(ChatMessageDao.Properties.ChatId.eq(chat.getChatId()))
+                    .orderAsc(ChatMessageDao.Properties.SendTime)
+                    .offset(0)
+                    .limit((pageSize + starNum))
+                    .build());
+            return;
+        }
+        asyncSessionMessage.queryList(QueryBuilder.internalCreate(DaoManager.getDaoSession().getDao(ChatMessage.class))
                 .where(ChatMessageDao.Properties.ChatId.eq(chat.getChatId()))
                 .orderAsc(ChatMessageDao.Properties.SendTime)
-                .offset((int) (count - pageNum * pageSize))
+                .offset(starNum)
                 .limit(pageSize)
                 .build());
     }
@@ -195,8 +219,8 @@ public class ChatActivity extends BaseActivity {
                     messageList.clear();
                     messageList.addAll(data);
                     chatAdapter.notifyDataSetChanged();
-                    pageNum++;
                     scrollToBottom();
+                    pageNum++;
                 } else {
                     messageList.addAll(0, data);
                     chatAdapter.notifyItemRangeInserted(0, itemCount);
@@ -236,7 +260,7 @@ public class ChatActivity extends BaseActivity {
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            count++;
+//            count++;
             messageList.add(newMessage);
             chatAdapter.notifyItemInserted(messageList.size());
             chatAdapter.notifyDataSetChanged();
@@ -258,7 +282,7 @@ public class ChatActivity extends BaseActivity {
                 currentList.add(chatMessage);
             }
         }
-        count += currentList.size();
+//        count += currentList.size();
         messageList.addAll(currentList);
         chatAdapter.notifyDataSetChanged();
     }
@@ -281,8 +305,9 @@ public class ChatActivity extends BaseActivity {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                Log.d("------->isSlideToBottom:" + recyclerView.canScrollVertically(-1));
-                if (recyclerView.canScrollVertically(-1)) {
+                Log.d("------->isSlideToTop:" + recyclerView.canScrollVertically(-1));
+//                Log.d("------->isSlideToBottom:" + recyclerView.canScrollVertically(1));
+                if (!recyclerView.canScrollVertically(-1)) {
                     getMessageFromLocal(false);
                 }
             }
@@ -339,17 +364,26 @@ public class ChatActivity extends BaseActivity {
         chatMessage.setMessage(content);
         chatMessage.setSenderId(userId);
         chatMessage.setSendTime(MyApplication.currentServerTimeMillis());
-        chatMessage.setUser(userMap.get(userId));
+        //个人信息
+        UserInfo userInfo = MyApplication.userInfoMap.get(userId);
+        chatMessage.setNickname(userInfo.getNickname());
+        chatMessage.setAvatar(userInfo.getAvatar());
+//        chatMessage.setUser(userMap.get(userId));
         chatMessage.setDone(false);
         messageList.add(chatMessage);
         chatAdapter.notifyItemChanged(messageList.size() - 1);
         scrollToBottom();
+        chat.setLastMessage(content);
+        chat.setUpdateTime(chatMessage.getSendTime());
+        asyncSessionMessage.insertOrReplace(chat);
         asyncSessionMessage.insert(chatMessage);
+//        count++;
         try {
             content = EmojiUtil.emojiConvert(content);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+        final int updatePosition = messageList.size() - 1;
         Map<String, Object> param = new HashMap<>(2);
         param.put("chatId", chat.getChatId());
         param.put("message", content);
@@ -359,7 +393,7 @@ public class ChatActivity extends BaseActivity {
                 if (response.isSuccess()) {
                     chatMessage.setDone(true);
                     asyncSessionMessage.insertOrReplace(chatMessage);
-                    chatAdapter.notifyItemChanged(messageList.size() - 1);
+                    chatAdapter.notifyItemChanged(updatePosition);
                 } else {
                     showToast(response.getMessage());
                 }
@@ -375,7 +409,9 @@ public class ChatActivity extends BaseActivity {
 
             }
         });
-
+        Log.d("sendMessage 更新信息界面");
+        Intent intent = new Intent(Constant.ActionConstant.UPDATE_MESSAGE_CHAT_LAYOUT);
+        LocalBroadcastManager.getInstance(MyApplication.getInstance()).sendBroadcast(intent);
 
     }
 
@@ -390,92 +426,113 @@ public class ChatActivity extends BaseActivity {
     };
 
 
-    /**
-     * 更新用户信息
-     */
-    private void updateUerInfo() {
-        final List<String> userList = gson.fromJson(chat.getUserList(), new TypeToken<List<String>>() {
-        }.getType());
-        asyncSession.setListenerMainThread(new AsyncOperationListener() {
-
-            @Override
-            public void onAsyncOperationCompleted(AsyncOperation operation) {
-                if (operation.isFailed()) {
-                    Log.d("获取数据异常");
-                    //从服务器创建并保存到本地
-                    getUserInfoFromServer(userList);
-                    return;
-                }
-                Log.d("operation.getType()= " + operation.getType());
-                if (operation.getType() == AsyncOperation.OperationType.QueryList) {
-                    Object obj = operation.getResult();
-                    Log.d("获取数据 obj = " + obj);
-                    updateUserInfos(obj, userList);
-                }
-            }
-        });
-        asyncSession.queryList(QueryBuilder.internalCreate(MessageDaoUtils.getDaoSession().getDao(User.class))
-                .where(UserDao.Properties.UserId.in(userList))
-                .build());
-    }
-
-    private void updateUserInfos(Object obj, List<String> userList) {
-        if (obj != null && obj instanceof List) {
-            List<User> data = (List<User>) obj;
-            if (data.isEmpty()) {
-                getUserInfoFromServer(userList);
-            } else {
-                for (User user : data) {
-                    userMap.put(user.getUserId(), user);
-                    userList.remove(user.getUserId());
-                }
-                chatAdapter.notifyDataSetChanged();
-                getUserInfoFromServer(userList);
-            }
-        } else {
-            getUserInfoFromServer(userList);
-        }
-    }
-
-    private void getUserInfoFromLocal(User user) {
-        userMap.put(user.getUserId(), user);
-        chatAdapter.notifyDataSetChanged();
-    }
-
-    private void getUserInfoFromServer(String userId) {
-        List<String> userList = new ArrayList<>();
-        userList.add(userId);
-        getUserInfoFromServer(userList);
-    }
-
-    private void getUserInfoFromServer(List<String> userList) {
-        Map<String, Object> param = new HashMap<>(1);
-        param.put("userList", gson.toJson(userList));
-        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_USER_LIST_INFO, param, new AppCallBack<ApiResponse<List<User>>>() {
-            @Override
-            public void next(ApiResponse<List<User>> response) {
-                if (response.isSuccess()) {
-                    for (User user : response.getData()) {
-                        userMap.put(user.getUserId(), user);
-                        chatAdapter.notifyDataSetChanged();
-                    }
-                    asyncSession.insert(response.getData());
-                } else {
-                    showToast(response.getMessage());
-                }
-            }
-
-            @Override
-            public void error(Throwable error) {
-
-            }
-
-            @Override
-            public void complete() {
-
-            }
-        });
-    }
+//    /**
+//     * 更新用户信息
+//     */
+//    private void updateUerInfo() {
+//        final List<String> userList = gson.fromJson(chat.getUserList(), new TypeToken<List<String>>() {
+//        }.getType());
+//        //从全局缓存中查找
+//        final List<String> notUserList = new ArrayList<>();
+//        for (String userId : userList) {
+//            UserInfo userInfo = MyApplication.userInfoMap.get(userId);
+//            if (userInfo == null) {
+//                boolean isUpdate = PreferenceUtil.getInstances(MyApplication.getInstance()).
+//                        getPreferenceBoolean(Constant.PreferenceKey.USER_INFO_WAITING + userId);
+//                if (!isUpdate) {
+//                    PreferenceUtil.getInstances(MyApplication.getInstance()).
+//                            savePreferenceBoolean(Constant.PreferenceKey.USER_INFO_WAITING + userId, true);
+//                    Log.d("更新用户信息 userId = " + userId);
+//                    notUserList.add(userId);
+//                }
+//            } else {
+//                userMap.put(userId, userInfo);
+//            }
+//        }
+//
+//        asyncSession.setListenerMainThread(new AsyncOperationListener() {
+//
+//            @Override
+//            public void onAsyncOperationCompleted(AsyncOperation operation) {
+//                if (operation.isFailed()) {
+//                    Log.d("ChatActivity asyncSession 获取数据异常");
+//                    //从服务器创建并保存到本地
+//                    getUserInfoFromServer(notUserList);
+//                    return;
+//                }
+//                Log.d("ChatActivity asyncSession operation.getType()= " + operation.getType());
+//                if (operation.getType() == AsyncOperation.OperationType.QueryList) {
+//                    Object obj = operation.getResult();
+//                    Log.d("ChatActivity asyncSession 获取数据 obj = " + obj);
+//                    updateUserInfos(obj, notUserList);
+//                }
+//            }
+//        });
+//        asyncSession.queryList(QueryBuilder.internalCreate(DaoManager.getDaoSession().getDao(UserInfo.class))
+//                .where(UserInfoDao.Properties.UserId.in(notUserList))
+//                .build());
+//    }
+//
+//    private void updateUserInfos(Object obj, List<String> userList) {
+//        if (obj != null && obj instanceof List) {
+//            List<UserInfo> data = (List<UserInfo>) obj;
+//            if (data.isEmpty()) {
+//                getUserInfoFromServer(userList);
+//            } else {
+//                for (UserInfo userInfo : data) {
+//                    PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey(Constant.PreferenceKey.USER_INFO_WAITING + userInfo.getUserId());
+//                    Log.d("更新用户信息完成 userId = " + userId);
+//                    MyApplication.userInfoMap.put(userInfo.getUserId(), userInfo);
+//                    userMap.put(userInfo.getUserId(), userInfo);
+//                    userList.remove(userInfo.getUserId());
+//                }
+//                chatAdapter.notifyDataSetChanged();
+//                getUserInfoFromServer(userList);
+//            }
+//        } else {
+//            getUserInfoFromServer(userList);
+//        }
+//    }
+//
+//    private void getUserInfoFromServer(final List<String> userList) {
+//        if (userList.isEmpty()) return;
+//        Map<String, Object> param = new HashMap<>(1);
+//        param.put("userList", gson.toJson(userList));
+//        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_USER_LIST_INFO, param, new AppCallBack<ApiResponse<List<UserInfo>>>() {
+//            @Override
+//            public void next(ApiResponse<List<UserInfo>> response) {
+//                if (response.isSuccess()) {
+//                    for (UserInfo userInfo : response.getData()) {
+//                        PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey(Constant.PreferenceKey.USER_INFO_WAITING + userInfo.getUserId());
+//                        Log.d("更新用户信息完成 userId = " + userId);
+//                        MyApplication.userInfoMap.put(userInfo.getUserId(), userInfo);
+//                        userMap.put(userInfo.getUserId(), userInfo);
+//                        chatAdapter.notifyDataSetChanged();
+//                    }
+//                    asyncSession.insertOrReplace(response.getData());
+//                } else {
+//                    for (String userId : userList) {
+//                        PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey(Constant.PreferenceKey.USER_INFO_WAITING + userId);
+//                        Log.d("更新用户信息完成 userId = " + userId);
+//                    }
+//                    showToast(response.getMessage());
+//                }
+//            }
+//
+//            @Override
+//            public void error(Throwable error) {
+//                for (String userId : userList) {
+//                    PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey(Constant.PreferenceKey.USER_INFO_WAITING + userId);
+//                    Log.d("更新用户信息完成 userId = " + userId);
+//                }
+//            }
+//
+//            @Override
+//            public void complete() {
+//
+//            }
+//        });
+//    }
 
     public void hideSoftInput(Context context, View view) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
