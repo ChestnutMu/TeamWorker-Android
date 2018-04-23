@@ -8,7 +8,7 @@ import java.net.ConnectException;
 import java.net.URISyntaxException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import cn.chestnut.mvvm.teamworker.core.MessageHandler;
+import cn.chestnut.mvvm.teamworker.socket.core.MessageHandler;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;

@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cn.chestnut.mvvm.teamworker.BuildConfig;
-import cn.chestnut.mvvm.teamworker.core.TeamWorkerMessageHandler;
+import cn.chestnut.mvvm.teamworker.socket.core.TeamWorkerMessageHandler;
 import cn.chestnut.mvvm.teamworker.model.User;
 import cn.chestnut.mvvm.teamworker.model.UserInfo;
 

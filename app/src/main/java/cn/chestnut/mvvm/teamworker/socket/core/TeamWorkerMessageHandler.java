@@ -1,4 +1,4 @@
-package cn.chestnut.mvvm.teamworker.core;
+package cn.chestnut.mvvm.teamworker.socket.core;
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -33,6 +33,7 @@ import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
 import cn.chestnut.mvvm.teamworker.model.Chat;
 import cn.chestnut.mvvm.teamworker.model.ChatMessage;
+import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
 import cn.chestnut.mvvm.teamworker.socket.ReceiverProtocol;
 import cn.chestnut.mvvm.teamworker.socket.SendProtocol;
 import cn.chestnut.mvvm.teamworker.socket.TeamWorkerClient;
