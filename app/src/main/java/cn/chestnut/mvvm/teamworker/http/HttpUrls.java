@@ -112,8 +112,11 @@ public class HttpUrls {
     public static final String AUTH_TEAM_USER = "/team/authTeamUser";
 
     //--------------------------------考勤接口-------------------------------------------------------
-    //根据UID获取考勤记录
-    public static final String GET_ATTENDANCE = "/attendance/getAttendance";
+    //获取个人打卡记录
+    public static final String GET_PUNCH_CLOCK_RECORDS = "/attendance/getPunchClockRecords";
+
+    //获取团队人员打卡记录
+    public static final String GET_PUNCH_CLOCK_RECORDS_BY_TEAM = "/attendance/getPunchClockRecordsByTeam";
 
     //添加考勤打卡记录
     public static final String PUNCH_CLOCK = "/attendance/punchClock";

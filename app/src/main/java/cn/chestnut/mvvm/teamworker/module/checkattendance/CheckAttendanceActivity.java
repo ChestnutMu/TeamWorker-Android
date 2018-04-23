@@ -16,8 +16,6 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
-import com.aspsine.swipetoloadlayout.OnLoadMoreListener;
-import com.aspsine.swipetoloadlayout.OnRefreshListener;
 import com.qiniu.android.http.ResponseInfo;
 import com.qiniu.android.storage.UpCompletionHandler;
 
@@ -34,11 +32,10 @@ import cn.chestnut.mvvm.teamworker.databinding.ActivityCheckAttendanceBinding;
 import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
+import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
 import cn.chestnut.mvvm.teamworker.model.Attendance;
-import cn.chestnut.mvvm.teamworker.http.RequestManager;
-import cn.chestnut.mvvm.teamworker.module.mine.SelectRegionAdapter;
 import cn.chestnut.mvvm.teamworker.utils.FormatDateUtil;
 import cn.chestnut.mvvm.teamworker.utils.GlideLoader;
 import cn.chestnut.mvvm.teamworker.utils.Log;
@@ -76,10 +73,6 @@ public class CheckAttendanceActivity extends BaseActivity {
     private ProcessPhotoUtils processPhotoUtils;
 
     private String uploadPictureKey;
-
-    private static int pageSize = 15;
-
-    private int pageNum = 1;
 
     private String filePath;
 
@@ -121,7 +114,6 @@ public class CheckAttendanceActivity extends BaseActivity {
     protected void initData() {
         initLocation();
         getAttendance();
-
     }
 
     protected void initView() {
@@ -161,27 +153,6 @@ public class CheckAttendanceActivity extends BaseActivity {
             @Override
             public void onPunchOutPhotoClick(int position) {
 
-            }
-        });
-
-        binding.swipeToLoadLayout.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                pageNum = 1;
-                if (attendanceList.size() > 0) {
-                    attendanceList.clear();
-                }
-                getAttendance();
-                binding.swipeToLoadLayout.setRefreshing(false);
-            }
-        });
-
-        binding.swipeToLoadLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore() {
-                pageNum++;
-                getAttendance();
-                binding.swipeToLoadLayout.setLoadingMore(false);
             }
         });
     }
@@ -236,10 +207,10 @@ public class CheckAttendanceActivity extends BaseActivity {
         params.put("teamId", getIntent().getStringExtra("teamId"));
         params.put("startTime", FormatDateUtil.getTodayMinTimeMillis());
         params.put("endTime", System.currentTimeMillis());
-        params.put("pageNum", pageNum);
-        params.put("pageSize", pageSize);
+        params.put("pageNum", 0);
+        params.put("pageSize", 1000);
         showProgressDialog(this);
-        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_ATTENDANCE, params, new AppCallBack<ApiResponse<List<Attendance>>>() {
+        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_PUNCH_CLOCK_RECORDS, params, new AppCallBack<ApiResponse<List<Attendance>>>() {
             @Override
             public void next(ApiResponse<List<Attendance>> response) {
                 if (response.isSuccess()) {
@@ -275,10 +246,13 @@ public class CheckAttendanceActivity extends BaseActivity {
         RequestManager.getInstance(this).executeRequest(HttpUrls.PUNCH_CLOCK, params, new AppCallBack<ApiResponse<Attendance>>() {
             @Override
             public void next(ApiResponse<Attendance> response) {
-                if (response.isSuccess()) {
-
-                }
                 showToast(response.getMessage());
+                if (response.isSuccess()) {
+                    if (attendanceList.size() > 0) {
+                        attendanceList.clear();
+                    }
+                    getAttendance();
+                }
             }
 
             @Override

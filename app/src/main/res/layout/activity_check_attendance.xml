@@ -1,98 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="@dimen/team_worker_margin"
-        android:layout_marginRight="@dimen/team_worker_margin"
-        android:layout_marginTop="3dp"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="当前定位地址："
-            android:textColor="@color/text_black"
-            android:textSize="@dimen/text_size_big" />
-
-        <TextView
-            android:id="@+id/show_location"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="5dp"
-            android:textSize="@dimen/text_size_big" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@color/white"
-            android:gravity="center_vertical"
-            android:paddingBottom="10dp"
-            android:paddingLeft="@dimen/team_worker_padding"
-            android:paddingTop="10dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="3dp"
-                android:text="图片"
-                android:textColor="@color/text_black" />
-
-            <ImageView
-                android:id="@+id/iv_picture"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginLeft="12dp"
-                android:background="@mipmap/icon_plus" />
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/up_work"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:background="@drawable/bg_corner_button_selector"
-            android:text="打卡"
-            android:textColor="@color/white"
-            android:textSize="@dimen/text_size_big" />
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:padding="@dimen/team_worker_padding">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="当前定位地址："
+                    android:textColor="@color/text_black"
+                    android:textSize="@dimen/text_size_big" />
+
+                <TextView
+                    android:id="@+id/show_location"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="5dp"
+                    android:textSize="@dimen/text_size_big" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@color/white"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingBottom="10dp"
+                android:paddingLeft="@dimen/team_worker_padding"
+                android:paddingTop="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:text="图片"
+                    android:textColor="@color/text_black" />
+
+                <ImageView
+                    android:id="@+id/iv_picture"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@mipmap/icon_plus" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/up_work"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:background="@drawable/bg_corner_button_selector"
+                android:text="打卡"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_big" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="我的打卡记录"
+                android:text="今天打卡记录："
                 android:textColor="@color/text_black"
                 android:textSize="@dimen/text_size_big" />
 
-            <com.aspsine.swipetoloadlayout.SwipeToLoadLayout
-                android:id="@+id/swipeToLoadLayout"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/white">
-
-                <include
-                    android:id="@id/swipe_refresh_header"
-                    layout="@layout/refresh_header_view_anim" />
+                android:layout_height="wrap_content"
+                android:descendantFocusability="blocksDescendants">
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/swipe_target"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:background="@color/white"
                     android:scrollbars="none" />
 
-                <cn.chestnut.mvvm.teamworker.widget.RefreshFooterView
-                    android:id="@+id/swipe_load_more_footer"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </com.aspsine.swipetoloadlayout.SwipeToLoadLayout>
-
+            </RelativeLayout>
         </LinearLayout>
-    </LinearLayout>
+    </ScrollView>
 </layout>

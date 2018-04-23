@@ -84,10 +84,8 @@ public class PermissionsUtil {
 
     //常量字符串数组，将需要申请的权限写进去，同时必须要在Androidmanifest.xml中声明。
     private static String[] PERMISSIONS_GROUP = {
-            Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.READ_CONTACTS
     };

@@ -164,7 +164,9 @@ public class WorkFragment extends BaseFragment {
         binding.llAttendance.setOnClickListener(new View.OnClickListener() {//考勤打卡
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), CheckAttendanceActivity.class));
+                Intent intent = new Intent(getActivity(),CheckAttendanceActivity.class);
+                intent.putExtra("teamId",currentTeamId);
+                startActivity(intent);
             }
         });
 

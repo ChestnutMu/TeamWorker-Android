@@ -16,14 +16,15 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_margin="8dp"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@color/backgroundgray"
+            android:padding="8dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="打卡记录"
-                android:textColor="@color/textBlack"
+                android:textColor="@color/appTheme"
                 android:textSize="@dimen/text_size_small" />
 
             <TextView
@@ -31,8 +32,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
-                android:textSize="@dimen/text_size_small"
-                android:textColor="@color/text_black"/>
+                android:textColor="@color/appTheme"
+                android:textSize="@dimen/text_size_small" />
         </LinearLayout>
 
         <LinearLayout
@@ -107,77 +108,99 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginBottom="@dimen/team_worker_padding"
             android:layout_marginLeft="@dimen/team_worker_padding"
+            android:layout_marginRight="@dimen/team_worker_padding"
             android:background="@color/backgroundgray" />
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/tv_not_punch_out"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="8dp"
-            android:paddingLeft="@dimen/team_worker_padding"
-            android:paddingTop="8dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="下班打卡时间："
-                android:textColor="@color/textBlack" />
-
-            <TextView
-                android:id="@+id/tv_punch_out_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="12dp"
-                android:text="@{attendance.showPunchOutTime()}"
-                android:textColor="@color/textBlack" />
-        </LinearLayout>
+            android:text="还未打下班卡"
+            android:visibility="gone"
+            android:textColor="@color/text_gray"
+            android:padding="12dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:paddingBottom="8dp"
-            android:paddingLeft="@dimen/team_worker_padding"
-            android:paddingTop="@dimen/team_worker_padding">
+            android:id="@+id/ll_punch_out"
+            android:visibility="gone"
+            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="上班打卡地址："
-                android:textColor="@color/textBlack" />
+                android:paddingBottom="8dp"
+                android:paddingLeft="@dimen/team_worker_padding"
+                android:paddingTop="8dp">
 
-            <TextView
-                android:id="@+id/tv_punch_out_address"
-                android:layout_width="0dp"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="下班打卡时间："
+                    android:textColor="@color/textBlack" />
+
+                <TextView
+                    android:id="@+id/tv_punch_out_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="12dp"
+                    android:text="@{attendance.showPunchOutTime()}"
+                    android:textColor="@color/textBlack" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="12dp"
-                android:layout_weight="1"
-                android:text="@{attendance.punchOutAddress}"
-                android:textColor="@color/textBlack" />
+                android:gravity="center_vertical"
+                android:paddingBottom="8dp"
+                android:paddingLeft="@dimen/team_worker_padding"
+                android:paddingTop="@dimen/team_worker_padding">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="上班打卡地址："
+                    android:textColor="@color/textBlack" />
+
+                <TextView
+                    android:id="@+id/tv_punch_out_address"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="12dp"
+                    android:layout_weight="1"
+                    android:text="@{attendance.punchOutAddress}"
+                    android:textColor="@color/textBlack" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingBottom="8dp"
+                android:paddingLeft="@dimen/team_worker_padding"
+                android:paddingTop="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="下班打卡照片："
+                    android:textColor="@color/textBlack" />
+
+                <ImageView
+                    android:id="@+id/iv_punch_out_photo"
+                    load_url_image="@{attendance.punchOutPicture}"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="12dp"
+                    android:textColor="@color/textBlack" />
+            </LinearLayout>
         </LinearLayout>
 
-        <LinearLayout
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:paddingBottom="8dp"
-            android:paddingLeft="@dimen/team_worker_padding"
-            android:paddingTop="8dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="下班打卡照片："
-                android:textColor="@color/textBlack" />
-
-            <ImageView
-                android:id="@+id/iv_punch_out_photo"
-                load_url_image="@{attendance.punchOutPicture}"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginLeft="12dp"
-                android:textColor="@color/textBlack" />
-        </LinearLayout>
+            android:layout_height="1dp"
+            android:background="@color/appTheme" />
     </LinearLayout>
 </layout>
