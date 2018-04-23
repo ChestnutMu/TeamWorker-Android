@@ -240,6 +240,7 @@ public class UserInformationActivity extends BaseActivity {
                     chat.setChatName(userFriend.getUser().getNickname());
                     chat.setChatPic(userFriend.getUser().getAvatar());
                     chat.setUserId(userFriend.getUser().getUserId());
+                    chat.setLastMessage("");
                     asyncSession.insert(chat);
                     //跳转
                     handleChat(chat);
