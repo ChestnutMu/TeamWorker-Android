@@ -170,20 +170,41 @@ public class MyFriendActivity extends BaseActivity {
             @Override
             public void next(ApiResponse<List<User>> response) {
                 if (response.isSuccess() && !response.getData().isEmpty()) {
-                    myFriendList.clear();
-                    myFriendList.addAll(response.getData());
-                    Collections.sort(myFriendList, new Comparator<User>() {
-                        @Override
-                        public int compare(User lmf, User rmf) {
-                            //根据拼音进行排序
-                            return lmf.getPinyin().compareTo(rmf.getPinyin());
+                    if (myFriendList.isEmpty()) {
+                        myFriendList.addAll(response.getData());
+                        Collections.sort(myFriendList, new Comparator<User>() {
+                            @Override
+                            public int compare(User lmf, User rmf) {
+                                //根据拼音进行排序
+                                return lmf.getPinyin().compareTo(rmf.getPinyin());
+                            }
+                        });
+                        adapter.notifyDataSetChanged();
+                        for (User user : myFriendList) {
+                            user.setFriend(true);
                         }
-                    });
-                    adapter.notifyDataSetChanged();
-                    for (User user : myFriendList) {
-                        user.setFriend(true);
+                        asyncSession.insertOrReplaceInTx(User.class, myFriendList);
+                    } else {
+                        for (User user : response.getData()) {
+                            user.setFriend(true);
+                            myFriendList.remove(user);
+                        }
+                        for (User user : myFriendList) {
+                            user.setFriend(false);
+                        }
+                        asyncSession.insertOrReplaceInTx(User.class, myFriendList);
+                        myFriendList.clear();
+                        myFriendList.addAll(response.getData());
+                        Collections.sort(myFriendList, new Comparator<User>() {
+                            @Override
+                            public int compare(User lmf, User rmf) {
+                                //根据拼音进行排序
+                                return lmf.getPinyin().compareTo(rmf.getPinyin());
+                            }
+                        });
+                        adapter.notifyDataSetChanged();
+                        asyncSession.insertOrReplaceInTx(User.class, myFriendList);
                     }
-                    asyncSession.insertOrReplaceInTx(User.class, myFriendList);
                 }
             }
 

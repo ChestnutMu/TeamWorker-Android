@@ -188,4 +188,14 @@ public class User extends BindingItem implements Serializable {
     public boolean getFriend() {
         return this.friend;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (obj instanceof User) {
+            if (userId.equals(((User) obj).getUserId()))
+                return true;
+        }
+        return super.equals(obj);
+    }
 }

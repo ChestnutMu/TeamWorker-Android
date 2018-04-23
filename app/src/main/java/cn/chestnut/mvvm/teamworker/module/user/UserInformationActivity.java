@@ -37,6 +37,7 @@ import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.ActivityUserInformationBinding;
 import cn.chestnut.mvvm.teamworker.databinding.PopupUserInfoMenuBinding;
 import cn.chestnut.mvvm.teamworker.db.ChatDao;
+import cn.chestnut.mvvm.teamworker.db.UserDao;
 import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
@@ -164,15 +165,28 @@ public class UserInformationActivity extends BaseActivity {
                 }
             });
         } else {
-            binding.btnSubmit.setText("添加到通讯录");
-            binding.btnSubmit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(UserInformationActivity.this, RequestFriendActivity.class);
-                    intent.putExtra("userId", userId);
-                    startActivity(intent);
-                }
-            });
+            long count = QueryBuilder.internalCreate(DaoManager.getDaoSession().getDao(User.class))
+                    .where(UserDao.Properties.UserId.eq(userFriend.getUser().getUserId()))
+                    .where(UserDao.Properties.Friend.eq(true)).buildCount().count();
+            if (count > 0) {
+                binding.btnSubmit.setText("发送消息");
+                binding.btnSubmit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        findChatAndGoTOChat();
+                    }
+                });
+            } else {
+                binding.btnSubmit.setText("添加到通讯录");
+                binding.btnSubmit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(UserInformationActivity.this, RequestFriendActivity.class);
+                        intent.putExtra("userId", userId);
+                        startActivity(intent);
+                    }
+                });
+            }
         }
         binding.setVariable(BR.userInformation, userFriend.getUser());
     }
