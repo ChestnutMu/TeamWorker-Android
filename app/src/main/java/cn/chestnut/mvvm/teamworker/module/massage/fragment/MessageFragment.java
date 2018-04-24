@@ -287,10 +287,10 @@ public class MessageFragment extends BaseFragment {
 
     private void getUserInfoFromServer(final Chat chat, final String senderId, final int position) {
         boolean isUpdate = PreferenceUtil.getInstances(MyApplication.getInstance()).
-                getPreferenceBoolean(Constant.PreferenceKey.USER_INFO_WAITING + senderId);
+                getPreferenceBooleanHaveTime(Constant.PreferenceKey.USER_INFO_WAITING + senderId);
         if (!isUpdate) {
             PreferenceUtil.getInstances(MyApplication.getInstance()).
-                    savePreferenceBoolean(Constant.PreferenceKey.USER_INFO_WAITING + senderId, true);
+                    savePreferenceBooleanBySecond(Constant.PreferenceKey.USER_INFO_WAITING + senderId, true,10L);
             Log.d("更新用户信息 userId = " + userId);
         } else {
             return;

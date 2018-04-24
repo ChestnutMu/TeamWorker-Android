@@ -87,6 +87,8 @@
             android:windowSoftInputMode="stateHidden" />
         <activity android:name=".module.work.WorkNotificationActivity" />
         <activity android:name=".module.massage.activity.CreateMultiChatActivity" />
+        <activity android:name=".module.massage.activity.ChatSettingActivity" />
+        <activity android:name=".module.massage.activity.DeleteChatUserActivity" />
         <activity android:name=".module.team.PhoneDirectoryActivity" />
         <activity android:name=".module.user.SearchFriendActivity" />
         <activity android:name=".module.user.UserInformationActivity" />

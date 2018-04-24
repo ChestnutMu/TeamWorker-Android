@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
@@ -17,6 +18,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
@@ -68,7 +70,7 @@ public class ChatActivity extends BaseActivity {
 
     private ActivityChatBinding binding;
 
-    public static final String BUNDLE_CHAT = "bundle_chat";//更新信息
+    public static final String BUNDLE_CHAT = "bundle_chat";//聊天室
 
     private Chat chat;
 
@@ -92,10 +94,19 @@ public class ChatActivity extends BaseActivity {
 
     private volatile long count = 0;
 
+    private ImageView ivSetting;
+
+    public static final String BROADCAST_INTENT_TYPE = "broadcast_intent_type";
+    public static final String BROADCAST_INTENT_NAME = "broadcast_intent_name";
+    public static final String BROADCAST_INTENT_MESSAGE = "broadcast_intent_message";
+
+    public TextView titleView;
+
     @Override
     protected void setBaseTitle(TextView titleView) {
+        this.titleView = titleView;
         chat = (Chat) getIntent().getSerializableExtra(BUNDLE_CHAT);
-        titleView.setText(chat.getChatName());
+        this.titleView.setText(chat.getChatName());
     }
 
     @Override
@@ -104,6 +115,28 @@ public class ChatActivity extends BaseActivity {
         initData();
         initView();
         addListener();
+    }
+
+    @Override
+    public void setButton(TextView edit, ImageView add, ImageView search) {
+        ivSetting = add;
+        ivSetting.setVisibility(View.VISIBLE);
+        if (chat.getChatType().equals(Constant.ChatType.TYPE_CHAT_DOUBLE)) {
+            ivSetting.setImageDrawable(getResources().getDrawable(R.mipmap.icon_single_people));
+        } else {
+            ivSetting.setImageDrawable(getResources().getDrawable(R.mipmap.icon_multi_people));
+        }
+        ivSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("ivSetting 点击");
+                goToChatSetting();
+            }
+        });
+    }
+
+    private void goToChatSetting() {
+        ChatSettingActivity.startActivity(this, chat);
     }
 
     @Override
@@ -120,30 +153,6 @@ public class ChatActivity extends BaseActivity {
         userMap = new HashMap<>();
 
         chatAdapter = new ChatAdapter(messageList, userId);
-
-//        receiver = new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                Message newMessage = (Message) intent.getSerializableExtra("newMessage");
-//                Log.d(("ChatPersonalActivity收到一条新消息") + newMessage.toString());
-//                try {
-//                    newMessage.setContent(EmojiUtil.emojiRecovery(newMessage.getContent()));
-//                    newMessage.setChatName(EmojiUtil.emojiRecovery(newMessage.getChatName()));
-//                } catch (UnsupportedEncodingException e) {
-//                    e.printStackTrace();
-//                }
-//                if (newMessage.getChatId().equals(chatId) && !newMessage.getSenderId().equals(userId)) {
-//                    MessageVo messageVo = new MessageVo();
-//                    messageVo.setMessage(newMessage);
-//                    messageVo.setMessageUser(DaoManager.queryMessageUserByUserId(newMessage.getSenderId()));
-//                    messageVoList.add(messageVo);
-//                    chatAdapter.notifyDataSetChanged();
-//                    executeRequest(SendProtocol.MSG_ISREAD_MESSAGE, newMessage.getMessageId());
-//                }
-//            }
-//        };
-
-//        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter(Constant.ActionConstant.ACTION_GET_NEW_MESSAGE));
     }
 
     protected void initView() {
@@ -154,6 +163,42 @@ public class ChatActivity extends BaseActivity {
         count = QueryBuilder.internalCreate(DaoManager.getDaoSession().getDao(ChatMessage.class))
                 .where(ChatMessageDao.Properties.ChatId.eq(chat.getChatId())).buildCount().count();
         getMessageFromLocal(true);
+
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d("ChatActivity " + intent.getAction());
+                if (Constant.ActionConstant.ACTION_UPDATE_CHAT.equals(intent.getAction())) {
+                    int type = intent.getIntExtra(BROADCAST_INTENT_TYPE, 0);
+                    Log.d("ChatActivity type " + type);
+                    if (type == 0) {
+                        //更新名字
+                        String name = intent.getStringExtra(BROADCAST_INTENT_NAME);
+                        titleView.setText(name);
+                        ChatMessage chatMessage = (ChatMessage) intent.getSerializableExtra(BROADCAST_INTENT_MESSAGE);
+                        messageList.add(chatMessage);
+                        chatAdapter.notifyItemChanged(messageList.size() - 1);
+                    } else if (type == 1) {
+                        //更新记录
+                        count = QueryBuilder.internalCreate(DaoManager.getDaoSession().getDao(ChatMessage.class))
+                                .where(ChatMessageDao.Properties.ChatId.eq(chat.getChatId())).buildCount().count();
+                        getMessageFromLocal(true);
+                    } else if (type == 2) {
+                        //更新头像
+                        ChatMessage chatMessage = (ChatMessage) intent.getSerializableExtra(BROADCAST_INTENT_MESSAGE);
+                        messageList.add(chatMessage);
+                        chatAdapter.notifyItemChanged(messageList.size() - 1);
+                    } else if (type == 3) {
+                        //更新人员变动
+                        ChatMessage chatMessage = (ChatMessage) intent.getSerializableExtra(BROADCAST_INTENT_MESSAGE);
+                        messageList.add(chatMessage);
+                        chatAdapter.notifyItemChanged(messageList.size() - 1);
+                    }
+                }
+            }
+        };
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter(Constant.ActionConstant.ACTION_UPDATE_CHAT));
     }
 
     //防止多次加载数据
@@ -231,9 +276,17 @@ public class ChatActivity extends BaseActivity {
                     isMore = false;
                 }
             } else {
+                if (isRefresh) {
+                    messageList.clear();
+                    chatAdapter.notifyDataSetChanged();
+                }
                 isMore = false;
             }
         } else {
+            if (isRefresh) {
+                messageList.clear();
+                chatAdapter.notifyDataSetChanged();
+            }
             isMore = false;
         }
     }
@@ -426,114 +479,6 @@ public class ChatActivity extends BaseActivity {
     };
 
 
-//    /**
-//     * 更新用户信息
-//     */
-//    private void updateUerInfo() {
-//        final List<String> userList = gson.fromJson(chat.getUserList(), new TypeToken<List<String>>() {
-//        }.getType());
-//        //从全局缓存中查找
-//        final List<String> notUserList = new ArrayList<>();
-//        for (String userId : userList) {
-//            UserInfo userInfo = MyApplication.userInfoMap.get(userId);
-//            if (userInfo == null) {
-//                boolean isUpdate = PreferenceUtil.getInstances(MyApplication.getInstance()).
-//                        getPreferenceBoolean(Constant.PreferenceKey.USER_INFO_WAITING + userId);
-//                if (!isUpdate) {
-//                    PreferenceUtil.getInstances(MyApplication.getInstance()).
-//                            savePreferenceBoolean(Constant.PreferenceKey.USER_INFO_WAITING + userId, true);
-//                    Log.d("更新用户信息 userId = " + userId);
-//                    notUserList.add(userId);
-//                }
-//            } else {
-//                userMap.put(userId, userInfo);
-//            }
-//        }
-//
-//        asyncSession.setListenerMainThread(new AsyncOperationListener() {
-//
-//            @Override
-//            public void onAsyncOperationCompleted(AsyncOperation operation) {
-//                if (operation.isFailed()) {
-//                    Log.d("ChatActivity asyncSession 获取数据异常");
-//                    //从服务器创建并保存到本地
-//                    getUserInfoFromServer(notUserList);
-//                    return;
-//                }
-//                Log.d("ChatActivity asyncSession operation.getType()= " + operation.getType());
-//                if (operation.getType() == AsyncOperation.OperationType.QueryList) {
-//                    Object obj = operation.getResult();
-//                    Log.d("ChatActivity asyncSession 获取数据 obj = " + obj);
-//                    updateUserInfos(obj, notUserList);
-//                }
-//            }
-//        });
-//        asyncSession.queryList(QueryBuilder.internalCreate(DaoManager.getDaoSession().getDao(UserInfo.class))
-//                .where(UserInfoDao.Properties.UserId.in(notUserList))
-//                .build());
-//    }
-//
-//    private void updateUserInfos(Object obj, List<String> userList) {
-//        if (obj != null && obj instanceof List) {
-//            List<UserInfo> data = (List<UserInfo>) obj;
-//            if (data.isEmpty()) {
-//                getUserInfoFromServer(userList);
-//            } else {
-//                for (UserInfo userInfo : data) {
-//                    PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey(Constant.PreferenceKey.USER_INFO_WAITING + userInfo.getUserId());
-//                    Log.d("更新用户信息完成 userId = " + userId);
-//                    MyApplication.userInfoMap.put(userInfo.getUserId(), userInfo);
-//                    userMap.put(userInfo.getUserId(), userInfo);
-//                    userList.remove(userInfo.getUserId());
-//                }
-//                chatAdapter.notifyDataSetChanged();
-//                getUserInfoFromServer(userList);
-//            }
-//        } else {
-//            getUserInfoFromServer(userList);
-//        }
-//    }
-//
-//    private void getUserInfoFromServer(final List<String> userList) {
-//        if (userList.isEmpty()) return;
-//        Map<String, Object> param = new HashMap<>(1);
-//        param.put("userList", gson.toJson(userList));
-//        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_USER_LIST_INFO, param, new AppCallBack<ApiResponse<List<UserInfo>>>() {
-//            @Override
-//            public void next(ApiResponse<List<UserInfo>> response) {
-//                if (response.isSuccess()) {
-//                    for (UserInfo userInfo : response.getData()) {
-//                        PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey(Constant.PreferenceKey.USER_INFO_WAITING + userInfo.getUserId());
-//                        Log.d("更新用户信息完成 userId = " + userId);
-//                        MyApplication.userInfoMap.put(userInfo.getUserId(), userInfo);
-//                        userMap.put(userInfo.getUserId(), userInfo);
-//                        chatAdapter.notifyDataSetChanged();
-//                    }
-//                    asyncSession.insertOrReplace(response.getData());
-//                } else {
-//                    for (String userId : userList) {
-//                        PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey(Constant.PreferenceKey.USER_INFO_WAITING + userId);
-//                        Log.d("更新用户信息完成 userId = " + userId);
-//                    }
-//                    showToast(response.getMessage());
-//                }
-//            }
-//
-//            @Override
-//            public void error(Throwable error) {
-//                for (String userId : userList) {
-//                    PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey(Constant.PreferenceKey.USER_INFO_WAITING + userId);
-//                    Log.d("更新用户信息完成 userId = " + userId);
-//                }
-//            }
-//
-//            @Override
-//            public void complete() {
-//
-//            }
-//        });
-//    }
-
     public void hideSoftInput(Context context, View view) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
         if (imm != null) {
@@ -545,7 +490,12 @@ public class ChatActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         mHandler.removeCallbacksAndMessages(null);
+        mHandler = null;
         asyncSessionMessage = null;
         asyncSession = null;
+        if (receiver != null) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+            receiver = null;
+        }
     }
 }

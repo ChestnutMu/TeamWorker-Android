@@ -52,6 +52,53 @@ public class PreferenceUtil {
     }
 
     /**
+     * 提交boolean类型的值
+     *
+     * @param key
+     * @param value
+     */
+    public void savePreferenceBooleanBySecond(String key, boolean value, long second) {
+        savePreferenceBoolean(key, value, second * 1000L);
+    }
+
+    /**
+     * 提交boolean类型的值
+     *
+     * @param key
+     * @param value
+     */
+    public void savePreferenceBoolean(String key, boolean value, long time) {
+        SharedPreferences preferences = mContext.getSharedPreferences(userinfo,
+                MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(key + "_time", (System.currentTimeMillis() + time) + "_" + value);
+        editor.commit();
+    }
+
+    /**
+     * 获取boolean类型的值
+     *
+     * @param key
+     * @return
+     */
+    public boolean getPreferenceBooleanHaveTime(String key) {
+        SharedPreferences preferences = mContext.getSharedPreferences(userinfo,
+                MODE_PRIVATE);
+        String value = preferences.getString(key + "_time", "");
+        if (value.equals("")) {//默认
+            return false;
+        } else {
+            String[] array = value.split("_");
+            long time = Long.parseLong(array[0]);
+            if (System.currentTimeMillis() > time) {
+                return false;
+            } else {
+                return Boolean.parseBoolean(array[1]);
+            }
+        }
+    }
+
+    /**
      * 获取boolean类型的值
      *
      * @param key
@@ -112,7 +159,7 @@ public class PreferenceUtil {
     public long getPreferenceLong(String key) {
         SharedPreferences preferences = mContext.getSharedPreferences(userinfo,
                 MODE_PRIVATE);
-        return preferences.getLong(key,0);
+        return preferences.getLong(key, 0);
     }
 
     /**

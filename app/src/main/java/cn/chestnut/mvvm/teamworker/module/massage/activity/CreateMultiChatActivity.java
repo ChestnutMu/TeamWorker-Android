@@ -41,10 +41,12 @@ import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
 import cn.chestnut.mvvm.teamworker.model.Chat;
+import cn.chestnut.mvvm.teamworker.model.ChatMessage;
 import cn.chestnut.mvvm.teamworker.model.User;
+import cn.chestnut.mvvm.teamworker.model.UserInfo;
 import cn.chestnut.mvvm.teamworker.module.massage.adapter.ChatUserAdapter;
 import cn.chestnut.mvvm.teamworker.module.massage.adapter.ChosenUserAdapter;
-import cn.chestnut.mvvm.teamworker.module.user.UserInformationActivity;
+import cn.chestnut.mvvm.teamworker.utils.EntityUtil;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 import cn.chestnut.mvvm.teamworker.utils.sqlite.DaoManager;
@@ -188,9 +190,46 @@ public class CreateMultiChatActivity extends BaseActivity {
                     if (response.isSuccess()) {
                         Chat chat = response.getData();
                         //保存到本地
+                        ChatMessage chatMessage = new ChatMessage();
+                        chatMessage.setChatMessageId(EntityUtil.getIdByTimeStampAndRandom());
+                        chatMessage.setChatId(chat.getChatId());
+                        chatMessage.setSenderId(userId);
+                        chatMessage.setType(Constant.ChatMessageType.TYPE_MESSAGE_CHANGE_PEOPLE_ADD);
+                        chatMessage.setDone(true);
+                        chatMessage.setSendTime(chat.getUpdateTime());
+
+                        List<UserInfo> userInfoList = new ArrayList<>();
+                        for (User user : chooseUserList) {
+                            UserInfo userInfo = new UserInfo();
+                            userInfo.setUserId(user.getUserId());
+                            userInfo.setNickname(user.getNickname());
+                            userInfo.setAvatar(user.getAvatar());
+                            userInfoList.add(userInfo);
+                        }
+                        chatMessage.setMessage(gson.toJson(userInfoList));
+                        String temp = "";
+                        for (int i = 0; i < userInfoList.size() - 1; i++) {
+                            temp = temp + userInfoList.get(i).getNickname() + "、";
+                        }
+                        temp = temp + userInfoList.get(userInfoList.size() - 1).getNickname();
+
+                        chat.setLastMessage("你邀请" + temp + "加入了聊天室");
+                        asyncSession.insert(chatMessage);
                         asyncSession.insertOrReplace(chat);
-                        //跳转
-                        handleChat(chat);
+                        //更新聊天室设置
+                        Intent intentSetting = new Intent(Constant.ActionConstant.ACTION_UPDATE_CHAT_SETTING);
+                        intentSetting.putExtra(ChatSettingActivity.BROADCAST_INTENT_USER_ID_LIST, chat.getUserList());
+                        LocalBroadcastManager.getInstance(MyApplication.getInstance()).sendBroadcast(intentSetting);
+
+                        //更新聊天室
+                        Intent intent = new Intent(Constant.ActionConstant.ACTION_UPDATE_CHAT);
+                        intent.putExtra(ChatActivity.BROADCAST_INTENT_TYPE, 3);
+                        intent.putExtra(ChatActivity.BROADCAST_INTENT_MESSAGE, chatMessage);
+                        LocalBroadcastManager.getInstance(MyApplication.getInstance()).sendBroadcast(intent);
+
+                        updateMessageLayout();
+                        finish();
+
                     } else {
                         showToast(response.getMessage());
                     }
@@ -207,6 +246,15 @@ public class CreateMultiChatActivity extends BaseActivity {
                 }
             });
         }
+    }
+
+    /**
+     * 更新消息界面
+     */
+    private void updateMessageLayout() {
+        Log.d("updateMessageLayout 更新信息界面");
+        Intent intent = new Intent(Constant.ActionConstant.UPDATE_MESSAGE_CHAT_LAYOUT);
+        LocalBroadcastManager.getInstance(MyApplication.getInstance()).sendBroadcast(intent);
     }
 
     private void handleChat(Chat chat) {
@@ -435,5 +483,11 @@ public class CreateMultiChatActivity extends BaseActivity {
                 return;
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        asyncSession = null;
     }
 }

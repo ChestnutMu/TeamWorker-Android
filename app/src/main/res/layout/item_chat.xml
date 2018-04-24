@@ -56,6 +56,7 @@
                     android:layout_height="match_parent"
                     android:autoLink="all"
                     android:background="@drawable/chat_bubble_left"
+                    android:gravity="center_vertical"
                     android:text="@{message.message}"
                     android:textColor="@color/text_black"
                     android:textSize="@dimen/text_size_small" />
@@ -108,5 +109,21 @@
                 android:layout_height="48dp"
                 app:load_url_image="@{message.avatar}" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_show_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="6dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_chat_message_tip"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_small"
+            android:visibility="gone" />
     </LinearLayout>
 </layout>

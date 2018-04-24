@@ -20,6 +20,7 @@ import org.greenrobot.greendao.query.QueryBuilder;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,6 +34,7 @@ import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
 import cn.chestnut.mvvm.teamworker.model.Chat;
 import cn.chestnut.mvvm.teamworker.model.ChatMessage;
+import cn.chestnut.mvvm.teamworker.model.UserInfo;
 import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
 import cn.chestnut.mvvm.teamworker.socket.ReceiverProtocol;
 import cn.chestnut.mvvm.teamworker.socket.SendProtocol;
@@ -216,11 +218,11 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
         Set<String> chatSet = chatMap.keySet();
         for (String chatId : chatSet) {
             boolean isUpdate = PreferenceUtil.getInstances(MyApplication.getInstance()).
-                    getPreferenceBoolean(Constant.PreferenceKey.CHAT_INFO_WAITING + chatId);
+                    getPreferenceBooleanHaveTime(Constant.PreferenceKey.CHAT_INFO_WAITING + chatId);
             Log.d("checkHasChatAndUpdate isUpdate = " + isUpdate + " chatId = " + chatId);
             if (!isUpdate) {
                 PreferenceUtil.getInstances(MyApplication.getInstance()).
-                        savePreferenceBoolean(Constant.PreferenceKey.CHAT_INFO_WAITING + chatId, true);
+                        savePreferenceBooleanBySecond(Constant.PreferenceKey.CHAT_INFO_WAITING + chatId, true, 10L);
                 newChatList.add(chatId);
             }
         }
@@ -262,8 +264,50 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
                 for (Chat chat : data) {
                     PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey(Constant.PreferenceKey.CHAT_INFO_WAITING + chat.getChatId());
                     chatList.remove(chat.getChatId());
-                    chat.setLastMessage(chatMap.get(chat.getChatId()).getNickname() + ":" + chatMap.get(chat.getChatId()).getMessage());
-                    chat.setUpdateTime(chatMap.get(chat.getChatId()).getSendTime());
+                    if (chatMap.get(chat.getChatId()).getType() == null) {
+                        chat.setLastMessage(chatMap.get(chat.getChatId()).getNickname() + ":" + chatMap.get(chat.getChatId()).getMessage());
+                        chat.setUpdateTime(chatMap.get(chat.getChatId()).getSendTime());
+                    } else {
+                        if (chatMap.get(chat.getChatId()).getType().equals(Constant.ChatMessageType.TYPE_MESSAGE_CHANGE_NAME)) {
+                            chat.setChatName(chatMap.get(chat.getChatId()).getMessage());
+                            chat.setLastMessage(chatMap.get(chat.getChatId()).getNickname() + "修改聊天室名称为“" + chatMap.get(chat.getChatId()).getMessage() + "”");
+                            chat.setUpdateTime(chatMap.get(chat.getChatId()).getSendTime());
+                        } else if (chatMap.get(chat.getChatId()).getType().equals(Constant.ChatMessageType.TYPE_MESSAGE_CHANGE_PIC)) {
+                            chat.setChatPic(chatMap.get(chat.getChatId()).getMessage());
+                            chat.setLastMessage(chatMap.get(chat.getChatId()).getNickname() + "修改聊天室头像");
+                            chat.setUpdateTime(chatMap.get(chat.getChatId()).getSendTime());
+                        } else if (chatMap.get(chat.getChatId()).getType().equals(Constant.ChatMessageType.TYPE_MESSAGE_CHANGE_PEOPLE_ADD)) {
+                            List<UserInfo> userInfoList = gson.fromJson(chatMap.get(chat.getChatId()).getMessage(), new TypeToken<ArrayList<UserInfo>>() {
+                            }.getType());
+                            Set<String> userList = new HashSet<>(userInfoList.size());
+                            String temp = "";
+                            for (int i = 0; i < userInfoList.size() - 1; i++) {
+                                temp = temp + userInfoList.get(i).getNickname() + "、";
+                                userList.add(userInfoList.get(i).getUserId());
+                            }
+                            temp = temp + userInfoList.get(userInfoList.size() - 1).getNickname();
+                            userList.add(userInfoList.get(userInfoList.size() - 1).getUserId());
+
+                            chat.setUserList(gson.toJson(userList));
+                            chat.setLastMessage(chatMap.get(chat.getChatId()).getNickname() + "邀请" + temp + "加入了聊天室");
+                            chat.setUpdateTime(chatMap.get(chat.getChatId()).getSendTime());
+                        } else if (chatMap.get(chat.getChatId()).getType().equals(Constant.ChatMessageType.TYPE_MESSAGE_CHANGE_PEOPLE_REMOVE)) {
+                            List<UserInfo> userInfoList = gson.fromJson(chatMap.get(chat.getChatId()).getMessage(), new TypeToken<ArrayList<UserInfo>>() {
+                            }.getType());
+                            Set<String> userList = new HashSet<>(userInfoList.size());
+                            String temp = "";
+                            for (int i = 0; i < userInfoList.size() - 1; i++) {
+                                temp = temp + userInfoList.get(i).getNickname() + "、";
+                                userList.add(userInfoList.get(i).getUserId());
+                            }
+                            temp = temp + userInfoList.get(userInfoList.size() - 1).getNickname();
+                            userList.add(userInfoList.get(userInfoList.size() - 1).getUserId());
+
+                            chat.setUserList(gson.toJson(userList));
+                            chat.setLastMessage(chatMap.get(chat.getChatId()).getNickname() + "将" + temp + "移出了聊天室");
+                            chat.setUpdateTime(chatMap.get(chat.getChatId()).getSendTime());
+                        }
+                    }
                     asyncSessionChat.insertOrReplace(chat);
                 }
                 if (chatList.isEmpty()) {
@@ -288,6 +332,13 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
             public void next(ApiResponse<List<Chat>> response) {
                 if (response.isSuccess()) {
                     for (Chat chat : response.getData()) {
+                        if (chat.getChatType().equals(Constant.ChatType.TYPE_CHAT_MULTIPLAYER)) {
+                            try {
+                                chat.setChatName(EmojiUtil.emojiRecovery(chat.getChatName()));
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                        }
                         asyncSessionChat.insertOrReplace(chat);
                         PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey(Constant.PreferenceKey.CHAT_INFO_WAITING + chat.getChatId());
                         //TODO 更新消息界面

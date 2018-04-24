@@ -9,9 +9,11 @@ import java.io.Serializable;
 import org.greenrobot.greendao.annotation.Generated;
 
 import cn.chestnut.mvvm.teamworker.BR;
+import cn.chestnut.mvvm.teamworker.Constant;
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.main.adapter.BindingItem;
 import cn.chestnut.mvvm.teamworker.utils.FormatDateUtil;
+import cn.chestnut.mvvm.teamworker.utils.Log;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -60,8 +62,8 @@ public class Chat extends BindingItem implements Serializable {
 
     @Generated(hash = 335641571)
     public Chat(Long id, String chatId, String userList, String adminId, String userId,
-            String chatName, String chatPic, Integer chatType, long createTime,
-            long updateTime, String lastMessage) {
+                String chatName, String chatPic, Integer chatType, long createTime,
+                long updateTime, String lastMessage) {
         this.id = id;
         this.chatId = chatId;
         this.userList = userList;
@@ -169,6 +171,10 @@ public class Chat extends BindingItem implements Serializable {
 
     public String showTime() {
         return FormatDateUtil.getMessageTime(System.currentTimeMillis(), getUpdateTime());
+    }
+
+    public boolean showChatInfo() {
+        return !getChatType().equals(Constant.ChatType.TYPE_CHAT_DOUBLE);
     }
 
     @Override

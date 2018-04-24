@@ -19,6 +19,19 @@ public class Constant {
         public static final int TYPE_CHAT_MULTIPLAYER = 1;
     }
 
+
+    /**
+     * 消息类型 null或者0 默认普通消息 1修改聊天室名称 2修改聊天室头像 3人员变动
+     */
+    public class ChatMessageType {
+        public static final int TYPE_MESSAGE_NORMAL = 0;
+        public static final int TYPE_MESSAGE_CHANGE_NAME = 1;
+        public static final int TYPE_MESSAGE_CHANGE_PIC = 2;
+        public static final int TYPE_MESSAGE_CHANGE_PEOPLE_ADD = 3;
+        public static final int TYPE_MESSAGE_CHANGE_PEOPLE_REMOVE = 4;
+        public static final int TYPE_MESSAGE_PEOPLE_OUT = 5;
+    }
+
     //PreferenceUtil key
     public class PreferenceKey {
 
@@ -39,6 +52,11 @@ public class Constant {
         public static final String UPDATE_MESSAGE_CHAT_LAYOUT = "update_message_chat_layout";//更新消息聊天室界面
 
         public static final String ACTION_GET_NEW_FRIEND_REQUEST = "action_get_new_friend_request";//收到一条新的好友请求
+
+
+        public static final String ACTION_UPDATE_CHAT = "action_update_chat";//更新聊天室
+
+        public static final String ACTION_UPDATE_CHAT_SETTING = "action_update_chat_setting";//更新聊天室设置
 
     }
 

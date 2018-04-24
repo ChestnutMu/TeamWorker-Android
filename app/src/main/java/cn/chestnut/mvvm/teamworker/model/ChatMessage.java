@@ -1,13 +1,11 @@
 package cn.chestnut.mvvm.teamworker.model;
 
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.Transient;
 import org.greenrobot.greendao.annotation.Unique;
 
 import java.io.Serializable;
-
-import org.greenrobot.greendao.annotation.Generated;
 
 import cn.chestnut.mvvm.teamworker.BR;
 import cn.chestnut.mvvm.teamworker.R;
@@ -54,10 +52,13 @@ public class ChatMessage extends BindingItem implements Serializable {
 
     private String avatar;
 
-    @Generated(hash = 1140521755)
+    //信息类型
+    private Integer type;
+
+    @Generated(hash = 568412284)
     public ChatMessage(Long id, String chatMessageId, String chatId, String userId,
             String senderId, String message, long sendTime, boolean done, String nickname,
-            String avatar) {
+            String avatar, Integer type) {
         this.id = id;
         this.chatMessageId = chatMessageId;
         this.chatId = chatId;
@@ -68,6 +69,7 @@ public class ChatMessage extends BindingItem implements Serializable {
         this.done = done;
         this.nickname = nickname;
         this.avatar = avatar;
+        this.type = type;
     }
 
     @Generated(hash = 2271208)
@@ -156,6 +158,14 @@ public class ChatMessage extends BindingItem implements Serializable {
 
     public boolean getDone() {
         return this.done;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 
     @Override

@@ -5,7 +5,12 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Unique;
 
 import java.io.Serializable;
+
 import org.greenrobot.greendao.annotation.Generated;
+
+import cn.chestnut.mvvm.teamworker.BR;
+import cn.chestnut.mvvm.teamworker.R;
+import cn.chestnut.mvvm.teamworker.main.adapter.BindingItem;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -15,7 +20,7 @@ import org.greenrobot.greendao.annotation.Generated;
  * Email: xiaoting233zhang@126.com
  */
 @Entity
-public class UserInfo implements Serializable {
+public class UserInfo extends BindingItem implements Serializable {
 
     private static final long serialVersionUID = -5381748401555421680L;
     @Id(autoincrement = true)
@@ -70,5 +75,19 @@ public class UserInfo implements Serializable {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public int getOtherViewType() {
+        return R.layout.item_chosen_delete_user;
+    }
+
+    @Override
+    public int getViewType() {
+        return R.layout.item_chat_user;
+    }
+
+    @Override
+    public int getViewVariableId() {
+        return BR.userInfo;
     }
 }
