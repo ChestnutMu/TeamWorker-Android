@@ -168,6 +168,17 @@ public class User extends BindingItem implements Serializable {
         return "";
     }
 
+
+    /**
+     * 选择用户创建聊天室使用
+     *
+     * @return
+     */
+    public int getChooseUserViewType() {
+        return R.layout.item_chosen_user;
+    }
+
+
     @Override
     public int getViewType() {
         return R.layout.item_user;

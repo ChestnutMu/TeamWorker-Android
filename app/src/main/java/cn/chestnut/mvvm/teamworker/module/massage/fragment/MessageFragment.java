@@ -49,6 +49,7 @@ import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
 import cn.chestnut.mvvm.teamworker.model.Chat;
 import cn.chestnut.mvvm.teamworker.model.UserInfo;
 import cn.chestnut.mvvm.teamworker.module.massage.activity.ChatActivity;
+import cn.chestnut.mvvm.teamworker.module.massage.activity.CreateMultiChatActivity;
 import cn.chestnut.mvvm.teamworker.module.massage.adapter.MessageAdapter;
 import cn.chestnut.mvvm.teamworker.module.user.SearchFriendActivity;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
@@ -142,7 +143,7 @@ public class MessageFragment extends BaseFragment {
                 if (position == 0) {
 
                 } else if (position == 1) {
-
+                    startActivity(new Intent(getActivity(), CreateMultiChatActivity.class));
                 } else if (position == 2) {
                     startActivity(new Intent(getActivity(), SearchFriendActivity.class));
                 }

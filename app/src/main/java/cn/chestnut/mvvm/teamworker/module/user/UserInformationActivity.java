@@ -231,6 +231,7 @@ public class UserInformationActivity extends BaseActivity {
         userList.add(userId);
         userList.add(myUserId);
         param.put("userList", gson.toJson(userList));
+        showProgressDialog(this);
         RequestManager.getInstance(this).executeRequest(HttpUrls.BUILD_CHAT, param, new AppCallBack<ApiResponse<Chat>>() {
             @Override
             public void next(ApiResponse<Chat> response) {
@@ -251,12 +252,12 @@ public class UserInformationActivity extends BaseActivity {
 
             @Override
             public void error(Throwable error) {
-
+                hideProgressDialog();
             }
 
             @Override
             public void complete() {
-
+                hideProgressDialog();
             }
         });
     }

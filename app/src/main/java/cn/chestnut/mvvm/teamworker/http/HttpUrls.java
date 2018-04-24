@@ -87,6 +87,8 @@ public class HttpUrls {
     //聊天室发送消息
     public static final String GET_CHAT_LIST = "/chat/getChatList";
 
+    //修改聊天室信息
+    public static final String CHANGE_CHAT_INFO = "/chat/changeChatInfo";
 
 
     //-----------------------团队接口------------------------------------------------------

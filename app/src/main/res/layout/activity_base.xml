@@ -59,7 +59,7 @@
                     android:gravity="center"
                     android:text="编辑"
                     android:textColor="@color/white"
-                    android:textSize="14sp"
+                    android:textSize="12sp"
                     android:visibility="gone" />
 
                 <ImageView

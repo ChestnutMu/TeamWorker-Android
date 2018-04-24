@@ -262,7 +262,7 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
                 for (Chat chat : data) {
                     PreferenceUtil.getInstances(MyApplication.getInstance()).deleteKey(Constant.PreferenceKey.CHAT_INFO_WAITING + chat.getChatId());
                     chatList.remove(chat.getChatId());
-                    chat.setLastMessage(chatMap.get(chat.getChatId()).getMessage());
+                    chat.setLastMessage(chatMap.get(chat.getChatId()).getNickname() + ":" + chatMap.get(chat.getChatId()).getMessage());
                     chat.setUpdateTime(chatMap.get(chat.getChatId()).getSendTime());
                     asyncSessionChat.insertOrReplace(chat);
                 }
