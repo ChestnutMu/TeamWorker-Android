@@ -21,6 +21,10 @@ public class ApiResponse<T> {
         this.status = status;
     }
 
+    public int getStatus() {
+        return status;
+    }
+
     public String getMessage() {
         return message;
     }

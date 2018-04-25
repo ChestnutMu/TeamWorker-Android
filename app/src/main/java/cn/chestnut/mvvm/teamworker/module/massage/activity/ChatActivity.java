@@ -38,7 +38,6 @@ import cn.chestnut.mvvm.teamworker.Constant;
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.ActivityChatBinding;
 import cn.chestnut.mvvm.teamworker.db.ChatMessageDao;
-import cn.chestnut.mvvm.teamworker.db.UserInfoDao;
 import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
@@ -48,7 +47,6 @@ import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
 import cn.chestnut.mvvm.teamworker.model.Chat;
 import cn.chestnut.mvvm.teamworker.model.ChatMessage;
 import cn.chestnut.mvvm.teamworker.model.UserInfo;
-import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
 import cn.chestnut.mvvm.teamworker.module.massage.adapter.ChatAdapter;
 import cn.chestnut.mvvm.teamworker.socket.ReceiverProtocol;
 import cn.chestnut.mvvm.teamworker.utils.EmojiUtil;
@@ -99,6 +97,7 @@ public class ChatActivity extends BaseActivity {
     public static final String BROADCAST_INTENT_TYPE = "broadcast_intent_type";
     public static final String BROADCAST_INTENT_NAME = "broadcast_intent_name";
     public static final String BROADCAST_INTENT_MESSAGE = "broadcast_intent_message";
+    public static final String BROADCAST_INTENT_CHAT = "broadcast_intent_chat";
 
     public TextView titleView;
 
@@ -195,6 +194,19 @@ public class ChatActivity extends BaseActivity {
                         chatAdapter.notifyItemChanged(messageList.size() - 1);
                     } else if (type == 4) {
                         finish();
+                    } else if (type == 5) {
+                        Chat newChat = (Chat) intent.getSerializableExtra(BROADCAST_INTENT_CHAT);
+                        if (!chat.getAdminId().equals(newChat.getAdminId()))
+                            chat.setAdminId(newChat.getAdminId());
+                        if (!chat.getUserList().equals(newChat.getUserList()))
+                            chat.setUserList(newChat.getUserList());
+                        if (!chat.getChatName().equals(newChat.getChatName())) {
+                            chat.setChatName(newChat.getChatName());
+                            titleView.setText(chat.getChatName());
+                        }
+                        if (chat.getChatPic() == null || !chat.getChatPic().equals(newChat.getChatPic()))
+                            chat.setChatPic(newChat.getChatPic());
+                        chat.setUpdateTime(newChat.getUpdateTime());
                     }
                 }
             }

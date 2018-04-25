@@ -35,15 +35,12 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import cn.chestnut.mvvm.teamworker.Constant;
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.ActivityChatSettingBinding;
-import cn.chestnut.mvvm.teamworker.db.ChatMessageDao;
 import cn.chestnut.mvvm.teamworker.db.UserInfoDao;
 import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
@@ -53,10 +50,8 @@ import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
 import cn.chestnut.mvvm.teamworker.model.Chat;
 import cn.chestnut.mvvm.teamworker.model.ChatMessage;
-import cn.chestnut.mvvm.teamworker.model.User;
 import cn.chestnut.mvvm.teamworker.model.UserInfo;
 import cn.chestnut.mvvm.teamworker.module.massage.adapter.ChatSettingUserAdapter;
-import cn.chestnut.mvvm.teamworker.module.mine.MyInformationActivity;
 import cn.chestnut.mvvm.teamworker.utils.EmojiUtil;
 import cn.chestnut.mvvm.teamworker.utils.EntityUtil;
 import cn.chestnut.mvvm.teamworker.utils.Log;
@@ -78,8 +73,6 @@ public class ChatSettingActivity extends BaseActivity {
     ActivityChatSettingBinding binding;
 
     public static final String BUNDLE_CHAT = "bundle_chat";//聊天室
-
-    private Chat chat;
 
     private String userId;
 
@@ -126,16 +119,16 @@ public class ChatSettingActivity extends BaseActivity {
      */
     protected void initData() {
         asyncSession = DaoManager.getDaoSession().startAsyncSession();
-        chat = (Chat) getIntent().getSerializableExtra(BUNDLE_CHAT);
         userId = PreferenceUtil.getInstances(this).getPreferenceString("userId");
-        binding.setChat(chat);
+        binding.setChat((Chat) getIntent().getSerializableExtra(BUNDLE_CHAT));
+        updateChatInfo();
     }
 
     /**
      * 初始化界面
      */
     protected void initView() {
-        userIdList = gson.fromJson(chat.getUserList(), new TypeToken<List<String>>() {
+        userIdList = gson.fromJson(binding.getChat().getUserList(), new TypeToken<List<String>>() {
         }.getType());
         userInfoList = new ArrayList<>();
         for (String userId : userIdList) {
@@ -143,7 +136,7 @@ public class ChatSettingActivity extends BaseActivity {
             userInfo.setUserId(userId);
             userInfoList.add(userInfo);
         }
-        if (chat.getAdminId().equals(userId)) {
+        if (binding.getChat().getAdminId().equals(userId)) {
             add.setAvatar("add");
             remove.setAvatar("remove");
             userInfoList.add(add);
@@ -172,7 +165,7 @@ public class ChatSettingActivity extends BaseActivity {
                         userInfo.setUserId(userId);
                         userInfoList.add(userInfo);
                     }
-                    if (chat.getAdminId().equals(userId)) {
+                    if (binding.getChat().getAdminId().equals(userId)) {
                         add.setAvatar("add");
                         remove.setAvatar("remove");
                         userInfoList.add(add);
@@ -197,17 +190,17 @@ public class ChatSettingActivity extends BaseActivity {
                 UserInfo userInfo = userInfoList.get(position);
                 if (userInfo.equals(add)) {
                     Log.d("添加用户");
-                    CreateMultiChatActivity.startActivity(ChatSettingActivity.this, chat.getChatId(), chat.getUserList());
+                    CreateMultiChatActivity.startActivity(ChatSettingActivity.this, binding.getChat().getChatId(), binding.getChat().getUserList());
                 } else if (userInfo.equals(remove)) {
                     Log.d("移除用户");
-                    if (chat.getAdminId().equals(userId)) {
+                    if (binding.getChat().getAdminId().equals(userId)) {
                         List<UserInfo> chatUserInfoList = new ArrayList<>();
                         chatUserInfoList.addAll(userInfoList);
                         chatUserInfoList.remove(chatUserInfoList.size() - 1);
                         chatUserInfoList.remove(chatUserInfoList.size() - 1);
-                        DeleteChatUserActivity.startActivity(ChatSettingActivity.this, chat.getChatId(), gson.toJson(chatUserInfoList));
+                        DeleteChatUserActivity.startActivity(ChatSettingActivity.this, binding.getChat().getChatId(), gson.toJson(chatUserInfoList));
                     } else {
-                        DeleteChatUserActivity.startActivity(ChatSettingActivity.this, chat.getChatId(), gson.toJson(userInfoList));
+                        DeleteChatUserActivity.startActivity(ChatSettingActivity.this, binding.getChat().getChatId(), gson.toJson(userInfoList));
                     }
                 } else {
                     Log.d("点击用户");
@@ -220,12 +213,12 @@ public class ChatSettingActivity extends BaseActivity {
                 clearRecord();
             }
         });
-        if (userId.equals(chat.getAdminId())) {
+        if (userId.equals(binding.getChat().getAdminId())) {
             binding.chatNameLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     final EditText editText = new EditText(ChatSettingActivity.this);
-                    editText.setText(chat.getChatName());
+                    editText.setText(binding.getChat().getChatName());
                     new AlertDialog.Builder(ChatSettingActivity.this)
                             .setTitle("名称")
                             .setView(editText)
@@ -275,18 +268,18 @@ public class ChatSettingActivity extends BaseActivity {
 
     private void delAndOut() {
         Map<String, Object> param = new HashMap<>(1);
-        param.put("chatId", chat.getChatId());
+        param.put("chatId", binding.getChat().getChatId());
         showProgressDialog(this);
         RequestManager.getInstance(this).executeRequest(HttpUrls.GO_OUT_CHAT, param, new AppCallBack<ApiResponse<Object>>() {
             @Override
             public void next(ApiResponse<Object> response) {
-                if (response.isSuccess()) {
+                if (response.isSuccess() || response.getStatus() == 2) {
                     asyncSession.runInTx(new Runnable() {
                         @Override
                         public void run() {
                             Database db = DaoManager.getDaoSession().getDatabase();
-                            db.execSQL("DELETE FROM CHAT_MESSAGE where CHAT_ID = ? ", new String[]{chat.getChatId()});
-                            db.execSQL("DELETE FROM CHAT where CHAT_ID = ? ", new String[]{chat.getChatId()});
+                            db.execSQL("DELETE FROM CHAT_MESSAGE where CHAT_ID = ? ", new String[]{binding.getChat().getChatId()});
+                            db.execSQL("DELETE FROM CHAT where CHAT_ID = ? ", new String[]{binding.getChat().getChatId()});
 
                             //更新聊天室
                             Intent intent = new Intent(Constant.ActionConstant.ACTION_UPDATE_CHAT);
@@ -317,7 +310,7 @@ public class ChatSettingActivity extends BaseActivity {
 
     private void updateAvatar(String avatar) {
         Map<String, Object> param = new HashMap<>(2);
-        param.put("chatId", chat.getChatId());
+        param.put("chatId", binding.getChat().getChatId());
         param.put("chatPic", avatar);
         showProgressDialog(this);
         RequestManager.getInstance(this).executeRequest(HttpUrls.CHANGE_CHAT_INFO, param, new AppCallBack<ApiResponse<Chat>>() {
@@ -338,7 +331,6 @@ public class ChatSettingActivity extends BaseActivity {
                     asyncSession.insert(chatMessage);
                     asyncSession.insertOrReplace(newChat);
 
-                    chat = newChat;
                     //更新当前界面
                     binding.setChat(newChat);
 
@@ -368,7 +360,7 @@ public class ChatSettingActivity extends BaseActivity {
 
     private void updateChatInfo(String chatName) {
         Map<String, Object> param = new HashMap<>(2);
-        param.put("chatId", chat.getChatId());
+        param.put("chatId", binding.getChat().getChatId());
         param.put("chatName", chatName);
         showProgressDialog(this);
         RequestManager.getInstance(this).executeRequest(HttpUrls.CHANGE_CHAT_INFO, param, new AppCallBack<ApiResponse<Chat>>() {
@@ -376,7 +368,8 @@ public class ChatSettingActivity extends BaseActivity {
             public void next(ApiResponse<Chat> response) {
                 if (response.isSuccess()) {
                     Chat newChat = response.getData();
-                    chat.setChatName(newChat.getChatName());
+                    binding.setChat(newChat);
+                    binding.getChat().setChatName(newChat.getChatName());
                     //保存到本地
                     ChatMessage chatMessage = new ChatMessage();
                     chatMessage.setChatMessageId(EntityUtil.getIdByTimeStampAndRandom());
@@ -397,7 +390,7 @@ public class ChatSettingActivity extends BaseActivity {
                     //更新聊天室
                     Intent intent = new Intent(Constant.ActionConstant.ACTION_UPDATE_CHAT);
                     intent.putExtra(ChatActivity.BROADCAST_INTENT_TYPE, 0);
-                    intent.putExtra(ChatActivity.BROADCAST_INTENT_NAME, chat.getChatName());
+                    intent.putExtra(ChatActivity.BROADCAST_INTENT_NAME, binding.getChat().getChatName());
                     intent.putExtra(ChatActivity.BROADCAST_INTENT_MESSAGE, chatMessage);
                     LocalBroadcastManager.getInstance(MyApplication.getInstance()).sendBroadcast(intent);
 
@@ -444,9 +437,9 @@ public class ChatSettingActivity extends BaseActivity {
                             @Override
                             public void run() {
                                 Database db = DaoManager.getDaoSession().getDatabase();
-                                db.execSQL("DELETE FROM CHAT_MESSAGE where CHAT_ID = ? ", new String[]{chat.getChatId()});
-                                chat.setLastMessage("");
-                                asyncSession.insertOrReplace(chat);
+                                db.execSQL("DELETE FROM CHAT_MESSAGE where CHAT_ID = ? ", new String[]{binding.getChat().getChatId()});
+                                binding.getChat().setLastMessage("");
+                                asyncSession.insertOrReplace(binding.getChat());
                                 //更新聊天室
                                 Intent intent = new Intent(Constant.ActionConstant.ACTION_UPDATE_CHAT);
                                 intent.putExtra(ChatActivity.BROADCAST_INTENT_TYPE, 1);
@@ -648,6 +641,67 @@ public class ChatSettingActivity extends BaseActivity {
 
     }
 
+    private void updateChatInfo() {
+        Map<String, Object> param = new HashMap<>(1);
+        List<String> chatIdList = new ArrayList<>(1);
+        chatIdList.add(binding.getChat().getChatId());
+        param.put("chatList", gson.toJson(chatIdList));
+        RequestManager.getInstance(this).executeRequest(HttpUrls.GET_CHAT_LIST, param, new AppCallBack<ApiResponse<List<Chat>>>() {
+
+            @Override
+            public void next(ApiResponse<List<Chat>> response) {
+                if (response.isSuccess()) {
+                    if (response.getData().isEmpty()) {
+                        showToast("聊天室已被删除");
+                    } else {
+                        Chat newChat = response.getData().get(0);
+                        if (!newChat.getUserList().equals(binding.getChat().getUserList())) {
+                            binding.setChat(newChat);
+                            userIdList = gson.fromJson(binding.getChat().getUserList(), new TypeToken<List<String>>() {
+                            }.getType());
+                            userInfoList.clear();
+                            for (String userId : userIdList) {
+                                UserInfo userInfo = new UserInfo();
+                                userInfo.setUserId(userId);
+                                userInfoList.add(userInfo);
+                            }
+                            if (binding.getChat().getAdminId().equals(userId)) {
+                                add.setAvatar("add");
+                                remove.setAvatar("remove");
+                                userInfoList.add(add);
+                                userInfoList.add(remove);
+                            }
+                            adapter.notifyDataSetChanged();
+                            updateUerInfo();
+                        } else {
+                            binding.setChat(newChat);
+                        }
+                        //更新聊天室
+                        Intent intent = new Intent(Constant.ActionConstant.ACTION_UPDATE_CHAT);
+                        intent.putExtra(ChatActivity.BROADCAST_INTENT_TYPE, 5);
+                        intent.putExtra(ChatActivity.BROADCAST_INTENT_CHAT, newChat);
+                        LocalBroadcastManager.getInstance(MyApplication.getInstance()).sendBroadcast(intent);
+
+                        asyncSession.insertOrReplace(newChat);
+                    }
+                } else {
+                    showToast(response.getMessage());
+                }
+            }
+
+            @Override
+            public void error(Throwable error) {
+                Log.e(error.toString());
+            }
+
+            @Override
+            public void complete() {
+
+            }
+
+        });
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -658,4 +712,6 @@ public class ChatSettingActivity extends BaseActivity {
             receiver = null;
         }
     }
+
+
 }

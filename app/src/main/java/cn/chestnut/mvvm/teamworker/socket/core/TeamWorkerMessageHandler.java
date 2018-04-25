@@ -288,7 +288,10 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
                             temp = temp + userInfoList.get(userInfoList.size() - 1).getNickname();
                             userList.add(userInfoList.get(userInfoList.size() - 1).getUserId());
 
-                            chat.setUserList(gson.toJson(userList));
+                            Set<String> userListOld = gson.fromJson(chat.getUserList(), new TypeToken<HashSet<String>>() {
+                            }.getType());
+                            userListOld.addAll(userList);
+                            chat.setUserList(gson.toJson(userListOld));
                             chat.setLastMessage(chatMap.get(chat.getChatId()).getNickname() + "邀请" + temp + "加入了聊天室");
                             chat.setUpdateTime(chatMap.get(chat.getChatId()).getSendTime());
                         } else if (chatMap.get(chat.getChatId()).getType().equals(Constant.ChatMessageType.TYPE_MESSAGE_CHANGE_PEOPLE_REMOVE)) {
@@ -303,7 +306,10 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
                             temp = temp + userInfoList.get(userInfoList.size() - 1).getNickname();
                             userList.add(userInfoList.get(userInfoList.size() - 1).getUserId());
 
-                            chat.setUserList(gson.toJson(userList));
+                            Set<String> userListOld = gson.fromJson(chat.getUserList(), new TypeToken<HashSet<String>>() {
+                            }.getType());
+                            userListOld.removeAll(userList);
+                            chat.setUserList(gson.toJson(userListOld));
                             chat.setLastMessage(chatMap.get(chat.getChatId()).getNickname() + "将" + temp + "移出了聊天室");
                             chat.setUpdateTime(chatMap.get(chat.getChatId()).getSendTime());
                         } else if (chatMap.get(chat.getChatId()).getType().equals(Constant.ChatMessageType.TYPE_MESSAGE_PEOPLE_OUT)) {
