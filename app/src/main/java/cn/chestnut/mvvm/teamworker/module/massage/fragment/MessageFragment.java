@@ -1,7 +1,9 @@
 package cn.chestnut.mvvm.teamworker.module.massage.fragment;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.databinding.DataBindingUtil;
@@ -26,6 +28,7 @@ import com.google.gson.Gson;
 import org.greenrobot.greendao.async.AsyncOperation;
 import org.greenrobot.greendao.async.AsyncOperationListener;
 import org.greenrobot.greendao.async.AsyncSession;
+import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.ArrayList;
@@ -240,9 +243,17 @@ public class MessageFragment extends BaseFragment {
                     isMore = false;
                 }
             } else {
+                if (isRefresh) {
+                    chatList.clear();
+                    chatAdapter.notifyDataSetChanged();
+                }
                 isMore = false;
             }
         } else {
+            if (isRefresh) {
+                chatList.clear();
+                chatAdapter.notifyDataSetChanged();
+            }
             isMore = false;
         }
     }
@@ -272,6 +283,13 @@ public class MessageFragment extends BaseFragment {
                 startActivity(intent);
             }
         });
+        chatAdapter.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                showDeleteTip(chatList.get(position), position);
+                return false;
+            }
+        });
         binding.recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -284,13 +302,49 @@ public class MessageFragment extends BaseFragment {
         });
     }
 
+    private void showDeleteTip(final Chat chat, final int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
+                .setTitle("确定清除该聊天室？")
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteChatAndMessage(chat, position);
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.show();
+    }
+
+    private void deleteChatAndMessage(final Chat chat, final int position) {
+        asyncSession.runInTx(new Runnable() {
+            @Override
+            public void run() {
+                Database db = DaoManager.getDaoSession().getDatabase();
+                db.execSQL("DELETE FROM CHAT_MESSAGE where CHAT_ID = ? ", new String[]{chat.getChatId()});
+                db.execSQL("DELETE FROM CHAT where CHAT_ID = ? ", new String[]{chat.getChatId()});
+            }
+        });
+        chatList.remove(position);
+        //更新聊天室
+        chatAdapter.notifyItemRemoved(position);
+        chatAdapter.notifyDataSetChanged();
+    }
+
 
     private void getUserInfoFromServer(final Chat chat, final String senderId, final int position) {
         boolean isUpdate = PreferenceUtil.getInstances(MyApplication.getInstance()).
                 getPreferenceBooleanHaveTime(Constant.PreferenceKey.USER_INFO_WAITING + senderId);
         if (!isUpdate) {
             PreferenceUtil.getInstances(MyApplication.getInstance()).
-                    savePreferenceBooleanBySecond(Constant.PreferenceKey.USER_INFO_WAITING + senderId, true,10L);
+                    savePreferenceBooleanBySecond(Constant.PreferenceKey.USER_INFO_WAITING + senderId, true, 10L);
             Log.d("更新用户信息 userId = " + userId);
         } else {
             return;
