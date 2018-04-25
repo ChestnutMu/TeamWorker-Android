@@ -90,6 +90,9 @@ public class HttpUrls {
     //修改聊天室信息
     public static final String CHANGE_CHAT_INFO = "/chat/changeChatInfo";
 
+    //退出聊天室
+    public static final String GO_OUT_CHAT = "/chat/goOutChat";
+
 
     //-----------------------团队接口------------------------------------------------------
     //创建一个团队

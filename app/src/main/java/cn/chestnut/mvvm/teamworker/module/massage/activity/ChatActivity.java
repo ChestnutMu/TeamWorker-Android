@@ -193,6 +193,8 @@ public class ChatActivity extends BaseActivity {
                         ChatMessage chatMessage = (ChatMessage) intent.getSerializableExtra(BROADCAST_INTENT_MESSAGE);
                         messageList.add(chatMessage);
                         chatAdapter.notifyItemChanged(messageList.size() - 1);
+                    } else if (type == 4) {
+                        finish();
                     }
                 }
             }

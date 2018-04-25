@@ -264,6 +264,54 @@ public class ChatSettingActivity extends BaseActivity {
             });
         }
 
+        binding.btnDelAndOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                delAndOut();
+            }
+        });
+
+    }
+
+    private void delAndOut() {
+        Map<String, Object> param = new HashMap<>(1);
+        param.put("chatId", chat.getChatId());
+        showProgressDialog(this);
+        RequestManager.getInstance(this).executeRequest(HttpUrls.GO_OUT_CHAT, param, new AppCallBack<ApiResponse<Object>>() {
+            @Override
+            public void next(ApiResponse<Object> response) {
+                if (response.isSuccess()) {
+                    asyncSession.runInTx(new Runnable() {
+                        @Override
+                        public void run() {
+                            Database db = DaoManager.getDaoSession().getDatabase();
+                            db.execSQL("DELETE FROM CHAT_MESSAGE where CHAT_ID = ? ", new String[]{chat.getChatId()});
+                            db.execSQL("DELETE FROM CHAT where CHAT_ID = ? ", new String[]{chat.getChatId()});
+
+                            //更新聊天室
+                            Intent intent = new Intent(Constant.ActionConstant.ACTION_UPDATE_CHAT);
+                            intent.putExtra(ChatActivity.BROADCAST_INTENT_TYPE, 4);
+                            LocalBroadcastManager.getInstance(MyApplication.getInstance()).sendBroadcast(intent);
+                        }
+                    });
+
+                    updateMessageLayout();
+                    finish();
+                } else {
+                    showToast(response.getMessage());
+                }
+            }
+
+            @Override
+            public void error(Throwable error) {
+                hideProgressDialog();
+            }
+
+            @Override
+            public void complete() {
+                hideProgressDialog();
+            }
+        });
     }
 
 
@@ -276,22 +324,23 @@ public class ChatSettingActivity extends BaseActivity {
             @Override
             public void next(ApiResponse<Chat> response) {
                 if (response.isSuccess()) {
-                    Chat chat = response.getData();
+                    Chat newChat = response.getData();
                     //保存到本地
                     ChatMessage chatMessage = new ChatMessage();
                     chatMessage.setChatMessageId(EntityUtil.getIdByTimeStampAndRandom());
-                    chatMessage.setChatId(chat.getChatId());
+                    chatMessage.setChatId(newChat.getChatId());
                     chatMessage.setSenderId(userId);
                     chatMessage.setType(Constant.ChatMessageType.TYPE_MESSAGE_CHANGE_PIC);
                     chatMessage.setDone(true);
-                    chatMessage.setSendTime(chat.getUpdateTime());
+                    chatMessage.setSendTime(newChat.getUpdateTime());
 
-                    chat.setLastMessage("你修改聊天室头像");
+                    newChat.setLastMessage("你修改聊天室头像");
                     asyncSession.insert(chatMessage);
-                    asyncSession.insertOrReplace(chat);
+                    asyncSession.insertOrReplace(newChat);
 
+                    chat = newChat;
                     //更新当前界面
-                    binding.setChat(chat);
+                    binding.setChat(newChat);
 
                     //更新聊天室
                     Intent intent = new Intent(Constant.ActionConstant.ACTION_UPDATE_CHAT);
@@ -326,23 +375,24 @@ public class ChatSettingActivity extends BaseActivity {
             @Override
             public void next(ApiResponse<Chat> response) {
                 if (response.isSuccess()) {
-                    Chat chat = response.getData();
+                    Chat newChat = response.getData();
+                    chat.setChatName(newChat.getChatName());
                     //保存到本地
                     ChatMessage chatMessage = new ChatMessage();
                     chatMessage.setChatMessageId(EntityUtil.getIdByTimeStampAndRandom());
-                    chatMessage.setChatId(chat.getChatId());
-                    chatMessage.setMessage(chat.getChatName());
+                    chatMessage.setChatId(newChat.getChatId());
+                    chatMessage.setMessage(newChat.getChatName());
                     chatMessage.setSenderId(userId);
                     chatMessage.setType(Constant.ChatMessageType.TYPE_MESSAGE_CHANGE_NAME);
                     chatMessage.setDone(true);
-                    chatMessage.setSendTime(chat.getUpdateTime());
+                    chatMessage.setSendTime(newChat.getUpdateTime());
 
-                    chat.setLastMessage("你修改聊天室名称为“" + chat.getChatName() + "”");
+                    newChat.setLastMessage("你修改聊天室名称为“" + newChat.getChatName() + "”");
                     asyncSession.insert(chatMessage);
-                    asyncSession.insertOrReplace(chat);
+                    asyncSession.insertOrReplace(newChat);
 
                     //更新当前界面
-                    binding.tvChatName.setText(chat.getChatName());
+                    binding.tvChatName.setText(newChat.getChatName());
 
                     //更新聊天室
                     Intent intent = new Intent(Constant.ActionConstant.ACTION_UPDATE_CHAT);

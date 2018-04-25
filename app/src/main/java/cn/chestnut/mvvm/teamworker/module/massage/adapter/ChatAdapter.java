@@ -104,6 +104,8 @@ public class ChatAdapter extends BaseRecyclerViewAdapter<ChatMessage, ItemChatBi
                 } else {
                     message = obj.getNickname() + "将" + temp + "移出了聊天室";
                 }
+            } else if (obj.getType().equals(Constant.ChatMessageType.TYPE_MESSAGE_PEOPLE_OUT)) {
+                message = obj.getNickname() + "退出了聊天室";
             }
 
             binding.tvShowTip.setText(message);

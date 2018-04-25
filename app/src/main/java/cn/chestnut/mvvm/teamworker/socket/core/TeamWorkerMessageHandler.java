@@ -306,6 +306,13 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
                             chat.setUserList(gson.toJson(userList));
                             chat.setLastMessage(chatMap.get(chat.getChatId()).getNickname() + "将" + temp + "移出了聊天室");
                             chat.setUpdateTime(chatMap.get(chat.getChatId()).getSendTime());
+                        } else if (chatMap.get(chat.getChatId()).getType().equals(Constant.ChatMessageType.TYPE_MESSAGE_PEOPLE_OUT)) {
+                            Chat temp = gson.fromJson(chatMap.get(chat.getChatId()).getMessage(), new TypeToken<Chat>() {
+                            }.getType());
+                            chat.setAdminId(temp.getAdminId());
+                            chat.setUserList(temp.getUserList());
+                            chat.setLastMessage(chatMap.get(chat.getChatId()).getNickname() + "退出了聊天室");
+                            chat.setUpdateTime(chatMap.get(chat.getChatId()).getSendTime());
                         }
                     }
                     asyncSessionChat.insertOrReplace(chat);
