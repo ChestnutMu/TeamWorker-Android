@@ -1,8 +1,14 @@
 package cn.chestnut.mvvm.teamworker.model;
 
+import org.junit.experimental.theories.FromDataPoints;
+
+import java.io.Serializable;
+
 import cn.chestnut.mvvm.teamworker.BR;
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.main.adapter.BindingItem;
+import cn.chestnut.mvvm.teamworker.utils.EmojiUtil;
+import cn.chestnut.mvvm.teamworker.utils.FormatDateUtil;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -12,7 +18,7 @@ import cn.chestnut.mvvm.teamworker.main.adapter.BindingItem;
  * Email: xiaoting233zhang@126.com
  */
 
-public class Team extends BindingItem {
+public class Team extends BindingItem implements Serializable {
     private String teamId;
 
     private String teamName;
@@ -69,8 +75,8 @@ public class Team extends BindingItem {
         this.teamDesc = teamDesc;
     }
 
-    public long getCreateTime() {
-        return createTime;
+    public String getCreateTime() {
+        return FormatDateUtil.timeParseDetail(createTime);
     }
 
     public void setCreateTime(long createTime) {

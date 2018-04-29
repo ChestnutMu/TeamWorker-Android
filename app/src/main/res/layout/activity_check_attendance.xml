@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -7,74 +8,66 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                android:orientation="vertical"
+                android:gravity="center_vertical"
                 android:padding="@dimen/team_worker_padding">
 
+                <ImageView
+                    android:id="@+id/iv_avatar"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp" />
+
                 <TextView
+                    android:id="@+id/tv_user_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="当前定位地址："
-                    android:textColor="@color/text_black"
-                    android:textSize="@dimen/text_size_big" />
-
-                <TextView
-                    android:id="@+id/show_location"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_marginTop="5dp"
-                    android:textSize="@dimen/text_size_big" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:background="@color/white"
-                android:gravity="center_vertical"
-                android:orientation="vertical"
-                android:paddingBottom="10dp"
-                android:paddingLeft="@dimen/team_worker_padding"
-                android:paddingTop="10dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="3dp"
-                    android:text="图片"
+                    android:layout_marginLeft="5dp"
                     android:textColor="@color/text_black" />
 
-                <ImageView
-                    android:id="@+id/iv_picture"
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    android:layout_marginLeft="3dp"
-                    android:layout_marginTop="16dp"
-                    android:background="@mipmap/icon_plus" />
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/tv_time"
+                    android:textColor="@color/appTheme"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
             </LinearLayout>
 
-            <Button
-                android:id="@+id/up_work"
+            <com.haibin.calendarview.CalendarView
+                android:id="@+id/calendarView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:background="@drawable/bg_corner_button_selector"
-                android:text="打卡"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_big" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="今天打卡记录："
-                android:textColor="@color/text_black"
-                android:textSize="@dimen/text_size_big" />
+                android:background="@color/white"
+                app:current_month_lunar_text_color="#CFCFCF"
+                app:current_month_text_color="#333333"
+                app:max_year="2020"
+                app:min_year="2004"
+                app:month_view="cn.chestnut.mvvm.teamworker.widget.MeiZuMonthView"
+                app:other_month_lunar_text_color="#e1e1e1"
+                app:other_month_text_color="#e1e1e1"
+                app:scheme_text="假"
+                app:scheme_text_color="#333"
+                app:scheme_theme_color="#128c4b"
+                app:selected_lunar_text_color="#CFCFCF"
+                app:selected_text_color="@color/appTheme"
+                app:selected_theme_color="@color/appTheme"
+                app:week_background="#fff"
+                app:week_text_color="#111"
+                app:week_view="cn.chestnut.mvvm.teamworker.widget.MeiZuWeekView"
+                app:year_view_day_text_color="#333333"
+                app:year_view_day_text_size="9sp"
+                app:year_view_month_text_color="#ff0000"
+                app:year_view_month_text_size="20sp"
+                app:year_view_scheme_color="#f17706" />
 
             <RelativeLayout
                 android:layout_width="match_parent"

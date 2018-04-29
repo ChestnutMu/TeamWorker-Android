@@ -64,6 +64,11 @@ public class TeamMemberActivity extends BaseActivity {
     @Override
     protected void addContainerView(ViewGroup viewGroup, LayoutInflater inflater) {
         binding = DataBindingUtil.inflate(inflater, R.layout.activity_team_member, viewGroup, true);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         initView();
         initData();
         addListener();
@@ -108,20 +113,20 @@ public class TeamMemberActivity extends BaseActivity {
                 if (teamUserId.equals(PreferenceUtil.getInstances(TeamMemberActivity.this).getPreferenceString("userId"))) {
                     showToast("不能从团队中删除自己");
                 } else {
-                    showDeleteMemberDialog(teamUserId);
+                    showDeleteMemberDialog(teamUserId, position);
                 }
             }
         });
 
     }
 
-    private void showDeleteMemberDialog(final String teamUserId) {
+    private void showDeleteMemberDialog(final String teamUserId, final int position) {
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("确定要从团队中删除该成员吗？")
                 .setPositiveButton("确定删除", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        deleteMember(teamUserId);
+                        deleteMember(teamUserId, position);
                     }
                 })
                 .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -135,7 +140,7 @@ public class TeamMemberActivity extends BaseActivity {
         dialog.show();
     }
 
-    private void deleteMember(String teamUserId) {
+    private void deleteMember(String teamUserId, final int position) {
         Map<String, String> params = new HashMap<>(2);
         params.put("teamId", teamId);
         params.put("teamUserId", teamUserId);
@@ -143,6 +148,10 @@ public class TeamMemberActivity extends BaseActivity {
         RequestManager.getInstance(this).executeRequest(HttpUrls.DEL_TEAM_USER, params, new AppCallBack<ApiResponse<Object>>() {
             @Override
             public void next(ApiResponse<Object> response) {
+                if (response.isSuccess()) {
+                    userList.remove(position);
+                    adapter.notifyDataSetChanged();
+                }
                 showToast(response.getMessage());
             }
 

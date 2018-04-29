@@ -133,44 +133,6 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
-                    android:layout_marginTop="1dp"
-                    android:background="@color/white"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="@dimen/team_worker_padding"
-                    android:paddingRight="@dimen/team_worker_padding">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="*"
-                        android:textColor="@color/redNewMsg" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="3dp"
-                        android:text="时长（天）"
-                        android:textColor="@color/text_black" />
-
-                    <EditText
-                        android:id="@+id/et_day_count"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="3dp"
-                        android:layout_marginRight="8dp"
-                        android:layout_weight="1"
-                        android:background="@null"
-                        android:gravity="right"
-                        android:hint="请输入时长"
-                        android:inputType="number"
-                        android:textColor="@color/text_gray"
-                        android:textSize="@dimen/text_size_normal" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
                     android:layout_marginTop="16dp"
                     android:background="@color/white"
                     android:gravity="center_vertical"
@@ -232,40 +194,6 @@
                         android:background="@mipmap/icon_plus" />
                 </LinearLayout>
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:background="@color/white"
-                    android:gravity="center_vertical"
-                    android:paddingBottom="10dp"
-                    android:paddingLeft="@dimen/team_worker_padding"
-                    android:paddingTop="10dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="*"
-                        android:id="@+id/tv_star"
-                        android:textColor="@color/redNewMsg" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="3dp"
-                        android:text="审批人"
-                        android:layout_toRightOf="@id/tv_star"
-                        android:textColor="@color/text_black" />
-
-                    <ImageView
-                        android:id="@+id/iv_approver"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:layout_below="@+id/tv_star"
-                        android:layout_marginLeft="3dp"
-                        android:layout_marginTop="16dp"
-                        android:background="@mipmap/icon_plus" />
-                </RelativeLayout>
             </LinearLayout>
 
         </ScrollView>

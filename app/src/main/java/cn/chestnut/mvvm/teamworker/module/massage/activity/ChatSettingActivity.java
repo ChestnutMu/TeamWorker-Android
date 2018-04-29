@@ -114,6 +114,28 @@ public class ChatSettingActivity extends BaseActivity {
         addListener();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == ProcessPhotoUtils.UPLOAD_PHOTO_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            Uri originalUri = data.getData(); // 获得图片的uri
+            String[] proj = {MediaStore.Images.Media.DATA};
+            Cursor cursor = managedQuery(originalUri, proj, null, null, null);
+            //获得用户选择的图片的索引值
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            // 将光标移至开头 ，这个很重要，不小心很容易引起越界
+            cursor.moveToFirst();
+            //获得图片的uri
+            String filePath = cursor.getString(column_index);
+            Log.d("filePath " + filePath);
+            uploadPicture(filePath);
+        } else if (requestCode == ProcessPhotoUtils.SHOOT_PHOTO_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            String filePath = processPhotoUtils.getMyPhotoFile().getPath();
+            Log.d("filePath " + filePath);
+            uploadPicture(filePath);
+        }
+    }
+
     /**
      * 初始化数据
      */
@@ -558,30 +580,6 @@ public class ChatSettingActivity extends BaseActivity {
             }
         });
     }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ProcessPhotoUtils.UPLOAD_PHOTO_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            Uri originalUri = data.getData(); // 获得图片的uri
-            String[] proj = {MediaStore.Images.Media.DATA};
-            Cursor cursor = managedQuery(originalUri, proj, null, null, null);
-            //获得用户选择的图片的索引值
-            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            // 将光标移至开头 ，这个很重要，不小心很容易引起越界
-            cursor.moveToFirst();
-            //获得图片的uri
-            String filePath = cursor.getString(column_index);
-            Log.d("filePath " + filePath);
-            uploadPicture(filePath);
-        } else if (requestCode == ProcessPhotoUtils.SHOOT_PHOTO_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            String filePath = processPhotoUtils.getMyPhotoFile().getPath();
-            Log.d("filePath " + filePath);
-            uploadPicture(filePath);
-        }
-    }
-
 
     private void uploadPicture(String data, String token) {
         String key = null;

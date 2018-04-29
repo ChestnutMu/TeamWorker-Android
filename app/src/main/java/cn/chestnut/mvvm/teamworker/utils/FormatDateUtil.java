@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
+
 /**
  * Copyright (c) 2017, Chestnut All rights reserved
  * Author: Chestnut
@@ -51,7 +53,8 @@ public class FormatDateUtil {
      * @param mTime
      * @return
      */
-    public static String getTimeRange(long currentTime, long mTime) {
+    public static String getTimeRange(long mTime) {
+        long currentTime = MyApplication.currentServerTimeMillis();
         long between = (currentTime - mTime) / 1000;
         int elapsedTime = (int) (between);
         if (elapsedTime < seconds_of_1minute) {
@@ -197,7 +200,7 @@ public class FormatDateUtil {
      *
      * @return
      */
-    public static long getTodayMinTimeMillis() {
+    public static long getThisMonthFirstDayMinTimeMillsis() {
         Calendar mCalendar = Calendar.getInstance();
         long currTime = System.currentTimeMillis();
         mCalendar.setTime(new Date(currTime));
@@ -210,6 +213,30 @@ public class FormatDateUtil {
         long minToday = mCalendar.getTimeInMillis();
 
         return minToday;
+    }
+
+    /**
+     * 获取今天时间的最小值，即00:00
+     *
+     * @param calendar
+     * @return
+     */
+    public static long getTodayMinTimeMillis(com.haibin.calendarview.Calendar calendar) {
+        Calendar mCalendar = Calendar.getInstance();
+        mCalendar.set(calendar.getYear(), calendar.getMonth() - 1, calendar.getDay(), 0, 0, 0);
+        return mCalendar.getTimeInMillis();
+    }
+
+    /**
+     * 获取今天时间的最大值，即23:59:59
+     *
+     * @param calendar
+     * @return
+     */
+    public static long getTodayMaxTimeMillis(com.haibin.calendarview.Calendar calendar) {
+        Calendar mCalendar = Calendar.getInstance();
+        mCalendar.set(calendar.getYear(), calendar.getMonth() - 1, calendar.getDay(), 23, 59, 59);
+        return mCalendar.getTimeInMillis();
     }
 
     /**

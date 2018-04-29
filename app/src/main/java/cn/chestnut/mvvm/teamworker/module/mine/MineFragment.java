@@ -1,13 +1,9 @@
 package cn.chestnut.mvvm.teamworker.module.mine;
 
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.databinding.DataBindingUtil;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,25 +12,15 @@ import android.widget.TextView;
 import org.greenrobot.greendao.async.AsyncSession;
 
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
 
-import cn.chestnut.mvvm.teamworker.Constant;
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.FragmentMineBinding;
-import cn.chestnut.mvvm.teamworker.http.ApiResponse;
-import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
-import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.BaseFragment;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
-import cn.chestnut.mvvm.teamworker.module.checkattendance.CheckAttendanceActivity;
-import cn.chestnut.mvvm.teamworker.model.User;
-import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
-import cn.chestnut.mvvm.teamworker.module.mine.MyInformationActivity;
+import cn.chestnut.mvvm.teamworker.module.checkattendance.PunchClockActivity;
 import cn.chestnut.mvvm.teamworker.socket.TeamWorkerClient;
 import cn.chestnut.mvvm.teamworker.utils.EmojiUtil;
-import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 import cn.chestnut.mvvm.teamworker.utils.GlideLoader;
 import cn.chestnut.mvvm.teamworker.utils.sqlite.DaoManager;
@@ -83,7 +69,7 @@ public class MineFragment extends BaseFragment {
         binding.llCheckAttendance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().startActivity(new Intent(getActivity(), CheckAttendanceActivity.class));
+                getActivity().startActivity(new Intent(getActivity(), PunchClockActivity.class));
             }
         });
         binding.llLogOut.setOnClickListener(new View.OnClickListener() {

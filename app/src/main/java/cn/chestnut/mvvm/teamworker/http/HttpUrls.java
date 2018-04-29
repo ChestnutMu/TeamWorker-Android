@@ -10,7 +10,9 @@ package cn.chestnut.mvvm.teamworker.http;
 
 public class HttpUrls {
     //---------域名------------
-    public static final String HTTPHOST = "http://172.18.92.153";
+    public static final String HTTPHOST = "http://192.168.199.241";
+
+//    public static final String HTTPHOST = "http://172.18.92.153";
 
     public static final String GET_PHOTO = "http://p2fnlgaq8.bkt.clouddn.com/";
 
@@ -137,6 +139,18 @@ public class HttpUrls {
 
     //审批请假
     public static final String APPROVE_WORK_OFF = "/workoff/approveWorkOff";
+
+    //获取个人请假条列表
+    public static final String GET_WORK_OFFS = "/workoff/getWorkOffs";
+
+    //获取团队请假条列表
+    public static final String GET_WORK_OFFS_FOR_TEAM = "/workoff/getWorkOffsForTeam";
+
+    //回收请假条
+    public static final String RETURN_WORK_OFF = "/workoff/returnWorkOff";
+
+    //处理请假条 1 已审批，通过；2 已审批，不通过
+    public static final String HANDLE_WORK_OFF = "/workoff/handleWorkOff";
 
     //-------------------------中国地区接口-----------------------------------------------------------
     //获取省或市或县

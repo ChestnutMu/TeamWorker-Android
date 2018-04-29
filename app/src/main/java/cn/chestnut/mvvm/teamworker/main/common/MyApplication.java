@@ -40,6 +40,7 @@ public class MyApplication extends MultiDexApplication {
 
     /*请求响应时间*/
     public static long responseTime = SystemClock.elapsedRealtime();
+
     /*获取请求响应时间的时间*/
     public static long responseCurrentTime = SystemClock.elapsedRealtime();
 

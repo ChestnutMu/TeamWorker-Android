@@ -14,7 +14,7 @@ android {
     buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "cn.chestnut.mvvm.teamworker"
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 26
         versionCode 1
         versionName "1.0.1"
@@ -92,4 +92,7 @@ dependencies {
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
     //七牛云图片存储
     compile 'com.qiniu:qiniu-android-sdk:7.3.+'
+    //日历
+    compile 'com.haibin:calendarview:3.3.0'
+
 }

@@ -30,9 +30,9 @@ public class ChatSettingUserAdapter extends BaseRecyclerViewAdapter<UserInfo, It
     protected void handleViewHolder(ItemChatUserBinding binding, UserInfo obj, int position) {
         if (obj.getUserId() == null) {
             if (obj.getAvatar().equals("add")) {
-                binding.ivAvatar.setImageDrawable(MyApplication.getInstance().getResources().getDrawable(R.mipmap.icon_add_people));
+                binding.ivAvatar.setImageResource(R.mipmap.icon_add_people);
             } else {
-                binding.ivAvatar.setImageDrawable(MyApplication.getInstance().getResources().getDrawable(R.mipmap.icon_remove_people));
+                binding.ivAvatar.setImageResource(R.mipmap.icon_remove_people);
             }
         } else if (obj.getNickname() == null) {
             UserInfo temp = MyApplication.userInfoMap.get(obj.getUserId());

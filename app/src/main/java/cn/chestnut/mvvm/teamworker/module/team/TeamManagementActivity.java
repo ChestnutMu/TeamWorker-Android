@@ -11,7 +11,10 @@ import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.ActivityTeamManagementBinding;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.module.approval.AskForWorkOffActivity;
+import cn.chestnut.mvvm.teamworker.module.approval.WorkOffListActivity;
 import cn.chestnut.mvvm.teamworker.module.checkattendance.CheckAttendanceActivity;
+import cn.chestnut.mvvm.teamworker.module.checkattendance.PunchClockActivity;
+import cn.chestnut.mvvm.teamworker.module.checkattendance.SelectMemberActivity;
 import cn.chestnut.mvvm.teamworker.module.work.WorkFragment;
 
 /**
@@ -26,6 +29,10 @@ public class TeamManagementActivity extends BaseActivity {
 
     private ActivityTeamManagementBinding binding;
 
+    private String teamId;
+
+    private int roleType;
+
     @Override
     protected void setBaseTitle(TextView titleView) {
         titleView.setText("团队管理");
@@ -34,7 +41,14 @@ public class TeamManagementActivity extends BaseActivity {
     @Override
     protected void addContainerView(ViewGroup viewGroup, LayoutInflater inflater) {
         binding = DataBindingUtil.inflate(inflater, R.layout.activity_team_management, viewGroup, true);
+        initData();
         addListener();
+    }
+
+    @Override
+    protected void initData() {
+        teamId = getIntent().getStringExtra("teamId");
+        roleType = getIntent().getIntExtra("roleType", -1);
     }
 
     @Override
@@ -43,10 +57,10 @@ public class TeamManagementActivity extends BaseActivity {
         binding.llTeamMember.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent1 = new Intent(TeamManagementActivity.this, TeamMemberActivity.class);
-                intent1.putExtra("teamId", getIntent().getStringExtra("teamId"));
-                intent1.putExtra("roleType", getIntent().getIntExtra("type", -1));
-                startActivity(intent1);
+                Intent intent = new Intent(TeamManagementActivity.this, TeamMemberActivity.class);
+                intent.putExtra("teamId", teamId);
+                intent.putExtra("roleType", roleType);
+                startActivity(intent);
             }
         });
 
@@ -62,7 +76,9 @@ public class TeamManagementActivity extends BaseActivity {
         binding.llAttendance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(TeamManagementActivity.this, CheckAttendanceActivity.class));
+                Intent intent = new Intent(TeamManagementActivity.this, SelectMemberActivity.class);
+                intent.putExtra("teamId", teamId);
+                startActivity(intent);
             }
         });
 
@@ -78,10 +94,10 @@ public class TeamManagementActivity extends BaseActivity {
         binding.llPermission.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (getIntent().getIntExtra("type", -1) == WorkFragment.TEAM_OWNER) {
-                    Intent intent2 = new Intent(TeamManagementActivity.this, PermissionActivity.class);
-                    intent2.putExtra("teamId", getIntent().getStringExtra("teamId"));
-                    startActivity(intent2);
+                if (roleType == WorkFragment.TEAM_OWNER) {
+                    Intent intent = new Intent(TeamManagementActivity.this, PermissionActivity.class);
+                    intent.putExtra("teamId", teamId);
+                    startActivity(intent);
                 } else {
                     showToast("只有团队所有者可以修改权限");
                 }
@@ -92,7 +108,10 @@ public class TeamManagementActivity extends BaseActivity {
         binding.llWorkoff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(TeamManagementActivity.this, AskForWorkOffActivity.class));
+                Intent intent = new Intent(TeamManagementActivity.this, WorkOffListActivity.class);
+                intent.putExtra("teamId", teamId);
+                intent.putExtra("workOffType", WorkOffListActivity.TEAM_WORK_OFF_TYPE);
+                startActivity(intent);
             }
         });
 

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +34,9 @@ import cn.chestnut.mvvm.teamworker.main.adapter.BaseListViewAdapter;
 import cn.chestnut.mvvm.teamworker.main.common.BaseFragment;
 import cn.chestnut.mvvm.teamworker.model.Team;
 import cn.chestnut.mvvm.teamworker.module.approval.AskForWorkOffActivity;
-import cn.chestnut.mvvm.teamworker.module.checkattendance.CheckAttendanceActivity;
+import cn.chestnut.mvvm.teamworker.module.approval.WorkOffListActivity;
+import cn.chestnut.mvvm.teamworker.module.checkattendance.PunchClockActivity;
+import cn.chestnut.mvvm.teamworker.module.team.TeamInformationActivity;
 import cn.chestnut.mvvm.teamworker.module.team.TeamManagementActivity;
 import cn.chestnut.mvvm.teamworker.module.team.TeamMemberActivity;
 import cn.chestnut.mvvm.teamworker.module.user.NewFriendActivity;
@@ -61,6 +64,10 @@ public class WorkFragment extends BaseFragment {
 
     private String currentTeamId;
 
+    private Team currentTeam;
+
+    private TextView tvTitle;
+
     public static int MANAGER = 1;
 
     public static int TEAM_OWNER = 2;
@@ -69,12 +76,16 @@ public class WorkFragment extends BaseFragment {
 
     @Override
     protected void setBaseTitle(final TextView titleView) {
-        titleView.setText("");
-        titleView.setBackgroundResource(R.mipmap.icon_change_team);
-        titleView.setOnClickListener(new View.OnClickListener() {
+        tvTitle = titleView;
+        tvTitle.setText("");
+        tvTitle.setCompoundDrawablesWithIntrinsicBounds(
+                getResources().getDrawable(R.mipmap.icon_change_team),
+                null, null, null);
+        tvTitle.setCompoundDrawablePadding(3);
+        tvTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showActionPopup(titleView);
+                showActionPopup();
             }
         });
     }
@@ -157,15 +168,18 @@ public class WorkFragment extends BaseFragment {
         binding.ivWorkoff.setOnClickListener(new View.OnClickListener() {//请假申请
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), AskForWorkOffActivity.class));
+                Intent intent = new Intent(getActivity(), WorkOffListActivity.class);
+                intent.putExtra("teamId", currentTeamId);
+                intent.putExtra("workOffType", WorkOffListActivity.MY_WORK_OFF_TYPE);
+                startActivity(intent);
             }
         });
 
         binding.llAttendance.setOnClickListener(new View.OnClickListener() {//考勤打卡
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(),CheckAttendanceActivity.class);
-                intent.putExtra("teamId",currentTeamId);
+                Intent intent = new Intent(getActivity(), PunchClockActivity.class);
+                intent.putExtra("teamId", currentTeamId);
                 startActivity(intent);
             }
         });
@@ -179,7 +193,7 @@ public class WorkFragment extends BaseFragment {
 
     }
 
-    private void showActionPopup(View add) {
+    private void showActionPopup() {
 
         CommonUtil.setBackgroundAlpha(0.5f, getActivity());
 
@@ -193,12 +207,14 @@ public class WorkFragment extends BaseFragment {
         popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         popupWindow.setFocusable(true);
         popupWindow.setOutsideTouchable(true);
-        popupWindow.showAsDropDown(add, -150, 0);
+        popupWindow.showAsDropDown(tvTitle, -150, 0);
 
         popupBinding.lvTeam.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                currentTeamId = teamList.get(position).getTeamId();
+                currentTeam = teamList.get(position);
+                currentTeamId = currentTeam.getTeamId();
+                tvTitle.setText(teamList.get(position).getTeamName());
                 updateView();
                 popupWindow.dismiss();
             }
@@ -254,7 +270,10 @@ public class WorkFragment extends BaseFragment {
                             teamList.addAll(response.getData());
                             workMyTeamAdapter.notifyDataSetChanged();
                             if (teamList.size() > 0) {
-                                currentTeamId = teamList.get(0).getTeamId();//默认设置当前所在的Team工作台
+                                //默认设置当前所在的Team工作台为第一个
+                                currentTeam = teamList.get(0);
+                                currentTeamId = currentTeam.getTeamId();
+                                tvTitle.setText(currentTeam.getTeamName());
                                 updateView();
                             }
                         }
@@ -276,6 +295,7 @@ public class WorkFragment extends BaseFragment {
     private void getTeamRelation() {
         Map<String, String> param = new HashMap<>(1);
         param.put("teamId", currentTeamId);
+
         RequestManager.getInstance(getActivity()).executeRequest(HttpUrls.GET_TEAM_RELATION, param,
                 new AppCallBack<ApiResponse<Map<String, String>>>() {
                     @Override
@@ -314,7 +334,7 @@ public class WorkFragment extends BaseFragment {
                 public void onClick(View v) {
                     Intent intent = new Intent(getActivity(), TeamManagementActivity.class);
                     intent.putExtra("teamId", currentTeamId);
-                    intent.putExtra("type", userRoleType);
+                    intent.putExtra("roleType", userRoleType);
                     startActivity(intent);
                 }
             });
@@ -322,7 +342,9 @@ public class WorkFragment extends BaseFragment {
             binding.llTeamInfo.setOnClickListener(new View.OnClickListener() {//团队资料
                 @Override
                 public void onClick(View v) {
-
+                    Intent intent = new Intent(getActivity(), TeamInformationActivity.class);
+                    intent.putExtra("team", currentTeam);
+                    startActivity(intent);
                 }
             });
 

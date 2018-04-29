@@ -46,14 +46,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/garyLight" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="15dp"
-                android:background="@color/garyLight"
-                android:visibility="@{chat.showChatInfo()?View.VISIBLE:View.GONE}" />
+                android:background="@color/garyLight2" />
 
             <LinearLayout
                 android:id="@+id/chatNameLayout"
@@ -61,11 +54,9 @@
                 android:layout_height="wrap_content"
                 android:background="@color/white"
                 android:gravity="center_vertical"
+                android:layout_marginTop="15dp"
                 android:orientation="horizontal"
-                android:paddingBottom="6dp"
-                android:paddingLeft="@dimen/team_worker_padding"
-                android:paddingRight="@dimen/team_worker_padding"
-                android:paddingTop="6dp"
+                android:padding="@dimen/team_worker_padding"
                 android:visibility="@{chat.showChatInfo()?View.VISIBLE:View.GONE}">
 
                 <TextView
@@ -94,10 +85,9 @@
             </LinearLayout>
 
             <View
-                android:layout_width="match_parent"
+                android:layout_width="10dp"
                 android:layout_height="1dp"
-                android:layout_marginLeft="10dp"
-                android:background="@color/garyLight"
+                android:background="@color/white"
                 android:visibility="@{chat.showChatInfo()?View.VISIBLE:View.GONE}" />
 
             <LinearLayout
@@ -140,26 +130,18 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/garyLight"
+                android:background="@color/garyLight2"
                 android:visibility="@{chat.showChatInfo()?View.VISIBLE:View.GONE}" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="15dp"
-                android:background="@color/garyLight" />
 
             <TextView
                 android:id="@+id/btnClearRecord"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
                 android:background="@color/white"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingBottom="6dp"
-                android:paddingLeft="@dimen/team_worker_padding"
-                android:paddingRight="@dimen/team_worker_padding"
-                android:paddingTop="6dp"
+                android:padding="@dimen/team_worker_padding"
                 android:text="清空聊天记录"
                 android:textColor="@color/text_black"
                 android:textSize="@dimen/text_size_normal" />
@@ -167,7 +149,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/garyLight" />
+                android:background="@color/garyLight2" />
 
             <TextView
                 android:id="@+id/btnDelAndOut"
@@ -177,10 +159,9 @@
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
                 android:layout_marginTop="20dp"
-                android:background="@color/appTheme"
+                android:background="@drawable/bg_corner_button_selector"
                 android:gravity="center"
-                android:paddingBottom="6dp"
-                android:paddingTop="6dp"
+                android:padding="@dimen/team_worker_padding"
                 android:text="删除并退出"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_big" />

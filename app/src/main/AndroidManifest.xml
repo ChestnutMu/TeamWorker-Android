@@ -79,7 +79,7 @@
         <activity android:name=".module.massage.activity.SelectDepartmentActivity" />
         <activity android:name=".module.massage.activity.SelectReceiverActivity" />
         <activity android:name=".module.massage.activity.SendNotificationActivity" />
-        <activity android:name=".module.checkattendance.CheckAttendanceActivity" />
+        <activity android:name=".module.checkattendance.PunchClockActivity" />
         <activity android:name=".module.mine.MyInformationActivity" />
         <activity android:name=".module.approval.AskForWorkOffActivity" />
         <activity
@@ -104,6 +104,11 @@
         <activity android:name=".module.team.InvitedUserInformationActivity"/>
         <activity android:name=".module.team.PermissionActivity"/>
         <activity android:name=".module.checkattendance.PhotoActivity"/>
+        <activity android:name=".module.checkattendance.CheckAttendanceActivity"/>
+        <activity android:name=".module.checkattendance.SelectMemberActivity"/>
+        <activity android:name=".module.approval.WorkOffListActivity"/>
+        <activity android:name=".module.approval.WorkOffDetailActivity"/>
+        <activity android:name=".module.team.TeamInformationActivity"/>
     </application>
 
 </manifest>

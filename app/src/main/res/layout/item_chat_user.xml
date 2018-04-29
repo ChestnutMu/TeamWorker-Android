@@ -27,6 +27,7 @@
             android:layout_marginBottom="4dp"
             android:layout_marginTop="4dp"
             android:gravity="center"
+            android:ellipsize="end"
             android:maxLines="1"
             android:text="@{userInfo.nickname}"
             android:textColor="@color/gray"

@@ -289,7 +289,7 @@
                     android:layout_marginTop="8dp"
                     android:gravity="center"
                     android:singleLine="true"
-                    android:text="权限管理"
+                    android:text="物品领用"
                     android:textColor="@color/black"
                     android:textSize="@dimen/text_size_normal" />
             </LinearLayout>
