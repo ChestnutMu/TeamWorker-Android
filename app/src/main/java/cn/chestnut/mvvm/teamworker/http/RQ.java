@@ -370,6 +370,7 @@ public class RQ {
         post(url, null, params, app);
     }
 
+    //与服务器时间进行校准的拦截器
     class TimeCalibrationInterceptor implements Interceptor {
         long minResponseTime = Long.MAX_VALUE;
 

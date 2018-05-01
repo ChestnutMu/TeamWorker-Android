@@ -103,7 +103,11 @@ public class NewFriendActivity extends BaseActivity {
         }
         requestList.addAll(friendRequestDaoUtils.queryNewFriendRequestByUserId(
                 PreferenceUtil.getInstances(this).getPreferenceString("userId")));
-        adapter.notifyDataSetChanged();
+        if (requestList.size() == 0) {
+            adapter.notifyDataSetChanged();
+        }else {
+            showToast("无新的好友请求");
+        }
     }
 
     private void acceptRequest(final NewFriendRequest request, final int position) {

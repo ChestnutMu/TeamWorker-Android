@@ -19,6 +19,7 @@ import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
 import cn.chestnut.mvvm.teamworker.http.RequestManager;
+import cn.chestnut.mvvm.teamworker.main.activity.MainActivity;
 import cn.chestnut.mvvm.teamworker.main.adapter.BaseListViewAdapter;
 import cn.chestnut.mvvm.teamworker.main.common.BaseFragment;
 import cn.chestnut.mvvm.teamworker.model.Team;
@@ -82,7 +83,7 @@ public class DirectoryFragment extends BaseFragment {
         binding.llBuildTeam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), BuildTeamActivity.class));
+                startActivityForResult(new Intent(getActivity(), BuildTeamActivity.class), MainActivity.REQUEST_CODE_BUILD_TEAM);
             }
         });
     }

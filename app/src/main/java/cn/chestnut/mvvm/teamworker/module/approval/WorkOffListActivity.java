@@ -19,18 +19,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cn.chestnut.mvvm.teamworker.BR;
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.ActivityWorkOffListBinding;
 import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
 import cn.chestnut.mvvm.teamworker.http.RequestManager;
-import cn.chestnut.mvvm.teamworker.main.adapter.BaseListViewAdapter;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.model.WorkOff;
-import cn.chestnut.mvvm.teamworker.module.checkattendance.PhotoActivity;
-import cn.chestnut.mvvm.teamworker.module.mine.SelectRegionAdapter;
+import cn.chestnut.mvvm.teamworker.module.work.WorkFragment;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 
 /**
@@ -49,10 +46,6 @@ public class WorkOffListActivity extends BaseActivity {
 
     private WorkOffListAdapter adapter;
 
-    public static int MY_WORK_OFF_TYPE = 1;
-
-    public static int TEAM_WORK_OFF_TYPE = 2;
-
     private int pageNum = 1;
 
     private static int pageSize = 15;
@@ -61,7 +54,11 @@ public class WorkOffListActivity extends BaseActivity {
 
     private String teamId;
 
-    private static int REQUEST_CODE_WORK_OFF_LIST = 1;
+    private final int REQUEST_CODE_WORK_OFF_LIST = 1;
+
+    private boolean isRefresh = false;
+
+    private boolean isLoadMore = false;
 
     @Override
     protected void setBaseTitle(TextView titleView) {
@@ -81,19 +78,19 @@ public class WorkOffListActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("resultCode:" + requestCode);
         if (requestCode == REQUEST_CODE_WORK_OFF_LIST && resultCode == RESULT_OK) {
-            if (workOffType == MY_WORK_OFF_TYPE) {
-                pageNum = 1;
-                if (workOffList.size() > 0) {
-                    workOffList.clear();
-                }
-                getMyAttendance();
+            isRefresh = true;
+            isLoadMore = false;
+            if (workOffType == WorkFragment.MY_DATA_TYPE) {
+                getMyWorkOffs();
+            } else {
+                getWorkOffsForTeam();
             }
         }
     }
 
     @Override
     public void setButton(TextView edit, ImageView add, ImageView search) {
-        if (workOffType == MY_WORK_OFF_TYPE) {
+        if (workOffType == WorkFragment.MY_DATA_TYPE) {
             add.setVisibility(View.VISIBLE);
             add.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -121,9 +118,9 @@ public class WorkOffListActivity extends BaseActivity {
     protected void initData() {
         teamId = getIntent().getStringExtra("teamId");
         workOffType = getIntent().getIntExtra("workOffType", 0);
-        if (workOffType == MY_WORK_OFF_TYPE) {
-            getMyAttendance();
-        } else if (workOffType == TEAM_WORK_OFF_TYPE) {
+        if (workOffType == WorkFragment.MY_DATA_TYPE) {
+            getMyWorkOffs();
+        } else if (workOffType == WorkFragment.TEAM_DATA_TYPE) {
             getWorkOffsForTeam();
         }
     }
@@ -133,13 +130,11 @@ public class WorkOffListActivity extends BaseActivity {
         binding.swipeToLoadLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (workOffList.size() > 0) {
-                    workOffList.clear();
-                }
-                pageNum = 1;
-                if (workOffType == MY_WORK_OFF_TYPE) {
-                    getMyAttendance();
-                } else if (workOffType == TEAM_WORK_OFF_TYPE) {
+                isRefresh = true;
+                isLoadMore = false;
+                if (workOffType == WorkFragment.MY_DATA_TYPE) {
+                    getMyWorkOffs();
+                } else if (workOffType == WorkFragment.TEAM_DATA_TYPE) {
                     getWorkOffsForTeam();
                 }
                 binding.swipeToLoadLayout.setRefreshing(false);
@@ -149,10 +144,11 @@ public class WorkOffListActivity extends BaseActivity {
         binding.swipeToLoadLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
-                pageNum++;
-                if (workOffType == MY_WORK_OFF_TYPE) {
-                    getMyAttendance();
-                } else if (workOffType == TEAM_WORK_OFF_TYPE) {
+                isRefresh = false;
+                isLoadMore = true;
+                if (workOffType == WorkFragment.MY_DATA_TYPE) {
+                    getMyWorkOffs();
+                } else if (workOffType == WorkFragment.TEAM_DATA_TYPE) {
                     getWorkOffsForTeam();
                 }
                 binding.swipeToLoadLayout.setLoadingMore(false);
@@ -169,16 +165,26 @@ public class WorkOffListActivity extends BaseActivity {
         });
     }
 
-    private void getMyAttendance() {
+    private void getMyWorkOffs() {
+        showProgressDialog(this);
+        if (isRefresh) {
+            pageNum = 1;
+        } else if (isLoadMore) {
+            pageNum++;
+        }
         Map<String, Object> params = new HashMap<>();
         params.put("teamId", teamId);
         params.put("pageNum", pageNum);
         params.put("pageSize", pageSize);
-        showProgressDialog(this);
         RequestManager.getInstance(this).executeRequest(HttpUrls.GET_WORK_OFFS, params, new AppCallBack<ApiResponse<List<WorkOff>>>() {
             @Override
             public void next(ApiResponse<List<WorkOff>> response) {
                 if (response.isSuccess()) {
+                    if (isRefresh) {
+                        if (workOffList.size() > 0) {
+                            workOffList.clear();
+                        }
+                    }
                     if (response.getData().size() > 0) {
                         workOffList.addAll(response.getData());
                     } else if (pageNum == 1) {
@@ -205,15 +211,25 @@ public class WorkOffListActivity extends BaseActivity {
     }
 
     private void getWorkOffsForTeam() {
+        showProgressDialog(this);
+        if (isRefresh) {
+            pageNum = 1;
+        } else if (isLoadMore) {
+            pageNum++;
+        }
         Map<String, Object> params = new HashMap<>();
         params.put("teamId", teamId);
         params.put("pageNum", pageNum);
         params.put("pageSize", pageSize);
-        showProgressDialog(this);
         RequestManager.getInstance(this).executeRequest(HttpUrls.GET_WORK_OFFS_FOR_TEAM, params, new AppCallBack<ApiResponse<List<WorkOff>>>() {
             @Override
             public void next(ApiResponse<List<WorkOff>> response) {
                 if (response.isSuccess()) {
+                    if (isRefresh) {
+                        if (workOffList.size() > 0) {
+                            workOffList.clear();
+                        }
+                    }
                     if (response.getData().size() > 0) {
                         workOffList.addAll(response.getData());
                     } else if (pageNum == 1) {

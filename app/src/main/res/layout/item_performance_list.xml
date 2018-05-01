@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="performance"
+            type="cn.chestnut.mvvm.teamworker.model.Performance" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:padding="12dp">
+
+        <ImageView
+            android:id="@+id/iv_avatar"
+            android:layout_width="48dp"
+            android:layout_centerVertical="true"
+            android:layout_height="48dp"
+            app:load_url_image="@{performance.userAvatar}" />
+
+        <TextView
+            android:id="@+id/tv_nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/iv_avatar"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="12dp"
+            android:layout_marginStart="12dp"
+            android:layout_toEndOf="@id/iv_avatar"
+            android:layout_toRightOf="@id/iv_avatar"
+            android:text="@{performance.userNickname}"
+            android:textColor="@color/text_black" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="@{performance.showCommitTime}"
+            android:layout_centerVertical="true"
+            android:textColor="@color/text_gray"
+            android:textSize="@dimen/text_size_small" />
+
+    </RelativeLayout>
+
+</layout>

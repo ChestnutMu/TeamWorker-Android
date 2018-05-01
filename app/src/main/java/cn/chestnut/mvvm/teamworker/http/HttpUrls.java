@@ -63,20 +63,11 @@ public class HttpUrls {
     //获取其还未接收成功的好友请求数量
     public static final String COUNT_NOT_SEND_REQUEST_BY_USERID = "/user/countNotSendRequestByUserId";
 
-    //获取用户个人信息
-    public static final String GET_MY_INFORMATION = "/user/getMyInformation";
-
     //修改用户个人信息
     public static final String UPDATE_MY_INFORMATION = "/user/updateMyInformation";
 
-    //获取消息中用户的信息
-    public static final String GET_USER_INFO = "/user/getUserInfo";
-
 
     //------------------消息接口---------------------------------------------------------------------
-    //获取用户还未接收的消息列表
-    public static final String GET_NOT_SEND_MESSAGES_BY_USER_ID = "/message/getNotSendMessagesByUserId";
-
     //创建聊天室
     public static final String BUILD_CHAT = "/chat/buildChat";
 
@@ -103,6 +94,9 @@ public class HttpUrls {
     //获取我所属的团队
     public static final String GET_MY_TEAMS = "/team/getMyTeams";
 
+    //修改用户团队信息
+    public static final String UPDATE_TEAM_INFORMATION = "/team/updateTeamInformation";
+
     //获取我所属的团队
     public static final String GET_TEAM_RELATION = "/team/getTeamRelation";
 
@@ -117,6 +111,12 @@ public class HttpUrls {
 
     //修改团队人员权限（只有团队owner可以修改）
     public static final String AUTH_TEAM_USER = "/team/authTeamUser";
+
+    //解散团队（只有团队owner可以解散）
+    public static final String RELEASE_TEAM = "/team/releaseTeam";
+
+    //转让团队（只有团队owner可以转让）
+    public static final String GIVE_UP_TEAM_OWNER = "/team/giveUpTeamOwner";
 
     //--------------------------------考勤接口-------------------------------------------------------
     //获取个人打卡记录
@@ -137,9 +137,6 @@ public class HttpUrls {
     //请假
     public static final String APPLY_WORK_OFF = "/workoff/applyWorkOff";
 
-    //审批请假
-    public static final String APPROVE_WORK_OFF = "/workoff/approveWorkOff";
-
     //获取个人请假条列表
     public static final String GET_WORK_OFFS = "/workoff/getWorkOffs";
 
@@ -151,6 +148,92 @@ public class HttpUrls {
 
     //处理请假条 1 已审批，通过；2 已审批，不通过
     public static final String HANDLE_WORK_OFF = "/workoff/handleWorkOff";
+
+    //-------------------------报销接口--------------------------------------------------------------
+    //报销
+    public static final String APPLY_REIMBURSEMENT = "/reimbursement/applyReimbursement";
+
+    //获取个人报销申请列表
+    public static final String GET_REIMBURSEMENTS = "/reimbursement/getReimbursements";
+
+    //获取团队报销申请列表
+    public static final String GET_REIMBURSEMENTS_FOR_TEAM = "/reimbursement/getReimbursementsForTeam";
+
+    //回收报销申请
+    public static final String RETURN_REIMBURSEMENT = "/reimbursement/returnReimbursement";
+
+    //处理报销申请 1 已审批，通过；2 已审批，不通过
+    public static final String HANDLE_REIMBURSEMENT = "/reimbursement/handleReimbursement";
+
+    //-------------------------物品领用接口--------------------------------------------------------------
+    //提交物品领用申请
+    public static final String APPLY_USE_GOOD = "/good/applyUseGood";
+
+    //获取个人物品领用申请列表
+    public static final String GET_USE_GOODS = "/good/getUseGoods";
+
+    //获取团队物品领用申请列表
+    public static final String GET_USE_GOODS_FOR_TEAM = "/good/getUseGoodsForTeam";
+
+    //回收物品领用申请
+    public static final String RETURN_USE_GOOD = "/good/returnUseGood";
+
+    //处理物品领用申请 1 已审批，通过；2 已审批，不通过
+    public static final String HANDLE_USE_GOOD = "/good/handleUseGood";
+
+    //-------------------------物品采购接口--------------------------------------------------------------
+    //提交物品采购申请
+    public static final String APPLY_PURCHASE = "/purchase/applyPurchase";
+
+    //获取个人物品采购申请列表
+    public static final String GET_PURCHASES = "/purchase/getPurchases";
+
+    //获取团队物品采购申请列表
+    public static final String GET_PURCHASES_FOR_TEAM = "/purchase/getPurchasesForTeam";
+
+    //回收物品采购申请
+    public static final String RETURN_PURCHASE = "/purchase/returnPurchase";
+
+    //处理物品采购申请 1 已审批，通过；2 已审批，不通过
+    public static final String HANDLE_PURCHASE = "/purchase/handlePurchase";
+
+    //-------------------------工作汇报接口--------------------------------------------------------------
+    //提交日报
+    public static final String SUBMIT_DAY_REPORT = "/report/submitDayReport";
+
+    //提交周报
+    public static final String SUBMIT_WEEK_REPORT = "/report/submitWeekReport";
+
+    //提交月报
+    public static final String SUBMIT_MONTH_REPORT = "/report/submitMonthReport";
+
+    //获取个人日报列表
+    public static final String GET_DAY_REPORTS = "/report/getDayReports";
+
+    //获取个人周报列表
+    public static final String GET_WEEK_REPORTS = "/report/getWeekReports";
+
+    //获取个人月报列表
+    public static final String GET_MONTH_REPORTS = "/report/getMonthReports";
+
+    //获取团队日报列表
+    public static final String GET_DAY_REPORTS_FOR_TEAM = "/report/getDayReportsForTeam";
+
+    //获取团队周报列表
+    public static final String GET_WEEK_REPORTS_FOR_TEAM = "/report/getWeekReportsForTeam";
+
+    //获取团队月报列表
+    public static final String GET_MONTH_REPORTS_FOR_TEAM = "/report/getMonthReportsForTeam";
+
+    //-------------------------绩效自评接口--------------------------------------------------------------
+    //提交绩效自评
+    public static final String SUBMIT_PERFORMANCE = "/performance/submitPerformance";
+
+    //获取隔热膜绩效自评
+    public static final String GET_PERFORMANCES = "/performance/getPerformances";
+
+    //获取团队绩效自评
+    public static final String GET_PERFORMANCES_FOR_TEAM = "/performance/getPerformancesForTeam";
 
     //-------------------------中国地区接口-----------------------------------------------------------
     //获取省或市或县

@@ -104,12 +104,12 @@ public class BuildTeamActivity extends BaseActivity {
                 filePath = cursor.getString(column_index);
                 Log.d("filePath " + filePath);
                 if (StringUtil.isStringNotNull(filePath)) {
-                    GlideLoader.displayImage(BuildTeamActivity.this, filePath, binding.ivTeamBadge);
+                    uploadPicture(filePath);
                 }
             } else if (requestCode == ProcessPhotoUtils.SHOOT_PHOTO_REQUEST_CODE) {
                 filePath = processPhotoUtils.getMyPhotoFile().getPath();
                 if (StringUtil.isStringNotNull(filePath)) {
-                    GlideLoader.displayImage(BuildTeamActivity.this, filePath, binding.ivTeamBadge);
+                    uploadPicture(filePath);
                 }
                 Log.d("filePath " + filePath);
             } else if (requestCode == FROM_MY_FRIEND) {
@@ -176,11 +176,7 @@ public class BuildTeamActivity extends BaseActivity {
                         && StringUtil.isStringNotNull(binding.etTeamDesc.getText().toString())
                         && StringUtil.isStringNotNull(binding.tvRegion.getText().toString())
                         ) {
-                    if (StringUtil.isStringNotNull(filePath)) {
-                        uploadPicture(filePath);
-                    } else {
-                        buildTeam();
-                    }
+                    buildTeam();
                 } else {
                     showToast("请填写带红色*号的团队信息");
                 }
@@ -228,21 +224,25 @@ public class BuildTeamActivity extends BaseActivity {
         dialog.show();
     }
 
-    private void uploadPicture(String filePath, String token) {
+    private void uploadPicture(final String filePath, String token) {
+        showProgressDialog(this);
         MyApplication.getUploadManager().put(filePath, null, token,
                 new UpCompletionHandler() {
                     @Override
                     public void complete(String key, ResponseInfo info, JSONObject res) {
+                        hideProgressDialog();
                         //res包含hash、key等信息，具体字段取决于上传策略的设置
                         if (info.isOK()) {
+                            showToast("照片上传成功");
                             Log.i("qiniu Upload Success");
                             try {
                                 pictureKey = res.getString("key");
-                                buildTeam();
+                                GlideLoader.displayImage(BuildTeamActivity.this, filePath, binding.ivTeamBadge);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         } else {
+                            showToast("照片上传失败");
                             Log.i("qiniu Upload Fail");
                             //如果失败，这里可以把info信息上报自己的服务器，便于后面分析上传错误原因
                         }
@@ -253,7 +253,7 @@ public class BuildTeamActivity extends BaseActivity {
     }
 
     private void uploadPicture(final String filePath) {
-
+        showProgressDialog(this);
         if (StringUtil.isEmpty(qiniuToken))
 
             RequestManager.getInstance(this).executeRequest(HttpUrls.GET_QINIUTOKEN, null, new AppCallBack<ApiResponse<String>>() {
@@ -270,12 +270,12 @@ public class BuildTeamActivity extends BaseActivity {
 
                 @Override
                 public void error(Throwable error) {
-                    Log.e(error.toString());
+                    hideProgressDialog();
                 }
 
                 @Override
                 public void complete() {
-
+                    hideProgressDialog();
                 }
 
             });
@@ -312,21 +312,25 @@ public class BuildTeamActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>(2);
         params.put("team", team);
         params.put("userList", gson.toJson(userIdList));
+        showProgressDialog(this);
         RequestManager.getInstance(this).executeRequest(HttpUrls.BUILD_TEAM, params, new AppCallBack<ApiResponse<Team>>() {
             @Override
             public void next(ApiResponse<Team> response) {
                 showToast(response.getMessage());
+                Intent intent = new Intent();
+                intent.putExtra("newTeam", response.getData());
+                setResult(RESULT_OK, intent);
                 finish();
             }
 
             @Override
             public void error(Throwable error) {
-
+                hideProgressDialog();
             }
 
             @Override
             public void complete() {
-
+                hideProgressDialog();
             }
         });
     }

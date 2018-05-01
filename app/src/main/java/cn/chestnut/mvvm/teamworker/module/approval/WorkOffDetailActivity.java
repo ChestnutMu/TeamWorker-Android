@@ -49,6 +49,7 @@ public class WorkOffDetailActivity extends BaseActivity {
 
     private static int OFF_PASS_WORK_OFF_STATUS = 2;//不通过请假申请
 
+    private boolean isUpdated = false;
 
     @Override
     protected void setBaseTitle(TextView titleView) {
@@ -76,7 +77,6 @@ public class WorkOffDetailActivity extends BaseActivity {
         }
         binding.setWorkOff(workOff);
 
-        Log.d("sdflsdfs");
         workOffDetailList = new ArrayList<>();
         adapter = new WorkOffDetailAdapter(this, R.layout.item_work_off_detail, BR.workOff, workOffDetailList);
 
@@ -239,6 +239,7 @@ public class WorkOffDetailActivity extends BaseActivity {
             @Override
             public void next(ApiResponse<WorkOff> response) {
                 if (response.isSuccess()) {
+                    isUpdated = true;
                     binding.tvStatus.setText(response.getData().getStatus());
                     binding.llApproval.setVisibility(View.GONE);
                     workOffDetailList.remove(1);
@@ -275,6 +276,7 @@ public class WorkOffDetailActivity extends BaseActivity {
             @Override
             public void next(ApiResponse<WorkOff> response) {
                 if (response.isSuccess()) {
+                    isUpdated = true;
                     binding.tvStatus.setText(response.getData().getStatus());
                     binding.tvReturn.setVisibility(View.GONE);
                     workOffDetailList.remove(1);
@@ -350,4 +352,11 @@ public class WorkOffDetailActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public void finish() {
+        if (isUpdated) {
+            setResult(RESULT_OK);
+        }
+        super.finish();
+    }
 }

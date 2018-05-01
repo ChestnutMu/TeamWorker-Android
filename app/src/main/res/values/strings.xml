@@ -9,8 +9,14 @@
     <string name="work_wait">待办</string>
     <string name="work_notification">通知</string>
 
+    <string name="day_report">日报</string>
+    <string name="week_report">周报</string>
+    <string name="month_report">月报</string>
+
     <string name="accepted">已同意</string>
     <string name="wait_accept">同意</string>
+    <string name="please_input">请输入</string>
+    <string name="remarks">备注</string>
 
 
 </resources>

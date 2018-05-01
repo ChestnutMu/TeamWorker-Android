@@ -1,288 +1,600 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:id="@+id/ll_manage_platform"
             android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:orientation="vertical"
-            android:visibility="gone"
-            android:padding="12dp">
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/ll_manage_platform"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:padding="12dp"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:text="管理员平台"
+                        android:textColor="@color/text_black"
+                        android:textSize="@dimen/text_size_big"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:text="(此平台仅管理员可见)"
+                        android:textColor="@color/text_gray"
+                        android:textSize="@dimen/text_size_small" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp">
+
+                    <LinearLayout
+                        android:id="@+id/ll_team_member"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@mipmap/icon_team_member" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:text="团队成员"
+                            android:textColor="@color/text_black"
+                            android:textSize="@dimen/text_size_small" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_team_information"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@mipmap/icon_team_info" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:text="团队资料"
+                            android:textColor="@color/text_black"
+                            android:textSize="@dimen/text_size_small" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_team_management"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@mipmap/icon_team_management" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:text="团队管理"
+                            android:textColor="@color/text_black"
+                            android:textSize="@dimen/text_size_small" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_setting"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@mipmap/icon_team_setting" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:text="团队设置"
+                            android:textColor="@color/text_black"
+                            android:textSize="@dimen/text_size_small" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@color/white"
+                android:padding="12dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="常用应用"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_big" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp">
+
+                <LinearLayout
+                    android:id="@+id/ll_view_member"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="1dp"
+                    android:layout_weight="1"
                     android:background="@color/white"
-                    android:text="管理员平台"
-                    android:textColor="@color/text_black"
-                    android:textSize="@dimen/text_size_big"
-                    android:textStyle="bold" />
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="12dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                    <ImageView
+                        android:id="@+id/iv_view_member"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:src="@mipmap/icon_view_member" />
+
+                    <TextView
+                        android:id="@+id/tv_view_member"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="团队成员"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_normal" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_view_team_informaion"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:text="(此平台仅管理员可见)"
-                    android:textColor="@color/text_gray"
-                    android:textSize="@dimen/text_size_small" />
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="1dp"
+                    android:layout_marginRight="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <ImageView
+                        android:id="@+id/iv_team_information"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:src="@mipmap/icon_team_information" />
+
+                    <TextView
+                        android:id="@+id/tv_team_information"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="团队资料"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_normal" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_notification"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <ImageView
+                        android:id="@+id/iv_notification"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:src="@mipmap/icon_notice" />
+
+                    <TextView
+                        android:id="@+id/tv_notification"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="团队公告"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_normal" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_attendance"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <ImageView
+                        android:id="@+id/iv_attendance"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:src="@mipmap/icon_attendance" />
+
+                    <TextView
+                        android:id="@+id/tv_attendance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="考勤打卡"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_normal" />
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp">
-
-                <LinearLayout
-                    android:id="@+id/ll_organization"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@mipmap/icon_organization" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:text="组织结构"
-                        android:textColor="@color/text_black"
-                        android:textSize="@dimen/text_size_small" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/ll_team_member"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@mipmap/icon_team_member" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:text="团队成员"
-                        android:textColor="@color/text_black"
-                        android:textSize="@dimen/text_size_small" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/ll_team_info"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@mipmap/icon_team_info" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:text="团队资料"
-                        android:textColor="@color/text_black"
-                        android:textSize="@dimen/text_size_small" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/ll_team_management"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@mipmap/icon_team_management" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:text="团队管理"
-                        android:textColor="@color/text_black"
-                        android:textSize="@dimen/text_size_small" />
-                </LinearLayout>
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@color/white"
-            android:padding="12dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="常用应用"
-                android:textColor="@color/black" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="1dp">
-
-            <LinearLayout
-                android:id="@+id/ll_attendance"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
+                android:layout_marginTop="@dimen/team_worker_padding"
                 android:background="@color/white"
-                android:gravity="center"
-                android:orientation="vertical"
                 android:padding="12dp">
 
-                <ImageView
-                    android:id="@+id/iv_attendance"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:src="@mipmap/icon_attendance" />
-
                 <TextView
-                    android:id="@+id/tv_attendance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="8dp"
-                    android:gravity="center"
-                    android:singleLine="true"
-                    android:text="考勤打卡"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/text_size_normal" />
+                    android:text="审批"
+                    android:textColor="@color/black" />
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/ll_workoff"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="1dp"
-                android:layout_weight="1"
-                android:background="@color/white"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="12dp">
+                android:layout_marginTop="1dp">
 
-                <ImageView
-                    android:id="@+id/iv_workoff"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:src="@mipmap/icon_offwork" />
-
-                <TextView
-                    android:id="@+id/tv_workoff"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:id="@+id/ll_use_good"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginTop="8dp"
+                    android:layout_weight="1"
+                    android:background="@color/white"
                     android:gravity="center"
-                    android:singleLine="true"
-                    android:text="请假申请"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/text_size_normal" />
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <ImageView
+                        android:id="@+id/iv_use_good"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:src="@mipmap/icon_use_good" />
+
+                    <TextView
+                        android:id="@+id/tv_use_good"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="物品领用"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_normal" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_workoff"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <ImageView
+                        android:id="@+id/iv_workoff"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:src="@mipmap/icon_offwork" />
+
+                    <TextView
+                        android:id="@+id/tv_workoff"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="请假申请"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_normal" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_reimbursement"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="1dp"
+                    android:layout_marginRight="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <ImageView
+                        android:id="@+id/iv_reimbursement"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:src="@mipmap/icon_reimbursement" />
+
+                    <TextView
+                        android:id="@+id/tv_reimbursement"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="报销申请"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_normal" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_purchase"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <ImageView
+                        android:id="@+id/iv_purchase"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:src="@mipmap/icon_purchase" />
+
+                    <TextView
+                        android:id="@+id/tv_purchase"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="采购申请"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_normal" />
+                </LinearLayout>
+
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/ll_decrusement"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="1dp"
-                android:layout_weight="1"
-                android:layout_marginRight="1dp"
+                android:layout_marginTop="@dimen/team_worker_padding"
                 android:background="@color/white"
-                android:gravity="center"
-                android:orientation="vertical"
                 android:padding="12dp">
 
-                <ImageView
-                    android:id="@+id/iv_decrusement"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:src="@mipmap/icon_decrusement" />
-
                 <TextView
-                    android:id="@+id/tv_decursement"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="8dp"
-                    android:gravity="center"
-                    android:singleLine="true"
-                    android:text="报销申请"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/text_size_normal" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/ll_work_report"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:background="@color/white"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="12dp">
-
-                <ImageView
-                    android:id="@+id/iv_work_report"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:src="@mipmap/icon_work_report" />
-
-                <TextView
-                    android:id="@+id/tv_work_report"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="8dp"
-                    android:gravity="center"
-                    android:singleLine="true"
                     android:text="工作汇报"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/text_size_normal" />
+                    android:textColor="@color/black" />
             </LinearLayout>
 
-        </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp">
 
-    </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/ll_day_report"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <ImageView
+                        android:id="@+id/iv_day_report"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:src="@mipmap/icon_day_report" />
+
+                    <TextView
+                        android:id="@+id/tv_day_report"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="日报告"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_normal" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_week_report"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <ImageView
+                        android:id="@+id/iv_week_report"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:src="@mipmap/icon_week_report" />
+
+                    <TextView
+                        android:id="@+id/tv_week_report"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="周报告"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_normal" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_month_report"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="1dp"
+                    android:layout_marginRight="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <ImageView
+                        android:id="@+id/iv_month_report"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:src="@mipmap/icon_month_report" />
+
+                    <TextView
+                        android:id="@+id/tv_month_report"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="月报告"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_normal" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_performance"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <ImageView
+                        android:id="@+id/iv_year_report"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:src="@mipmap/icon_performance" />
+
+                    <TextView
+                        android:id="@+id/tv_performance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="绩效自评"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_normal" />
+                </LinearLayout>
+                
+            </LinearLayout>
+            
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="24dp" />
+        </LinearLayout>
+    </ScrollView>
 </layout>

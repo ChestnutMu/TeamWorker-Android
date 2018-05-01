@@ -59,6 +59,10 @@ public class SelectRegionActivity extends BaseActivity {
 
     private String area;
 
+    private boolean isRefresh = false;
+
+    private boolean isLoadMore = false;
+
     @Override
     protected void setBaseTitle(TextView titleView) {
         titleView.setText("选择地区");
@@ -92,10 +96,8 @@ public class SelectRegionActivity extends BaseActivity {
         binding.swipeToLoadLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {
-                pageNum = 1;
-                if (addressList.size() > 0) {
-                    addressList.clear();
-                }
+                isRefresh = true;
+                isLoadMore = false;
                 getAddressList();
                 binding.swipeToLoadLayout.setRefreshing(false);
             }
@@ -104,7 +106,8 @@ public class SelectRegionActivity extends BaseActivity {
         binding.swipeToLoadLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
-                pageNum++;
+                isRefresh = false;
+                isLoadMore = true;
                 getAddressList();
                 binding.swipeToLoadLayout.setLoadingMore(false);
             }
@@ -169,15 +172,25 @@ public class SelectRegionActivity extends BaseActivity {
     }
 
     private void getAddressList() {
+        showProgressDialog(this);
+        if (isRefresh) {
+            pageNum = 1;
+        } else if (isLoadMore) {
+            pageNum++;
+        }
         Map<String, String> params = new HashMap<>(3);
         params.put("prAddressId", prAddressId);
         params.put("pageSize", String.valueOf(pageSize));
         params.put("pageNum", String.valueOf(pageNum));
-        showProgressDialog(this);
         RequestManager.getInstance(this).executeRequest(HttpUrls.GET_ADDRESSES, params, new AppCallBack<ApiResponse<List<Address>>>() {
             @Override
             public void next(ApiResponse<List<Address>> response) {
                 if (response.isSuccess()) {
+                    if (isRefresh) {
+                        if (addressList.size() > 0) {
+                            addressList.clear();
+                        }
+                    }
                     if (response.getData().size() > 0) {
                         addressList.addAll(response.getData());
                     } else if (pageNum > 1) {

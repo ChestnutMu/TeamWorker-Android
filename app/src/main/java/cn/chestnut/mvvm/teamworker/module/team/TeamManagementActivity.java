@@ -11,10 +11,15 @@ import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.ActivityTeamManagementBinding;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.module.approval.AskForWorkOffActivity;
+import cn.chestnut.mvvm.teamworker.module.approval.PurchaseListActivity;
+import cn.chestnut.mvvm.teamworker.module.approval.ReimbursementListActivity;
+import cn.chestnut.mvvm.teamworker.module.approval.UseGoodListActivity;
 import cn.chestnut.mvvm.teamworker.module.approval.WorkOffListActivity;
 import cn.chestnut.mvvm.teamworker.module.checkattendance.CheckAttendanceActivity;
 import cn.chestnut.mvvm.teamworker.module.checkattendance.PunchClockActivity;
 import cn.chestnut.mvvm.teamworker.module.checkattendance.SelectMemberActivity;
+import cn.chestnut.mvvm.teamworker.module.report.DayReportListActivity;
+import cn.chestnut.mvvm.teamworker.module.report.WorkReportActivity;
 import cn.chestnut.mvvm.teamworker.module.work.WorkFragment;
 
 /**
@@ -65,10 +70,12 @@ public class TeamManagementActivity extends BaseActivity {
         });
 
         //查看成员的工作汇报
-        binding.llWorkoff.setOnClickListener(new View.OnClickListener() {
+        binding.llWorkReport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(TeamManagementActivity.this, AskForWorkOffActivity.class));
+                Intent intent = new Intent(TeamManagementActivity.this, WorkReportActivity.class);
+                intent.putExtra("teamId", teamId);
+                startActivity(intent);
             }
         });
 
@@ -83,10 +90,13 @@ public class TeamManagementActivity extends BaseActivity {
         });
 
         //审批成员的报销申请
-        binding.llDecrusement.setOnClickListener(new View.OnClickListener() {
+        binding.llReimbursement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(TeamManagementActivity.this, ReimbursementListActivity.class);
+                intent.putExtra("teamId", teamId);
+                intent.putExtra("reimbursementType", WorkFragment.TEAM_DATA_TYPE);
+                startActivity(intent);
             }
         });
 
@@ -110,7 +120,7 @@ public class TeamManagementActivity extends BaseActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(TeamManagementActivity.this, WorkOffListActivity.class);
                 intent.putExtra("teamId", teamId);
-                intent.putExtra("workOffType", WorkOffListActivity.TEAM_WORK_OFF_TYPE);
+                intent.putExtra("workOffType", WorkFragment.TEAM_DATA_TYPE);
                 startActivity(intent);
             }
         });
@@ -119,15 +129,21 @@ public class TeamManagementActivity extends BaseActivity {
         binding.llUseGood.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(TeamManagementActivity.this, UseGoodListActivity.class);
+                intent.putExtra("teamId", teamId);
+                intent.putExtra("useGoodType", WorkFragment.TEAM_DATA_TYPE);
+                startActivity(intent);
             }
         });
 
-        //审批成员的用章申请
-        binding.llUseSeal.setOnClickListener(new View.OnClickListener() {
+        //审批成员的采购申请
+        binding.llPurchase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(TeamManagementActivity.this, PurchaseListActivity.class);
+                intent.putExtra("teamId", teamId);
+                intent.putExtra("purchaseType", WorkFragment.TEAM_DATA_TYPE);
+                startActivity(intent);
             }
         });
     }

@@ -64,10 +64,11 @@ import cn.chestnut.mvvm.teamworker.utils.sqlite.DaoManager;
 public class MyInformationActivity extends BaseActivity {
 
     private ActivityMyInformationBinding binding;
-    private String token;
+
     private String userId;
 
     private ProcessPhotoUtils processPhotoUtils;
+
     private String qiniuToken;
 
     private int GET_REGION_REQUEST_CODE = 3;
@@ -116,7 +117,6 @@ public class MyInformationActivity extends BaseActivity {
 
     protected void initData() {
         asyncSession = DaoManager.getDaoSession().startAsyncSession();
-        token = PreferenceUtil.getInstances(this).getPreferenceString("token");
         userId = PreferenceUtil.getInstances(this).getPreferenceString("userId");
     }
 
@@ -140,6 +140,7 @@ public class MyInformationActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 final EditText editText = new EditText(MyInformationActivity.this);
+                editText.setMaxLines(1);
                 new AlertDialog.Builder(MyInformationActivity.this)
                         .setTitle("昵称")
                         .setView(editText)
@@ -171,6 +172,7 @@ public class MyInformationActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 final EditText editText = new EditText(MyInformationActivity.this);
+                editText.setMaxLines(1);
                 editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                 new AlertDialog.Builder(MyInformationActivity.this)
                         .setTitle("手机")
@@ -315,7 +317,6 @@ public class MyInformationActivity extends BaseActivity {
                 params.put("region", user.getRegion());
                 break;
         }
-        params.put("userId", userId);
         RequestManager.getInstance(this).executeRequest(HttpUrls.UPDATE_MY_INFORMATION, params, new AppCallBack<ApiResponse<User>>() {
 
             @Override
@@ -335,8 +336,7 @@ public class MyInformationActivity extends BaseActivity {
                     binding.tvBirthday.setText(response.getData().getBirthday());
                     binding.tvRegion.setText(response.getData().getRegion());
                     if (StringUtil.isStringNotNull(user.getAvatar())) {
-                        GlideLoader glideLoader = new GlideLoader();
-                        glideLoader.displayImage(MyInformationActivity.this, HttpUrls.GET_PHOTO + response.getData().getAvatar(), binding.ivAvatar);
+                        GlideLoader.displayImage(MyInformationActivity.this, HttpUrls.GET_PHOTO + response.getData().getAvatar(), binding.ivAvatar);
                     }
                     asyncSession.insertOrReplace(response.getData());
                     if (flag == 1) {
@@ -378,10 +378,12 @@ public class MyInformationActivity extends BaseActivity {
 
     private void uploadPicture(String data, String token) {
         String key = null;
+        showProgressDialog(this);
         MyApplication.getUploadManager().put(data, key, token,
                 new UpCompletionHandler() {
                     @Override
                     public void complete(String key, ResponseInfo info, JSONObject res) {
+                        hideProgressDialog();
                         //res包含hash、key等信息，具体字段取决于上传策略的设置
                         if (info.isOK()) {
                             Log.i("qiniu Upload Success");
@@ -403,7 +405,7 @@ public class MyInformationActivity extends BaseActivity {
     }
 
     private void uploadPicture(final String data) {
-
+        showProgressDialog(this);
         if (StringUtil.isEmpty(qiniuToken))
 
             RequestManager.getInstance(this).executeRequest(HttpUrls.GET_QINIUTOKEN, null, new AppCallBack<ApiResponse<String>>() {
@@ -420,12 +422,12 @@ public class MyInformationActivity extends BaseActivity {
 
                 @Override
                 public void error(Throwable error) {
-                    Log.e(error.toString());
+                    hideProgressDialog();
                 }
 
                 @Override
                 public void complete() {
-
+                    hideProgressDialog();
                 }
 
             });

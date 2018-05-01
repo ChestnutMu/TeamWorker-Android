@@ -1,5 +1,6 @@
 package cn.chestnut.mvvm.teamworker.module.work;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -30,19 +31,31 @@ import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
 import cn.chestnut.mvvm.teamworker.http.RequestManager;
+import cn.chestnut.mvvm.teamworker.main.activity.MainActivity;
 import cn.chestnut.mvvm.teamworker.main.adapter.BaseListViewAdapter;
+import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.main.common.BaseFragment;
 import cn.chestnut.mvvm.teamworker.model.Team;
 import cn.chestnut.mvvm.teamworker.module.approval.AskForWorkOffActivity;
+import cn.chestnut.mvvm.teamworker.module.approval.PurchaseListActivity;
+import cn.chestnut.mvvm.teamworker.module.approval.ReimbursementListActivity;
+import cn.chestnut.mvvm.teamworker.module.approval.UseGoodListActivity;
 import cn.chestnut.mvvm.teamworker.module.approval.WorkOffListActivity;
 import cn.chestnut.mvvm.teamworker.module.checkattendance.PunchClockActivity;
+import cn.chestnut.mvvm.teamworker.module.report.DayReportListActivity;
+import cn.chestnut.mvvm.teamworker.module.report.MonthReportListActivity;
+import cn.chestnut.mvvm.teamworker.module.report.PerformanceListActivity;
+import cn.chestnut.mvvm.teamworker.module.report.WeekReportListActivity;
 import cn.chestnut.mvvm.teamworker.module.team.TeamInformationActivity;
 import cn.chestnut.mvvm.teamworker.module.team.TeamManagementActivity;
 import cn.chestnut.mvvm.teamworker.module.team.TeamMemberActivity;
+import cn.chestnut.mvvm.teamworker.module.team.TeamSettingActivity;
+import cn.chestnut.mvvm.teamworker.module.team.ViewTeamInformationActivity;
 import cn.chestnut.mvvm.teamworker.module.user.NewFriendActivity;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
+import cn.chestnut.mvvm.teamworker.utils.StringUtil;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -68,11 +81,21 @@ public class WorkFragment extends BaseFragment {
 
     private TextView tvTitle;
 
-    public static int MANAGER = 1;
+    public static final int NORMAL_MEMBER = 0;
 
-    public static int TEAM_OWNER = 2;
+    public static final int MANAGER = 1;
 
-    private int userRoleType;//0普通人 1管理员 2团队所有者
+    public static final int TEAM_OWNER = 2;
+
+    private final int REQUEST_CODE_TEAM_INFORMATION = 3;
+
+    private final int REQUEST_CODE_TEAM_SETTING = 4;
+
+    public static int MY_DATA_TYPE = 1;
+
+    public static int TEAM_DATA_TYPE = 2;
+
+    private int userRoleType;//0普通成员 1管理员 2团队所有者
 
     @Override
     protected void setBaseTitle(final TextView titleView) {
@@ -102,14 +125,6 @@ public class WorkFragment extends BaseFragment {
     @Override
     public void setButton(TextView edit, ImageView add, ImageView search) {
         super.setButton(edit, add, search);
-        add.setVisibility(View.VISIBLE);
-        add.setImageDrawable(getResources().getDrawable(R.mipmap.icon_to_to_list));
-        add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getActivity(), WorkNotificationActivity.class));
-            }
-        });
         search.setVisibility(View.VISIBLE);
         search.setImageDrawable(getResources().getDrawable(R.mipmap.icon_notification));
         search.setOnClickListener(new View.OnClickListener() {
@@ -126,6 +141,25 @@ public class WorkFragment extends BaseFragment {
         super.onResume();
         Log.d("DirectoryFragment onResume");
         getNotSendRequestCountByUserId();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("回调，解散了,resultCode:" + resultCode);
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == REQUEST_CODE_TEAM_INFORMATION) {
+                currentTeam = (Team) data.getSerializableExtra("team");
+                tvTitle.setText(currentTeam.getTeamName());
+            } else if (requestCode == MainActivity.REQUEST_CODE_BUILD_TEAM) {
+                teamList.add((Team) data.getSerializableExtra("newTeam"));
+                updateView();
+            }
+        } else if (resultCode == TeamSettingActivity.RESULT_CODE_GIVE_UP_TEAM_OWNER) {
+            hideManagementPlatform();
+        } else if (requestCode == TeamSettingActivity.RESULT_CODE_RELEASE_TEAM) {
+            getMyTeam();
+        }
     }
 
     /**
@@ -157,11 +191,23 @@ public class WorkFragment extends BaseFragment {
      * 添加监听器
      */
     private void addListener() {
-
-        binding.llDecrusement.setOnClickListener(new View.OnClickListener() {//报销申请
+        binding.llUseGood.setOnClickListener(new View.OnClickListener() {//报销申请
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), UseGoodListActivity.class);
+                intent.putExtra("teamId", currentTeamId);
+                intent.putExtra("useGoodType", WorkFragment.MY_DATA_TYPE);
+                startActivity(intent);
+            }
+        });
 
+        binding.llReimbursement.setOnClickListener(new View.OnClickListener() {//报销申请
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), ReimbursementListActivity.class);
+                intent.putExtra("teamId", currentTeamId);
+                intent.putExtra("reimbursementType", WorkFragment.MY_DATA_TYPE);
+                startActivity(intent);
             }
         });
 
@@ -170,7 +216,17 @@ public class WorkFragment extends BaseFragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), WorkOffListActivity.class);
                 intent.putExtra("teamId", currentTeamId);
-                intent.putExtra("workOffType", WorkOffListActivity.MY_WORK_OFF_TYPE);
+                intent.putExtra("workOffType", MY_DATA_TYPE);
+                startActivity(intent);
+            }
+        });
+
+        binding.llPurchase.setOnClickListener(new View.OnClickListener() {//报销申请
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), PurchaseListActivity.class);
+                intent.putExtra("teamId", currentTeamId);
+                intent.putExtra("purchaseType", WorkFragment.MY_DATA_TYPE);
                 startActivity(intent);
             }
         });
@@ -184,10 +240,107 @@ public class WorkFragment extends BaseFragment {
             }
         });
 
-        binding.llWorkReport.setOnClickListener(new View.OnClickListener() {//工作汇报
+        binding.llViewTeamInformaion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), ViewTeamInformationActivity.class);
+                intent.putExtra("team", currentTeam);
+                startActivity(intent);
+            }
+        });
 
+        binding.llViewMember.setOnClickListener(new View.OnClickListener() {//查看团队成员
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(new Intent(getActivity(), TeamMemberActivity.class));
+                intent.putExtra("teamId", currentTeamId);
+                intent.putExtra("roleType", userRoleType);
+                startActivity(intent);
+            }
+        });
+
+        binding.llDayReport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), DayReportListActivity.class);
+                intent.putExtra("teamId", currentTeamId);
+                intent.putExtra("dayReportType", MY_DATA_TYPE);
+                startActivity(intent);
+            }
+        });
+
+        binding.llWeekReport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), WeekReportListActivity.class);
+                intent.putExtra("teamId", currentTeamId);
+                intent.putExtra("weekReportType", MY_DATA_TYPE);
+                startActivity(intent);
+            }
+        });
+
+        binding.llMonthReport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), MonthReportListActivity.class);
+                intent.putExtra("teamId", currentTeamId);
+                intent.putExtra("monthReportType", MY_DATA_TYPE);
+                startActivity(intent);
+            }
+        });
+
+        binding.llPerformance.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), PerformanceListActivity.class);
+                intent.putExtra("teamId", currentTeamId);
+                intent.putExtra("performanceType", MY_DATA_TYPE);
+                startActivity(intent);
+            }
+        });
+
+        //设置管理员平台中四个按钮的监听器
+        binding.llTeamManagement.setOnClickListener(new View.OnClickListener() {//团队管理
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), TeamManagementActivity.class);
+                intent.putExtra("teamId", currentTeamId);
+                intent.putExtra("roleType", userRoleType);
+                startActivity(intent);
+            }
+        });
+
+        binding.llTeamInformation.setOnClickListener(new View.OnClickListener() {//团队资料
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), TeamInformationActivity.class);
+                intent.putExtra("team", currentTeam);
+                startActivityForResult(intent, REQUEST_CODE_TEAM_INFORMATION);
+            }
+        });
+
+        binding.llSetting.setOnClickListener(new View.OnClickListener() {//团队设置
+            @Override
+            public void onClick(View v) {
+                if (userRoleType == TEAM_OWNER) {//如果用户在团队中的角色为"团队所有者"
+                    Intent intent = new Intent(getActivity(), TeamSettingActivity.class);
+                    intent.putExtra("teamId", currentTeamId);
+                    startActivityForResult(intent, REQUEST_CODE_TEAM_SETTING);
+                } else {
+                    showToast("只有团队所有者可以进行团队设置");
+                }
+            }
+        });
+
+        binding.llTeamMember.setOnClickListener(new View.OnClickListener()
+
+        {//团队成员
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(new Intent(getActivity(), TeamMemberActivity.class));
+                intent.putExtra("teamId", currentTeamId);
+                intent.putExtra("roleType", userRoleType);
+                startActivity(intent);
             }
         });
 
@@ -215,7 +368,7 @@ public class WorkFragment extends BaseFragment {
                 currentTeam = teamList.get(position);
                 currentTeamId = currentTeam.getTeamId();
                 tvTitle.setText(teamList.get(position).getTeamName());
-                updateView();
+                getTeamRelation();
                 popupWindow.dismiss();
             }
         });
@@ -225,10 +378,6 @@ public class WorkFragment extends BaseFragment {
                 CommonUtil.setBackgroundAlpha(1, getActivity());
             }
         });
-    }
-
-    private void updateView() {
-        getTeamRelation();
     }
 
     private void getNotSendRequestCountByUserId() {
@@ -259,6 +408,7 @@ public class WorkFragment extends BaseFragment {
 
     //获取我所在的所有团队
     private void getMyTeam() {
+        showProgressDialog(getActivity());
         RequestManager.getInstance(getActivity()).executeRequest(HttpUrls.GET_MY_TEAMS, null,
                 new AppCallBack<ApiResponse<List<Team>>>() {
                     @Override
@@ -268,30 +418,39 @@ public class WorkFragment extends BaseFragment {
                                 teamList.clear();
                             }
                             teamList.addAll(response.getData());
-                            workMyTeamAdapter.notifyDataSetChanged();
-                            if (teamList.size() > 0) {
-                                //默认设置当前所在的Team工作台为第一个
-                                currentTeam = teamList.get(0);
-                                currentTeamId = currentTeam.getTeamId();
-                                tvTitle.setText(currentTeam.getTeamName());
-                                updateView();
-                            }
+                            updateView();
                         }
                     }
 
                     @Override
                     public void error(Throwable error) {
-
+                        hideProgressDialog();
                     }
 
                     @Override
                     public void complete() {
-
+                        hideProgressDialog();
                     }
                 });
     }
 
-    //获取用户在团队中的角色
+    private void updateView() {
+        workMyTeamAdapter.notifyDataSetChanged();
+        if (teamList.size() > 0) {
+            //默认设置当前所在的Team工作台为第一个
+            currentTeam = teamList.get(0);
+            currentTeamId = currentTeam.getTeamId();
+            tvTitle.setText(currentTeam.getTeamName());
+            tvTitle.setClickable(true);
+            getTeamRelation();
+        } else {
+            tvTitle.setText("");
+            tvTitle.setClickable(false);
+            hideManagementPlatform();
+        }
+    }
+
+    //获取用户在团队中的角色,根据角色来设置是否显示管理员平台
     private void getTeamRelation() {
         Map<String, String> param = new HashMap<>(1);
         param.put("teamId", currentTeamId);
@@ -302,7 +461,11 @@ public class WorkFragment extends BaseFragment {
                     public void next(ApiResponse<Map<String, String>> response) {
                         if (response.isSuccess()) {
                             userRoleType = Integer.parseInt(response.getData().get("type"));
-                            showManagementPlatform(userRoleType);
+                            if (userRoleType == TEAM_OWNER || userRoleType == MANAGER) {//如果用户在团队中的角色为"团队所有者"或管理员
+                                showManagementPlatform();
+                            } else {
+                                hideManagementPlatform();
+                            }
                         } else {
                             showToast(response.getMessage());
                         }
@@ -321,52 +484,18 @@ public class WorkFragment extends BaseFragment {
     }
 
     /**
-     * 根据用户在团队中的角色来显示或隐藏管理者平台
-     *
-     * @param userRoleType
+     * 显示管理者平台
      */
-    private void showManagementPlatform(final int userRoleType) {
-        if (userRoleType == TEAM_OWNER || userRoleType == MANAGER) {//如果用户在团队中的角色为"团队所有者"或管理员
-            binding.llManagePlatform.setVisibility(View.VISIBLE);
+    private void showManagementPlatform() {
+        binding.llManagePlatform.setVisibility(View.VISIBLE);
+    }
 
-            binding.llTeamManagement.setOnClickListener(new View.OnClickListener() {//团队管理
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(getActivity(), TeamManagementActivity.class);
-                    intent.putExtra("teamId", currentTeamId);
-                    intent.putExtra("roleType", userRoleType);
-                    startActivity(intent);
-                }
-            });
+    /**
+     * 隐藏管理者平台
+     */
+    private void hideManagementPlatform() {
+        binding.llManagePlatform.setVisibility(View.GONE);
 
-            binding.llTeamInfo.setOnClickListener(new View.OnClickListener() {//团队资料
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(getActivity(), TeamInformationActivity.class);
-                    intent.putExtra("team", currentTeam);
-                    startActivity(intent);
-                }
-            });
-
-            binding.llOrganization.setOnClickListener(new View.OnClickListener() {//组织结构
-                @Override
-                public void onClick(View v) {
-
-                }
-            });
-
-            binding.llTeamMember.setOnClickListener(new View.OnClickListener() {//团队成员
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(new Intent(getActivity(), TeamMemberActivity.class));
-                    intent.putExtra("teamId", currentTeamId);
-                    intent.putExtra("roleType", userRoleType);
-                    startActivity(intent);
-                }
-            });
-        } else {
-            binding.llManagePlatform.setVisibility(View.GONE);
-        }
     }
 }
 

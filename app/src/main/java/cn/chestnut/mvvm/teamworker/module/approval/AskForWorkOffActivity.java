@@ -90,7 +90,7 @@ public class AskForWorkOffActivity extends BaseActivity {
 
     @Override
     protected void setBaseTitle(TextView titleView) {
-        titleView.setText("请假");
+        titleView.setText("申请请假");
     }
 
     @Override
@@ -337,7 +337,7 @@ public class AskForWorkOffActivity extends BaseActivity {
     }
 
     private void applyWorkOff() {
-        Map<String, Object> params = new HashMap<>();
+        Map<String, Object> params = new ArrayMap<>();
         params.put("teamId", teamId);
         params.put("userNickname", PreferenceUtil.getInstances(this).getPreferenceString("nickname"));
         params.put("userAvatar", PreferenceUtil.getInstances(this).getPreferenceString("avatar"));

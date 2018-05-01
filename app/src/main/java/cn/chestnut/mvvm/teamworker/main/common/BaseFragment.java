@@ -1,5 +1,6 @@
 package cn.chestnut.mvvm.teamworker.main.common;
 
+import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.FragmentBaseBinding;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
+import cn.chestnut.mvvm.teamworker.utils.ProgressDialogShow;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -65,7 +67,22 @@ public abstract class BaseFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    /**
+     * 显示进度条对话框
+     */
+
+    public void showProgressDialog(Context context) {
+        ProgressDialogShow.showProgress(context);
+
+    }
+
+    /**
+     * 隐藏进度条对话框
+     */
+    public void hideProgressDialog() {
+        ProgressDialogShow.cancleProgressDialog();
     }
 
 }

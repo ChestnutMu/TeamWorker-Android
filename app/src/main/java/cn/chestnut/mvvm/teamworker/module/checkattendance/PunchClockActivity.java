@@ -205,7 +205,7 @@ public class PunchClockActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("teamId", getIntent().getStringExtra("teamId"));
         params.put("startTime", FormatDateUtil.getThisMonthFirstDayMinTimeMillsis());
-        params.put("endTime", System.currentTimeMillis());
+        params.put("endTime", MyApplication.currentServerTimeMillis());
         params.put("pageNum", 1);
         params.put("pageSize", 1000);
         showProgressDialog(this);

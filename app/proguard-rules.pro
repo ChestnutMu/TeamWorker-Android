@@ -28,3 +28,8 @@
 -keep class com.qiniu.**{*;}
 -keep class com.qiniu.**{public <init>();}
 -ignorewarnings
+
+# 日历
+-keepclasseswithmembers class * {
+    public <init>(android.content.Context);
+}

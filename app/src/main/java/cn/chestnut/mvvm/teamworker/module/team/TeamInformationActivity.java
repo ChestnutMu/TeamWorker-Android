@@ -75,6 +75,8 @@ public class TeamInformationActivity extends BaseActivity {
 
     private int SELECT_REGION_REQUESTCODE = 6;
 
+    private boolean isUpdate = false;
+
     @Override
     protected void setBaseTitle(TextView titleView) {
         titleView.setText("团队资料");
@@ -110,7 +112,6 @@ public class TeamInformationActivity extends BaseActivity {
             Team team = new Team();
             team.setTeamRegion(data.getStringExtra("region"));
             updateTeamInformation(team, UPDATE_TEAM_REGION);
-            // TODO: 2018/4/29 完善修改团队资料
         }
     }
 
@@ -136,6 +137,7 @@ public class TeamInformationActivity extends BaseActivity {
             public void onClick(View v) {
 
                 final EditText editText = new EditText(TeamInformationActivity.this);
+                editText.setMaxLines(1);
                 new AlertDialog.Builder(TeamInformationActivity.this)
                         .setTitle("修改团队名称")
                         .setView(editText)
@@ -168,8 +170,8 @@ public class TeamInformationActivity extends BaseActivity {
         binding.llTeamIndustry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 final EditText editText = new EditText(TeamInformationActivity.this);
+                editText.setMaxLines(1);
                 new AlertDialog.Builder(TeamInformationActivity.this)
                         .setTitle("修改团队所处行业")
                         .setView(editText)
@@ -195,7 +197,6 @@ public class TeamInformationActivity extends BaseActivity {
         binding.llTeamDesc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 final EditText editText = new EditText(TeamInformationActivity.this);
                 new AlertDialog.Builder(TeamInformationActivity.this)
                         .setTitle("修改团队介绍")
@@ -222,10 +223,12 @@ public class TeamInformationActivity extends BaseActivity {
 
     private void uploadPicture(String data, String token) {
         String key = null;
+        showProgressDialog(this);
         MyApplication.getUploadManager().put(data, key, token,
                 new UpCompletionHandler() {
                     @Override
                     public void complete(String key, ResponseInfo info, JSONObject res) {
+                        hideProgressDialog();
                         //res包含hash、key等信息，具体字段取决于上传策略的设置
                         if (info.isOK()) {
                             Log.i("qiniu Upload Success");
@@ -241,37 +244,41 @@ public class TeamInformationActivity extends BaseActivity {
                             //如果失败，这里可以把info信息上报自己的服务器，便于后面分析上传错误原因
                         }
                         Log.i("qiniu " + key + ",\r\n " + info + ",\r\n " + res);
+                        hideProgressDialog();
                     }
                 }, null);
 
     }
 
-    private void updateTeamInformation(Team team, int flag) {
+    private void updateTeamInformation(Team newTeam, int flag) {
         Map<String, String> params = new HashMap<>();
         switch (flag) {
             case UPDATE_TEAM_BADGE:
-                params.put("teamBadge", team.getTeamBadge());
+                params.put("teamBadge", newTeam.getTeamBadge());
                 break;
             case UPDATE_TEAM_NAME:
-                params.put("teamName", team.getTeamName());
+                params.put("teamName", newTeam.getTeamName());
                 break;
             case UPDATE_TEAM_INDUSTRY:
-                params.put("industry", team.getTeamIndustry());
+                params.put("teamIndustry", newTeam.getTeamIndustry());
                 break;
             case UPDATE_TEAM_REGION:
-                params.put("region", team.getTeamRegion());
+                params.put("teamRegion", newTeam.getTeamRegion());
                 break;
             case UPDATE_TEAM_DESC:
-                params.put("desc", team.getTeamDesc());
+                params.put("teamDesc", newTeam.getTeamDesc());
                 break;
         }
         params.put("teamId", team.getTeamId());
-        RequestManager.getInstance(this).executeRequest(HttpUrls.UPDATE_MY_INFORMATION, params, new AppCallBack<ApiResponse<Team>>() {
+        showProgressDialog(this);
+        RequestManager.getInstance(this).executeRequest(HttpUrls.UPDATE_TEAM_INFORMATION, params, new AppCallBack<ApiResponse<Team>>() {
 
             @Override
             public void next(ApiResponse<Team> response) {
                 if (response.isSuccess()) {
-                    binding.setTeam(response.getData());
+                    team = response.getData();
+                    binding.setTeam(team);
+                    isUpdate = true;
                 } else {
                     showToast(response.getMessage());
                 }
@@ -280,21 +287,20 @@ public class TeamInformationActivity extends BaseActivity {
 
             @Override
             public void error(Throwable error) {
-                Log.e(error.toString());
+                hideProgressDialog();
             }
 
             @Override
             public void complete() {
-
+                hideProgressDialog();
             }
 
         });
     }
 
     private void uploadPicture(final String data) {
-
+        showProgressDialog(this);
         if (StringUtil.isEmpty(qiniuToken))
-
             RequestManager.getInstance(this).executeRequest(HttpUrls.GET_QINIUTOKEN, null, new AppCallBack<ApiResponse<String>>() {
 
                 @Override
@@ -309,12 +315,12 @@ public class TeamInformationActivity extends BaseActivity {
 
                 @Override
                 public void error(Throwable error) {
-                    Log.e(error.toString());
+                    hideProgressDialog();
                 }
 
                 @Override
                 public void complete() {
-
+                    hideProgressDialog();
                 }
 
             });
@@ -322,6 +328,15 @@ public class TeamInformationActivity extends BaseActivity {
         else {
             uploadPicture(data, qiniuToken);
         }
+    }
 
+    @Override
+    public void finish() {
+        if (isUpdate) {
+            Intent intent = new Intent();
+            intent.putExtra("team", team);
+            setResult(RESULT_OK, intent);
+        }
+        super.finish();
     }
 }

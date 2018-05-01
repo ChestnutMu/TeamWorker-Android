@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="dayReport"
+            type="cn.chestnut.mvvm.teamworker.model.DayReport" />
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:padding="@dimen/team_worker_padding">
+
+            <ImageView
+                load_url_image="@{dayReport.userAvatar}"
+                android:layout_width="32dp"
+                android:layout_height="32dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:text="@{dayReport.userNickname}"
+                android:textColor="@color/text_black" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{dayReport.showCommitTime()}"
+                android:textColor="@color/text_gray"
+                android:textSize="@dimen/text_size_small" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/team_worker_padding"
+            android:background="@color/white"
+            android:padding="@dimen/team_worker_padding">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:text="今日完成工作"
+                android:textColor="@color/text_black"
+                android:textSize="@dimen/text_size_big" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/team_worker_padding"
+                android:text="@{dayReport.finishedWork}"
+                android:textSize="@dimen/text_size_big" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/team_worker_padding"
+            android:background="@color/white"
+            android:padding="@dimen/team_worker_padding">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="未完成工作"
+                android:textColor="@color/text_black"
+                android:textSize="@dimen/text_size_big" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/team_worker_padding"
+                android:text="@{dayReport.unfinishedWork}"
+                android:textSize="@dimen/text_size_big" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/team_worker_padding"
+            android:background="@color/white"
+            android:padding="@dimen/team_worker_padding">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="需协调工作"
+                android:textColor="@color/text_black"
+                android:textSize="@dimen/text_size_big" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/team_worker_padding"
+                android:text="@{dayReport.needCoordinatedWork}"
+                android:textSize="@dimen/text_size_big" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/team_worker_padding"
+            android:background="@color/white"
+            android:padding="@dimen/team_worker_padding"
+            android:text="备注"
+            android:textSize="@dimen/text_size_big"
+            android:textColor="@color/text_black" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@color/white"
+            android:gravity="top"
+            android:padding="@dimen/team_worker_padding"
+            android:text="@{dayReport.remarks}"
+            android:textSize="@dimen/text_size_big" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingBottom="10dp"
+            android:paddingStart="@dimen/team_worker_padding"
+            android:paddingTop="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:text="图片"
+                android:textColor="@color/text_black" />
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="3dp"
+                android:layout_marginTop="16dp"
+                app:load_url_image="@{dayReport.photo}" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</layout>

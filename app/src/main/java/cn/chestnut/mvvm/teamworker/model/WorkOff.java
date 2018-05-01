@@ -65,7 +65,6 @@ public class WorkOff extends BindingItem implements Serializable {
     /*处理时间*/
     private Long handleTime;
 
-    /*状态 WorkOffConstants*/
     /*-1收回请求 0 已申请，待审批；1 已审批，通过；2 已审批，不通过*/
     private Integer status;
 

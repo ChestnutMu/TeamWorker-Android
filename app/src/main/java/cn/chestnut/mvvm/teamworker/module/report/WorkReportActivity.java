@@ -1,4 +1,4 @@
-package cn.chestnut.mvvm.teamworker.module.work;
+package cn.chestnut.mvvm.teamworker.module.report;
 
 import android.databinding.DataBindingUtil;
 import android.support.design.widget.TabLayout;
@@ -10,11 +10,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import cn.chestnut.mvvm.teamworker.R;
-import cn.chestnut.mvvm.teamworker.databinding.ActivityMainBinding;
-import cn.chestnut.mvvm.teamworker.databinding.ActivityWorkNotificationBinding;
+import cn.chestnut.mvvm.teamworker.databinding.ActivityWorkReportBinding;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
-import cn.chestnut.mvvm.teamworker.socket.ReceiverProtocol;
-import cn.chestnut.mvvm.teamworker.utils.PermissionsUtil;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -24,34 +21,40 @@ import cn.chestnut.mvvm.teamworker.utils.PermissionsUtil;
  * Email: xiaoting233zhang@126.com
  */
 
-public class WorkNotificationActivity extends BaseActivity {
-    private ActivityWorkNotificationBinding binding;
+public class WorkReportActivity extends BaseActivity {
+
+    private ActivityWorkReportBinding binding;
+
     //Tab 文字
-    private final int[] TAB_TITLES = new int[]{R.string.work_wait, R.string.work_notification};
+    private final int[] TAB_TITLES = new int[]{R.string.day_report, R.string.week_report, R.string.month_report};
+
     //Fragment 数组
-    private final Fragment[] TAB_FRAGMENTS = new Fragment[]{new WorkWaitDealFragment(), new WorkFragment()};
+    private final Fragment[] TAB_FRAGMENTS = new Fragment[]{new DayReportFragment(), new WeekReportFragment(),new MonthReportFragment()};
+
     //Tab 数目
     private final int COUNT = TAB_TITLES.length;
+
     private MyViewPagerAdapter mAdapter;
 
     @Override
     protected void setBaseTitle(TextView titleView) {
-        titleView.setText("工作通知");
+        titleView.setText("工作汇报");
     }
 
     @Override
     protected void addContainerView(ViewGroup viewGroup, LayoutInflater inflater) {
-        binding = DataBindingUtil.inflate(inflater, R.layout.activity_work_notification, viewGroup, true);
+        binding = DataBindingUtil.inflate(inflater, R.layout.activity_work_report, viewGroup, true);
         initView();
         initData();
     }
 
-    protected void initData() {}
+    protected void initData() {
+    }
 
     protected void initView() {
         setTabs();
         mAdapter = new MyViewPagerAdapter(getSupportFragmentManager());
-        binding.viewPager.setOffscreenPageLimit(2);
+        binding.viewPager.setOffscreenPageLimit(3);
         binding.viewPager.setAdapter(mAdapter);
         binding.viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(binding.tabLayout));
         binding.tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {

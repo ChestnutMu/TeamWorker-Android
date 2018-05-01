@@ -3,6 +3,8 @@ package cn.chestnut.mvvm.teamworker.utils;
 import java.sql.Timestamp;
 import java.util.Random;
 
+import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
+
 /**
  * Copyright (c) 2017, Chestnut All rights reserved
  * Author: Chestnut
@@ -35,7 +37,7 @@ public class EntityUtil {
      */
     public static String getIdByTimeStampAndRandom(int digit) {
         if (digit < 0) return "";
-        return String.valueOf(System.currentTimeMillis()) + getRandomString(digit);
+        return String.valueOf(MyApplication.currentServerTimeMillis() + getRandomString(digit));
     }
 
     /**

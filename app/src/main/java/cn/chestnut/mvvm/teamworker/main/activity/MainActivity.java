@@ -63,6 +63,8 @@ public class MainActivity extends BaseActivity {
 
     private BroadcastReceiver receiver;
 
+    public static final int REQUEST_CODE_BUILD_TEAM = 1;
+
     @Override
     protected void setBaseTitle(TextView titleView) {
         titleView.setText("首页");
@@ -76,22 +78,21 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    public void onSessionMessage(int msgId, Object object) {
-
-        switch (msgId) {
-            case ReceiverProtocol.RECEIVE_NEW_MESSAGE:
-                break;
-
-            default:
-                break;
-        }
-
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         getNotSendRequestCountByUserId();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //分发给MainActivity下的所有附属Fragment
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        List<Fragment> fragmentList = fragmentManager.getFragments();
+        for (int i = 0; i < fragmentList.size(); i++) {
+            Fragment fragment = fragmentList.get(i);
+            fragment.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     protected void initData() {

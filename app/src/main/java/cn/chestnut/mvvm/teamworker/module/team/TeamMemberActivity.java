@@ -35,6 +35,7 @@ import cn.chestnut.mvvm.teamworker.model.User;
 import cn.chestnut.mvvm.teamworker.module.mine.MyFriendActivity;
 import cn.chestnut.mvvm.teamworker.module.user.SearchFriendActivity;
 import cn.chestnut.mvvm.teamworker.module.user.UserInformationActivity;
+import cn.chestnut.mvvm.teamworker.module.work.WorkFragment;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 
@@ -52,9 +53,15 @@ public class TeamMemberActivity extends BaseActivity {
 
     private List<User> userList;
 
-    private TeamMemberAdapter adapter;
+    private TeamMemberAdapter teamMemberAdapter;
+
+    private BaseListViewAdapter viewMemberAdapter;
 
     private String teamId;
+
+    private int userRoleType;
+
+    private boolean isNormalMember = true;
 
     @Override
     protected void setBaseTitle(TextView titleView) {
@@ -64,38 +71,47 @@ public class TeamMemberActivity extends BaseActivity {
     @Override
     protected void addContainerView(ViewGroup viewGroup, LayoutInflater inflater) {
         binding = DataBindingUtil.inflate(inflater, R.layout.activity_team_member, viewGroup, true);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         initView();
         initData();
         addListener();
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        getTeamers();
+    }
+
+    @Override
     public void setButton(TextView edit, final ImageView add, ImageView search) {
-        add.setVisibility(View.VISIBLE);
-        add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showActionPopup(add);
-            }
-        });
+        if (!isNormalMember) {
+            add.setVisibility(View.VISIBLE);
+            add.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showActionPopup(add);
+                }
+            });
+        }
     }
 
     @Override
     protected void initView() {
         userList = new ArrayList<>();
-        adapter = new TeamMemberAdapter(R.layout.item_team_member, BR.user, userList);
-        binding.lvTeamMember.setAdapter(adapter);
+        userRoleType = getIntent().getIntExtra("roleType", -1);
+        if (userRoleType == WorkFragment.MANAGER || userRoleType == WorkFragment.TEAM_OWNER) {
+            isNormalMember = false;
+            teamMemberAdapter = new TeamMemberAdapter(R.layout.item_team_member, BR.user, userList);
+            binding.lvTeamMember.setAdapter(teamMemberAdapter);
+        } else {
+            viewMemberAdapter = new BaseListViewAdapter(R.layout.item_view_member, BR.user, userList);
+            binding.lvTeamMember.setAdapter(viewMemberAdapter);
+        }
     }
 
     @Override
     protected void initData() {
         teamId = getIntent().getStringExtra("teamId");
-        getTeamers();
     }
 
     @Override
@@ -107,16 +123,18 @@ public class TeamMemberActivity extends BaseActivity {
             }
         });
 
-        adapter.setOnDeleteMemberLisenter(new TeamMemberAdapter.OnDeleteMemberLisenter() {
-            @Override
-            public void onDeleteMember(String teamUserId, int position) {
-                if (teamUserId.equals(PreferenceUtil.getInstances(TeamMemberActivity.this).getPreferenceString("userId"))) {
-                    showToast("不能从团队中删除自己");
-                } else {
-                    showDeleteMemberDialog(teamUserId, position);
+        if (!isNormalMember) {
+            teamMemberAdapter.setOnDeleteMemberLisenter(new TeamMemberAdapter.OnDeleteMemberLisenter() {
+                @Override
+                public void onDeleteMember(String teamUserId, int position) {
+                    if (teamUserId.equals(PreferenceUtil.getInstances(TeamMemberActivity.this).getPreferenceString("userId"))) {
+                        showToast("不能从团队中删除自己");
+                    } else {
+                        showDeleteMemberDialog(teamUserId, position);
+                    }
                 }
-            }
-        });
+            });
+        }
 
     }
 
@@ -150,7 +168,7 @@ public class TeamMemberActivity extends BaseActivity {
             public void next(ApiResponse<Object> response) {
                 if (response.isSuccess()) {
                     userList.remove(position);
-                    adapter.notifyDataSetChanged();
+                    teamMemberAdapter.notifyDataSetChanged();
                 }
                 showToast(response.getMessage());
             }
@@ -214,25 +232,33 @@ public class TeamMemberActivity extends BaseActivity {
     private void getTeamers() {
         Map<String, String> param = new HashMap<>();
         param.put("teamId", teamId);
+        showProgressDialog(this);
         RequestManager.getInstance(this).executeRequest(HttpUrls.GET_TEAMERS, param, new AppCallBack<ApiResponse<List<User>>>() {
             @Override
             public void next(ApiResponse<List<User>> response) {
                 if (response.isSuccess()) {
                     if (response.isSuccess()) {
+                        if (userList.size() > 0) {
+                            userList.clear();
+                        }
                         userList.addAll(response.getData());
-                        adapter.notifyDataSetChanged();
+                        if (isNormalMember) {
+                            viewMemberAdapter.notifyDataSetChanged();
+                        } else {
+                            teamMemberAdapter.notifyDataSetChanged();
+                        }
                     }
                 }
             }
 
             @Override
             public void error(Throwable error) {
-
+                hideProgressDialog();
             }
 
             @Override
             public void complete() {
-
+                hideProgressDialog();
             }
         });
     }

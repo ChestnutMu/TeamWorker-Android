@@ -16,7 +16,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="团队管理应用"
+                android:text="日常管理"
                 android:textColor="@color/black" />
         </LinearLayout>
 
@@ -85,7 +85,7 @@
                     android:layout_marginTop="8dp"
                     android:gravity="center"
                     android:singleLine="true"
-                    android:text="查看汇报"
+                    android:text="工作汇报"
                     android:textColor="@color/black"
                     android:textSize="@dimen/text_size_normal" />
             </LinearLayout>
@@ -161,10 +161,24 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@color/white"
+            android:padding="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="审批"
+                android:textColor="@color/black" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="1dp">
 
             <LinearLayout
-                android:id="@+id/ll_decrusement"
+                android:id="@+id/ll_reimbursement"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -175,15 +189,15 @@
                 android:padding="12dp">
 
                 <ImageView
-                    android:id="@+id/iv_decrusement"
+                    android:id="@+id/iv_reimbursement"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:src="@mipmap/icon_decrusement" />
+                    android:src="@mipmap/icon_reimbursement" />
 
                 <TextView
-                    android:id="@+id/tv_decursement"
+                    android:id="@+id/tv_reimbursement"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -229,7 +243,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/ll_use_seal"
+                android:id="@+id/ll_purchase"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -242,12 +256,12 @@
                 android:padding="12dp">
 
                 <ImageView
-                    android:id="@+id/iv_use_seal"
+                    android:id="@+id/iv_purchase"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:src="@mipmap/icon_use_seal" />
+                    android:src="@mipmap/icon_purchase" />
 
                 <TextView
                     android:id="@+id/tv_use_seal"
@@ -257,7 +271,7 @@
                     android:layout_marginTop="8dp"
                     android:gravity="center"
                     android:singleLine="true"
-                    android:text="用印审批"
+                    android:text="采购审批"
                     android:textColor="@color/black"
                     android:textSize="@dimen/text_size_normal" />
             </LinearLayout>
