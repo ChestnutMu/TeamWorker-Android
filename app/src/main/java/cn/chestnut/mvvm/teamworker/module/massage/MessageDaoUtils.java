@@ -458,4 +458,14 @@ public class MessageDaoUtils {
                 .where(UserDao.Properties.UserId.eq(user.getUserId()))
                 .build());
     }
+
+    public static void updateChatMessageDone(AsyncSession asyncSession, final String chatMessageId) {
+        asyncSession.runInTx(new Runnable() {
+            @Override
+            public void run() {
+                Database db = DaoManager.getDaoSession().getDatabase();
+                db.execSQL("update CHAT_MESSAGE set Done = ? where CHAT_MESSAGE_ID = ? ", new Object[]{true, chatMessageId});
+            }
+        });
+    }
 }

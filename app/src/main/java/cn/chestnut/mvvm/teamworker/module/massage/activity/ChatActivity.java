@@ -453,6 +453,7 @@ public class ChatActivity extends BaseActivity {
         final int updatePosition = messageList.size() - 1;
         Map<String, Object> param = new HashMap<>(2);
         param.put("chatId", chat.getChatId());
+        param.put("chatMessageId", chatMessage.getChatMessageId());
         param.put("message", content);
         RequestManager.getInstance(this).executeRequest(HttpUrls.SEND_CHAT_MESSAGE, param, new AppCallBack<ApiResponse<Object>>() {
             @Override

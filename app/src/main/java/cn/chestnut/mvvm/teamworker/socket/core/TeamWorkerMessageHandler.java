@@ -148,6 +148,9 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
             case ReceiverProtocol.MSG_SEND_CHAT_MANY_MESSAGE:
                 handleManyChatMessage(response);
                 break;
+            case ReceiverProtocol.MSG_SEND_CHAT_MESSAGE_DONE:
+                handleChatMessageDone(response);
+                break;
             default:
                 break;
         }
@@ -156,6 +159,13 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
             for (OnHandlerSessionListener listener : mSessionListeners) {
                 notifySessionListeners(msgId, response, listener);
             }
+    }
+
+    private void handleChatMessageDone(Object response) {
+        Log.d("response = " + response);
+        if (asyncSession == null)
+            asyncSession = DaoManager.getDaoSession().startAsyncSession();
+        MessageDaoUtils.updateChatMessageDone(asyncSession, (String) response);
     }
 
     /**
