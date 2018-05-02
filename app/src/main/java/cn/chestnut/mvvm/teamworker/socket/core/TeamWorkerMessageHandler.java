@@ -348,6 +348,7 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
                         if (chat.getChatType().equals(Constant.ChatType.TYPE_CHAT_MULTIPLAYER)) {
                             try {
                                 chat.setChatName(EmojiUtil.emojiRecovery(chat.getChatName()));
+                                chat.setLastMessage(EmojiUtil.emojiRecovery(chat.getLastMessage()));
                             } catch (UnsupportedEncodingException e) {
                                 e.printStackTrace();
                             }
