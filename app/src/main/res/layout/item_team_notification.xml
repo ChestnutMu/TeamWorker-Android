@@ -3,9 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
-            name="team"
-            type="cn.chestnut.mvvm.teamworker.model.Team" />
+            name="teamNotification"
+            type="cn.chestnut.mvvm.teamworker.model.TeamNotification" />
     </data>
 
     <LinearLayout
@@ -13,22 +14,33 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:gravity="center_vertical"
-        android:orientation="horizontal"
         android:padding="12dp">
 
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
-            app:load_url_image="@{team.teamBadge}" />
+            app:load_url_image="@{teamNotification.senderAvatar}" />
 
         <TextView
-            android:id="@+id/tv_team_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:text="@{team.teamName}"
+            android:layout_marginLeft="12dp"
+            android:layout_marginStart="12dp"
+            android:text="@{teamNotification.title}"
             android:textColor="@color/text_black"
             android:textSize="@dimen/text_size_big" />
+
+        <android.support.v4.widget.Space
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{teamNotification.showTime()}"
+            android:textColor="@color/text_gray"
+            android:textSize="@dimen/text_size_small" />
 
     </LinearLayout>
 

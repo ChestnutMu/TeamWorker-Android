@@ -234,13 +234,27 @@
                     android:orientation="vertical"
                     android:padding="12dp">
 
-                    <ImageView
-                        android:id="@+id/iv_notification"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:src="@mipmap/icon_notice" />
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/iv_notification"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:src="@mipmap/icon_notice" />
+
+                        <View
+                            android:id="@+id/badge"
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:layout_alignLeft="@id/search"
+                            android:layout_marginLeft="40dp"
+                            android:background="@drawable/bg_number_badge"
+                            android:visibility="invisible" />
+                    </RelativeLayout>
 
                     <TextView
                         android:id="@+id/tv_notification"
@@ -589,9 +603,9 @@
                         android:textColor="@color/black"
                         android:textSize="@dimen/text_size_normal" />
                 </LinearLayout>
-                
+
             </LinearLayout>
-            
+
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="24dp" />

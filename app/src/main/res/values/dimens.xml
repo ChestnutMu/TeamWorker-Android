@@ -6,5 +6,5 @@
     <dimen name="text_size_more_small">8sp</dimen>
 
     <dimen name="team_worker_margin">5dp</dimen>
-    <dimen name="team_worker_padding">12dp</dimen>
+    <dimen name="team_worker_padding">16dp</dimen>
 </resources>

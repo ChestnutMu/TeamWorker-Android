@@ -5,6 +5,7 @@ import android.databinding.DataBindingUtil;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ import cn.chestnut.mvvm.teamworker.main.adapter.BaseListViewAdapter;
 import cn.chestnut.mvvm.teamworker.main.common.BaseFragment;
 import cn.chestnut.mvvm.teamworker.model.Team;
 import cn.chestnut.mvvm.teamworker.module.team.BuildTeamActivity;
+import cn.chestnut.mvvm.teamworker.module.team.ViewTeamInformationActivity;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -86,6 +88,15 @@ public class DirectoryFragment extends BaseFragment {
                 startActivityForResult(new Intent(getActivity(), BuildTeamActivity.class), MainActivity.REQUEST_CODE_BUILD_TEAM);
             }
         });
+
+        binding.lvMyTeam.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getActivity(), ViewTeamInformationActivity.class);
+                intent.putExtra("team", teamList.get(position));
+                getActivity().startActivity(intent);
+            }
+        });
     }
 
     private void getMyTeam() {
@@ -93,8 +104,13 @@ public class DirectoryFragment extends BaseFragment {
             @Override
             public void next(ApiResponse<List<Team>> response) {
                 if (response.isSuccess()) {
-                    teamList.addAll(response.getData());
-                    workMyTeamAdapter.notifyDataSetChanged();
+                    if (response.getData().size() > 0) {
+                        teamList.addAll(response.getData());
+                        workMyTeamAdapter.notifyDataSetChanged();
+                    }else {
+                        binding.tvNoTeam.setVisibility(View.VISIBLE);
+                    }
+
                 }
             }
 

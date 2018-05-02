@@ -9,11 +9,17 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@color/white"
             android:padding="12dp"
             android:text="我的团队"
-            android:textColor="@color/black" />
+            android:textSize="@dimen/text_size_normal" />
+
+        <TextView
+            android:id="@+id/tv_no_team"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/team_worker_padding"
+            android:text="你还没有加入任何团队"
+            android:visibility="gone" />
 
         <ListView
             android:id="@+id/lv_my_team"

@@ -18,6 +18,7 @@ import cn.chestnut.mvvm.teamworker.module.approval.WorkOffListActivity;
 import cn.chestnut.mvvm.teamworker.module.checkattendance.CheckAttendanceActivity;
 import cn.chestnut.mvvm.teamworker.module.checkattendance.PunchClockActivity;
 import cn.chestnut.mvvm.teamworker.module.checkattendance.SelectMemberActivity;
+import cn.chestnut.mvvm.teamworker.module.massage.activity.SendNotificationActivity;
 import cn.chestnut.mvvm.teamworker.module.report.DayReportListActivity;
 import cn.chestnut.mvvm.teamworker.module.report.WorkReportActivity;
 import cn.chestnut.mvvm.teamworker.module.work.WorkFragment;
@@ -96,6 +97,16 @@ public class TeamManagementActivity extends BaseActivity {
                 Intent intent = new Intent(TeamManagementActivity.this, ReimbursementListActivity.class);
                 intent.putExtra("teamId", teamId);
                 intent.putExtra("reimbursementType", WorkFragment.TEAM_DATA_TYPE);
+                startActivity(intent);
+            }
+        });
+
+        //发送团队公告
+        binding.llNotification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TeamManagementActivity.this, SendNotificationActivity.class);
+                intent.putExtra("teamId", teamId);
                 startActivity(intent);
             }
         });

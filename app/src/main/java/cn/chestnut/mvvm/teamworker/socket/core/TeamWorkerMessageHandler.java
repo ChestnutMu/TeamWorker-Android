@@ -34,6 +34,7 @@ import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
 import cn.chestnut.mvvm.teamworker.model.Chat;
 import cn.chestnut.mvvm.teamworker.model.ChatMessage;
+import cn.chestnut.mvvm.teamworker.model.Notification;
 import cn.chestnut.mvvm.teamworker.model.UserInfo;
 import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
 import cn.chestnut.mvvm.teamworker.socket.ReceiverProtocol;
@@ -150,6 +151,12 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
                 break;
             case ReceiverProtocol.MSG_SEND_CHAT_MESSAGE_DONE:
                 handleChatMessageDone(response);
+                break;
+            case ReceiverProtocol.MSG_SEND_NOTIFICATION:
+                handleNotification(response);
+                break;
+            case ReceiverProtocol.MSG_SEND_MULTI_NOTIFICATION:
+                handleManyChatMessage(response);
                 break;
             default:
                 break;
@@ -390,6 +397,38 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
         });
     }
 
+    /**
+     * 处理收到的单条公告
+     *
+     * @param response
+     */
+    private void handleNotification(Object response) {
+        Notification notification = gson.fromJson(
+                response.toString(), new TypeToken<ChatMessage>() {
+                }.getType());
+        send(SendProtocol.MSG_ISSEND_NOTIFICATION, notification.getNotificationId());
+        updateTeamNotificationBadge();
+    }
+
+    /**
+     * 处理收到的多条公告
+     *
+     * @param response
+     */
+
+    private void handleMutiNotification(Object response) {
+        List<Notification> notificationList = gson.fromJson(
+                response.toString(), new TypeToken<List<Notification>>() {
+                }.getType());
+        if (asyncSession == null)
+            asyncSession = DaoManager.getDaoSession().startAsyncSession();
+        Map<String, ChatMessage> chatMap = new HashMap<>();
+        for (Notification notification : notificationList) {
+            send(SendProtocol.MSG_ISSEND_NOTIFICATION, notification.getNotificationId());
+        }
+        updateTeamNotificationBadge();
+    }
+
     private void notifySessionListeners(int msgId, Object response, OnHandlerSessionListener listener) {
         if (listener != null) {
             try {
@@ -519,6 +558,15 @@ public class TeamWorkerMessageHandler extends Handler implements MessageHandler 
     private void updateMessageLayout() {
         Log.d("updateMessageLayout 更新信息界面");
         Intent intent = new Intent(Constant.ActionConstant.UPDATE_MESSAGE_CHAT_LAYOUT);
+        LocalBroadcastManager.getInstance(MyApplication.getInstance()).sendBroadcast(intent);
+    }
+
+    /**
+     * 更新工作界面的团队公告右上角的角标
+     */
+    private void updateTeamNotificationBadge() {
+        Log.d("updateTeamNotificationBadge 更新团队公告右上角的角标");
+        Intent intent = new Intent(Constant.ActionConstant.UPDATE_TEAM_NOTIFICATION_BADGE);
         LocalBroadcastManager.getInstance(MyApplication.getInstance()).sendBroadcast(intent);
     }
 

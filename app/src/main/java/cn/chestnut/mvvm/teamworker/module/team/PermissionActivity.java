@@ -130,9 +130,9 @@ public class PermissionActivity extends BaseActivity {
             @Override
             public void next(ApiResponse<Object> response) {
                 if (response.isSuccess()) {
-                    showToast("修改团队成员权限成功");
+                    showToast("修改成员管理权限成功");
                 } else {
-                    showToast("修改团队成员权限失败");
+                    showToast(response.getMessage());
                 }
             }
 
