@@ -85,7 +85,6 @@
         <activity
             android:name=".module.team.BuildTeamActivity"
             android:windowSoftInputMode="stateHidden" />
-        <activity android:name=".module.work.WorkNotificationActivity" />
         <activity android:name=".module.massage.activity.CreateMultiChatActivity" />
         <activity android:name=".module.massage.activity.ChatSettingActivity" />
         <activity android:name=".module.massage.activity.DeleteChatUserActivity" />
@@ -120,20 +119,22 @@
         <activity android:name=".module.report.WeekReportDetailActivity" />
         <activity android:name=".module.report.WeekReportListActivity" />
         <activity android:name=".module.report.SubmitWeekReportActivity" />
-        <activity android:name=".module.report.MonthReportDetailActivity"/>
-        <activity android:name=".module.report.MonthReportListActivity"/>
-        <activity android:name=".module.report.SubmitMonthReportActivity"/>
-        <activity android:name=".module.report.PerformanceDetailActivity"/>
-        <activity android:name=".module.report.PerformanceListActivity"/>
-        <activity android:name=".module.report.SubmitPerformanceActivity"/>
-        <activity android:name=".module.approval.UseGoodDetailActivity"/>
-        <activity android:name=".module.approval.UseGoodListActivity"/>
-        <activity android:name=".module.approval.AskForUseGoodActivity"/>
-        <activity android:name=".module.approval.PurchaseDetailActivity"/>
-        <activity android:name=".module.approval.PurchaseListActivity"/>
-        <activity android:name=".module.approval.AskForPurchaseActivity"/>
-        <activity android:name=".module.report.WorkReportActivity"/>
-        <activity android:name=".module.team.ViewTeamInformationActivity"/>
+        <activity android:name=".module.report.MonthReportDetailActivity" />
+        <activity android:name=".module.report.MonthReportListActivity" />
+        <activity android:name=".module.report.SubmitMonthReportActivity" />
+        <activity android:name=".module.report.PerformanceDetailActivity" />
+        <activity android:name=".module.report.PerformanceListActivity" />
+        <activity android:name=".module.report.SubmitPerformanceActivity" />
+        <activity android:name=".module.approval.UseGoodDetailActivity" />
+        <activity android:name=".module.approval.UseGoodListActivity" />
+        <activity android:name=".module.approval.AskForUseGoodActivity" />
+        <activity android:name=".module.approval.PurchaseDetailActivity" />
+        <activity android:name=".module.approval.PurchaseListActivity" />
+        <activity android:name=".module.approval.AskForPurchaseActivity" />
+        <activity android:name=".module.report.WorkReportActivity" />
+        <activity android:name=".module.team.ViewTeamInformationActivity" />
+        <activity android:name=".module.massage.activity.TeamNotificationActivity" />
+        <activity android:name=".module.massage.activity.TeamNotificationDetailActivity"/>
     </application>
 
 </manifest>

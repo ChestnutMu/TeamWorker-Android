@@ -42,6 +42,7 @@ import cn.chestnut.mvvm.teamworker.module.approval.ReimbursementListActivity;
 import cn.chestnut.mvvm.teamworker.module.approval.UseGoodListActivity;
 import cn.chestnut.mvvm.teamworker.module.approval.WorkOffListActivity;
 import cn.chestnut.mvvm.teamworker.module.checkattendance.PunchClockActivity;
+import cn.chestnut.mvvm.teamworker.module.massage.activity.TeamNotificationActivity;
 import cn.chestnut.mvvm.teamworker.module.report.DayReportListActivity;
 import cn.chestnut.mvvm.teamworker.module.report.MonthReportListActivity;
 import cn.chestnut.mvvm.teamworker.module.report.PerformanceListActivity;
@@ -175,6 +176,8 @@ public class WorkFragment extends BaseFragment {
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equals(Constant.ActionConstant.ACTION_GET_NEW_FRIEND_REQUEST)) {
                     getNotSendRequestCountByUserId();
+                } else if (intent.getAction().equals(Constant.ActionConstant.UPDATE_TEAM_NOTIFICATION_BADGE)) {
+                    binding.badge.setVisibility(View.VISIBLE);
                 }
             }
         };
@@ -255,6 +258,16 @@ public class WorkFragment extends BaseFragment {
                 Intent intent = new Intent(new Intent(getActivity(), TeamMemberActivity.class));
                 intent.putExtra("teamId", currentTeamId);
                 intent.putExtra("roleType", userRoleType);
+                startActivity(intent);
+            }
+        });
+
+        binding.llNotification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.badge.setVisibility(View.INVISIBLE);
+                Intent intent = new Intent(getActivity(), TeamNotificationActivity.class);
+                intent.putExtra("teamId", currentTeamId);
                 startActivity(intent);
             }
         });

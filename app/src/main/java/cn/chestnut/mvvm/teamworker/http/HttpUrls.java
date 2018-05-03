@@ -10,8 +10,11 @@ package cn.chestnut.mvvm.teamworker.http;
 
 public class HttpUrls {
     //---------域名------------
+    //本地服务器ip
     public static final String HTTPHOST = "http://192.168.199.241";
-
+    //dj服务器ip
+//    public static final String HTTPHOST = "http://13.230.251.164";
+    //办公室服务器ip
 //    public static final String HTTPHOST = "http://172.18.92.153";
 
     public static final String GET_PHOTO = "http://p2fnlgaq8.bkt.clouddn.com/";
@@ -85,6 +88,13 @@ public class HttpUrls {
 
     //退出聊天室
     public static final String GO_OUT_CHAT = "/chat/goOutChat";
+
+    //------------------通知接口---------------------------------------------------------------------
+    //发送通知
+    public static final String SEND_NOTIFICATION = "/notification/sendNotification";
+
+    //获取团队中的所有公告
+    public static final String GET_TEAM_NOTIFICATION_LIST = "/notification/getTeamNotificationList";
 
 
     //-----------------------团队接口------------------------------------------------------

@@ -34,4 +34,6 @@ public class SendProtocol {
 
 
     public static final int MSG_ISSEND_CHAT_MESSAGE = 2000;//已接收聊天室消息 发送对象 chatMessageId
+
+    public static final int MSG_ISSEND_NOTIFICATION = 3000;//已接收通知 发送对象 chatMessageId
 }

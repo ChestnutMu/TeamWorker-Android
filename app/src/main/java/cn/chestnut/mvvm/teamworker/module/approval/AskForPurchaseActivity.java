@@ -67,7 +67,6 @@ public class AskForPurchaseActivity extends BaseActivity {
     protected void addContainerView(ViewGroup viewGroup, LayoutInflater inflater) {
         binding = DataBindingUtil.inflate(inflater, R.layout.activity_ask_for_purchase, viewGroup, true);
         initData();
-        initView();
         addListener();
     }
 
@@ -99,10 +98,6 @@ public class AskForPurchaseActivity extends BaseActivity {
 
     protected void initData() {
         teamId = getIntent().getStringExtra("teamId");
-    }
-
-
-    protected void initView() {
     }
 
     protected void addListener() {

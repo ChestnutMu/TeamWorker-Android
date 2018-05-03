@@ -4,42 +4,27 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="@drawable/divider_linearlayout"
         android:orientation="vertical"
         android:showDividers="middle">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/team_worker_padding"
             android:background="@color/white"
-            android:padding="10dp">
+            android:padding="@dimen/team_worker_padding">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="通知接受者："
-                android:textColor="@color/text_black"
-                android:textSize="@dimen/text_size_big" />
-
-            <TextView
-                android:id="@+id/tv_receivers"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:textSize="@dimen/text_size_big" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:padding="10dp">
+                android:text="*"
+                android:textColor="@color/redNewMsg" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="主题:"
+                android:layout_marginLeft="3dp"
+                android:text="公告标题"
                 android:textColor="@color/text_black"
                 android:textSize="@dimen/text_size_big" />
 
@@ -49,35 +34,76 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:background="@null"
-                android:hint="请输入通知主题"
+                android:hint="请输入公告标题"
                 android:textSize="@dimen/text_size_big" />
 
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/backgroundgray" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:background="@color/white"
-            android:orientation="vertical"
-            android:padding="10dp">
+            android:padding="@dimen/team_worker_padding">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="通知内容:"
+                android:text="*"
+                android:textColor="@color/redNewMsg" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:text="公告内容"
                 android:textColor="@color/text_black"
                 android:textSize="@dimen/text_size_big" />
+        </LinearLayout>
 
-            <EditText
-                android:id="@+id/et_content"
-                android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:layout_marginTop="5dp"
-                android:gravity="top|left"
-                android:background="@null"
-                android:hint="请输入通知内容"
-                android:textSize="@dimen/text_size_big" />
+        <EditText
+            android:id="@+id/et_content"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:background="@color/white"
+            android:gravity="top|left"
+            android:hint="请输入公告内容"
+            android:padding="@dimen/team_worker_padding"
+            android:textSize="@dimen/text_size_big" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/backgroundgray" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:padding="@dimen/team_worker_padding">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:text="上传图片"
+                android:textColor="@color/text_black" />
+
+            <ImageView
+                android:id="@+id/iv_picture"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginLeft="3dp"
+                android:layout_marginTop="16dp"
+                android:background="@mipmap/icon_plus" />
         </LinearLayout>
 
         <Button

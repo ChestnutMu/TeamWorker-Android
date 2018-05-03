@@ -122,9 +122,10 @@ public class CheckAttendanceActivity extends BaseActivity {
                     }
                     if (response.getData().size() > 0) {
                         attendanceList.addAll(response.getData());
-                        adapter.notifyDataSetChanged();
+                    } else {
+                        showToast("当天无考勤记录");
                     }
-
+                    adapter.notifyDataSetChanged();
                 } else {
                     showToast(response.getMessage());
                 }

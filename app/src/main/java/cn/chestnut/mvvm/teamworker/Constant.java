@@ -51,6 +51,8 @@ public class Constant {
 
         public static final String UPDATE_MESSAGE_CHAT_LAYOUT = "update_message_chat_layout";//更新消息聊天室界面
 
+        public static final String UPDATE_TEAM_NOTIFICATION_BADGE = "update_team_notification_badge";//更新工作界面中的团队公告角标
+
         public static final String ACTION_GET_NEW_FRIEND_REQUEST = "action_get_new_friend_request";//收到一条新的好友请求
 
 

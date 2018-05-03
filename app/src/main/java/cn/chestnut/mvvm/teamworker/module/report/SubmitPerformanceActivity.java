@@ -100,6 +100,14 @@ public class SubmitPerformanceActivity extends BaseActivity {
 
     @Override
     protected void addListener() {
+        binding.ivPicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                processPhotoUtils = new ProcessPhotoUtils(SubmitPerformanceActivity.this);
+                processPhotoUtils.startPhoto();
+            }
+        });
+
         binding.btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

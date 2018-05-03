@@ -2,13 +2,22 @@ package cn.chestnut.mvvm.teamworker.module.massage.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.databinding.DataBindingUtil;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.util.ArrayMap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.qiniu.android.http.ResponseInfo;
+import com.qiniu.android.storage.UpCompletionHandler;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -18,16 +27,25 @@ import java.util.Map;
 
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.ActivitySendNotificationBinding;
+import cn.chestnut.mvvm.teamworker.http.ApiResponse;
+import cn.chestnut.mvvm.teamworker.http.AppCallBack;
+import cn.chestnut.mvvm.teamworker.http.HttpUrls;
+import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
+import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
+import cn.chestnut.mvvm.teamworker.module.approval.AskForPurchaseActivity;
 import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
 import cn.chestnut.mvvm.teamworker.model.Message;
 import cn.chestnut.mvvm.teamworker.model.User;
 import cn.chestnut.mvvm.teamworker.socket.SendProtocol;
 import cn.chestnut.mvvm.teamworker.utils.EmojiUtil;
 import cn.chestnut.mvvm.teamworker.utils.EntityUtil;
+import cn.chestnut.mvvm.teamworker.utils.GlideLoader;
+import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 import cn.chestnut.mvvm.teamworker.utils.StringUtil;
 import cn.chestnut.mvvm.teamworker.utils.TimeManager;
+import cn.chestnut.mvvm.teamworker.utils.photo.ProcessPhotoUtils;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -40,11 +58,14 @@ import cn.chestnut.mvvm.teamworker.utils.TimeManager;
 public class SendNotificationActivity extends BaseActivity {
 
     private ActivitySendNotificationBinding binding;
-    private Gson gson = new Gson();
-    private List<String> uidList;
-    private List<Message> messageList;
 
-    private final int request_code_select_person = 1001;
+    private String qiniuToken;
+
+    private String pictureKey;
+
+    private String teamId;
+
+    private ProcessPhotoUtils processPhotoUtils;
 
     @Override
     protected void setBaseTitle(TextView titleView) {
@@ -60,38 +81,34 @@ public class SendNotificationActivity extends BaseActivity {
     }
 
     @Override
-    public void onSessionMessageException(int msgId, Exception exception) {
-        showToast("连接异常");
-    }
-
-    @Override
-    public void onSessionTimeout() {
-        showToast("发送超时");
-    }
-
-    @Override
-    public void onSessionClosed() {
-        showToast("连接关闭");
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == request_code_select_person && resultCode == Activity.RESULT_OK) {
-            User user = (User) data.getExtras().getSerializable("user");
-            if (user != null) {
-                if (uidList.isEmpty()) {
-                    binding.tvReceivers.setText(user.getNickname());
-                } else {
-                    binding.tvReceivers.setText(binding.tvReceivers.getText() + "," + user.getNickname());
-                }
-                uidList.add(user.getUserId());
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == ProcessPhotoUtils.UPLOAD_PHOTO_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            Uri originalUri = data.getData(); // 获得图片的uri
+            String[] proj = {MediaStore.Images.Media.DATA};
+            Cursor cursor = managedQuery(originalUri, proj, null, null, null);
+            //获得用户选择的图片的索引值
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            // 将光标移至开头 ，这个很重要，不小心很容易引起越界
+            cursor.moveToFirst();
+            //获得图片的uri
+            String filePath = cursor.getString(column_index);
+            Log.d("filePath " + filePath);
+            if (StringUtil.isStringNotNull(filePath)) {
+                uploadPicture(filePath);
             }
+        } else if (requestCode == ProcessPhotoUtils.SHOOT_PHOTO_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            String filePath = processPhotoUtils.getMyPhotoFile().getPath();
+            if (StringUtil.isStringNotNull(filePath)) {
+                uploadPicture(filePath);
+            }
+            Log.d("filePath " + filePath);
         }
     }
 
     protected void initData() {
-        uidList = new ArrayList<>();
-        messageList = new ArrayList<>();
+        processPhotoUtils = new ProcessPhotoUtils(this);
+        teamId = getIntent().getStringExtra("teamId");
     }
 
     protected void initView() {
@@ -99,19 +116,22 @@ public class SendNotificationActivity extends BaseActivity {
     }
 
     protected void addListener() {
-        binding.tvReceivers.setOnClickListener(new View.OnClickListener() {
+        binding.ivPicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SendNotificationActivity.this, SelectDepartmentActivity.class);
-                startActivityForResult(intent, request_code_select_person);
+                processPhotoUtils = new ProcessPhotoUtils(SendNotificationActivity.this);
+                processPhotoUtils.startPhoto();
             }
         });
 
         binding.btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendNotification();
-                finish();
+                if (StringUtil.isStringNotNull(binding.etTitle.getText().toString()) && StringUtil.isStringNotNull(binding.etContent.getText().toString())) {
+                    sendNotification();
+                } else {
+                    showToast("请填写带*号的信息");
+                }
             }
         });
     }
@@ -120,41 +140,89 @@ public class SendNotificationActivity extends BaseActivity {
      * 发送通知
      */
     private void sendNotification() {
-        if (uidList.isEmpty()) {
-            showToast("至少有一位接受者");
-            return;
-        }
-        String title = binding.etTitle.getText().toString();
-        String content = binding.etContent.getText().toString();
-        String chatId = EntityUtil.getIdByTimeStampAndRandom();
+        showProgressDialog(this);
+        ArrayMap<String, String> params = new ArrayMap<>(4);
+        params.put("teamId", teamId);
+        params.put("title", binding.etTitle.getText().toString());
+        params.put("content", binding.etContent.getText().toString());
+        params.put("photo", pictureKey);
+        RequestManager.getInstance(this).executeRequest(HttpUrls.SEND_NOTIFICATION, params, new AppCallBack<ApiResponse<Object>>() {
+            @Override
+            public void next(ApiResponse<Object> response) {
+                if (response.isSuccess()) {
+                    showToast("发送通知成功");
+                    finish();
+                } else {
+                    showToast(response.getMessage());
+                }
+            }
 
-        Message message = new Message();
-        message.setMessageId(EntityUtil.getIdByTimeStampAndRandom());
-        message.setSenderId(PreferenceUtil.getInstances(this).getPreferenceString("userId"));
-        message.setContent(content);
-        message.setChatId(chatId);
-        MessageDaoUtils messageDaoUtils = new MessageDaoUtils();
-        message.setTime(TimeManager.getInstance().getServiceTime());
-        messageDaoUtils.insertMessage(message);
+            @Override
+            public void error(Throwable error) {
+                hideProgressDialog();
+            }
 
-        try {
-            title = EmojiUtil.emojiConvert(title);
-            content = EmojiUtil.emojiConvert(content);
-
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-        if (StringUtil.isEmpty(content) || StringUtil.isEmpty(title)) {
-            showToast("主题或通知内容不能为空");
-            return;
-        }
-        Map<String, String> params = new HashMap<>();
-        params.put("chatName", title);
-        params.put("chatId", chatId);
-        params.put("content", content);
-        params.put("uids", gson.toJson(uidList));
-        executeRequest(SendProtocol.MSG_SEND_MESSAGE, gson.toJson(params));
+            @Override
+            public void complete() {
+                hideProgressDialog();
+            }
+        });
     }
 
+    private void uploadPicture(final String filePath, String token) {
+        MyApplication.getUploadManager().put(filePath, null, token,
+                new UpCompletionHandler() {
+                    @Override
+                    public void complete(String key, ResponseInfo info, JSONObject res) {
+                        hideProgressDialog();
+                        //res包含hash、key等信息，具体字段取决于上传策略的设置
+                        if (info.isOK()) {
+                            Log.i("qiniu Upload Success");
+                            try {
+                                pictureKey = res.getString("key");
+                                showToast("图片上传成功");
+                                GlideLoader.displayImage(SendNotificationActivity.this, filePath, binding.ivPicture);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.i("qiniu Upload Fail");
+                            showToast("图片上传失败");
+                            //如果失败，这里可以把info信息上报自己的服务器，便于后面分析上传错误原因
+                        }
+                        Log.i("qiniu " + key + ",\r\n " + info + ",\r\n " + res);
+                    }
+                }, null);
+
+    }
+
+    private void uploadPicture(final String filePath) {
+        showProgressDialog(this);
+        if (StringUtil.isEmpty(qiniuToken))
+            RequestManager.getInstance(this).executeRequest(HttpUrls.GET_QINIUTOKEN, null, new AppCallBack<ApiResponse<String>>() {
+
+                @Override
+                public void next(ApiResponse<String> response) {
+                    if (response.isSuccess()) {
+                        qiniuToken = response.getData();
+                        uploadPicture(filePath, qiniuToken);
+                    }
+                }
+
+                @Override
+                public void error(Throwable error) {
+                    hideProgressDialog();
+                }
+
+                @Override
+                public void complete() {
+                    hideProgressDialog();
+                }
+
+            });
+
+        else {
+            uploadPicture(filePath, qiniuToken);
+        }
+    }
 }
