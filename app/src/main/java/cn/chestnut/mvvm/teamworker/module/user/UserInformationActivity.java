@@ -338,6 +338,12 @@ public class UserInformationActivity extends BaseActivity {
             public void next(ApiResponse<UserFriend> response) {
                 if (response.isSuccess()) {
                     userFriend = response.getData();
+                    asyncSession.insertOrReplace(userFriend.getUser());
+                    UserInfo userInfo=new UserInfo();
+                    userInfo.setUserId(userFriend.getUser().getUserId());
+                    userInfo.setAvatar(userFriend.getUser().getAvatar());
+                    userInfo.setUserId(userFriend.getUser().getNickname());
+                    asyncSession.insertOrReplace(userInfo);
                     updateLayout();
                 }
             }
