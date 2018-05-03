@@ -75,7 +75,7 @@
             android:background="@color/backgroundgray" />
 
         <LinearLayout
-            android:id="@+id/ll_check_attendance"
+            android:id="@+id/ll_security"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -165,7 +165,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_weight="1"
-                android:text="关于Team Worker"
+                android:text="关于TeamWorker"
                 android:textColor="@color/black" />
 
             <ImageView

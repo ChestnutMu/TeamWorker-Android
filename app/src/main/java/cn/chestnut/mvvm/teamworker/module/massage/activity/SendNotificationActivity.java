@@ -12,18 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.qiniu.android.http.ResponseInfo;
 import com.qiniu.android.storage.UpCompletionHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.ActivitySendNotificationBinding;
@@ -33,18 +26,9 @@ import cn.chestnut.mvvm.teamworker.http.HttpUrls;
 import cn.chestnut.mvvm.teamworker.http.RequestManager;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
-import cn.chestnut.mvvm.teamworker.module.approval.AskForPurchaseActivity;
-import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
-import cn.chestnut.mvvm.teamworker.model.Message;
-import cn.chestnut.mvvm.teamworker.model.User;
-import cn.chestnut.mvvm.teamworker.socket.SendProtocol;
-import cn.chestnut.mvvm.teamworker.utils.EmojiUtil;
-import cn.chestnut.mvvm.teamworker.utils.EntityUtil;
 import cn.chestnut.mvvm.teamworker.utils.GlideLoader;
 import cn.chestnut.mvvm.teamworker.utils.Log;
-import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 import cn.chestnut.mvvm.teamworker.utils.StringUtil;
-import cn.chestnut.mvvm.teamworker.utils.TimeManager;
 import cn.chestnut.mvvm.teamworker.utils.photo.ProcessPhotoUtils;
 
 /**
@@ -69,7 +53,7 @@ public class SendNotificationActivity extends BaseActivity {
 
     @Override
     protected void setBaseTitle(TextView titleView) {
-        titleView.setText("发送通知");
+        titleView.setText("发送公告");
     }
 
     @Override
@@ -170,6 +154,7 @@ public class SendNotificationActivity extends BaseActivity {
     }
 
     private void uploadPicture(final String filePath, String token) {
+        showProgressDialog(this);
         MyApplication.getUploadManager().put(filePath, null, token,
                 new UpCompletionHandler() {
                     @Override

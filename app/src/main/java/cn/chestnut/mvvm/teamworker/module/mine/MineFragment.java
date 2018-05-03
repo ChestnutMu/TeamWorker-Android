@@ -66,7 +66,7 @@ public class MineFragment extends BaseFragment {
      * 添加监听器
      */
     private void addListener() {
-        binding.llCheckAttendance.setOnClickListener(new View.OnClickListener() {
+        binding.llAboutTeamworker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getActivity().startActivity(new Intent(getActivity(), PunchClockActivity.class));
@@ -108,6 +108,24 @@ public class MineFragment extends BaseFragment {
             }
         });
 
+        binding.llAboutTeamworker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().startActivity(new Intent(getActivity(), AboutTeamWorkerActivity.class));
+            }
+        });
+        binding.llHelpAndFeedback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        binding.llSecurity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().startActivity(new Intent(getActivity(), ChangePasswordActivity.class));
+            }
+        });
     }
 
     private void logout() {

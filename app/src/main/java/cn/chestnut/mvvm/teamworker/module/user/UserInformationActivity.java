@@ -51,14 +51,11 @@ import cn.chestnut.mvvm.teamworker.model.UserFriend;
 import cn.chestnut.mvvm.teamworker.model.UserInfo;
 import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
 import cn.chestnut.mvvm.teamworker.module.massage.activity.ChatActivity;
-import cn.chestnut.mvvm.teamworker.module.mine.MyFriendActivity;
 import cn.chestnut.mvvm.teamworker.module.team.PullUserIntoTeamActivity;
 import cn.chestnut.mvvm.teamworker.utils.CommonUtil;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 import cn.chestnut.mvvm.teamworker.utils.sqlite.DaoManager;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * Copyright (c) 2018, Chestnut All rights reserved
@@ -390,8 +387,6 @@ public class UserInformationActivity extends BaseActivity {
             @Override
             public void next(ApiResponse<Object> response) {
                 if (response.isSuccess()) {
-                    NewFriendRequestDaoUtils newFriendRequestDaoUtils = new NewFriendRequestDaoUtils();
-                    // TODO: 2018/4/10 删除好友后，删除本地的好友请求状态，通过requesterId
                     showToast(response.getMessage());
                     getUserDetail();
                 }

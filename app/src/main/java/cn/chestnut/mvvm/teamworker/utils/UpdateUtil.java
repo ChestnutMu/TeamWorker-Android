@@ -71,28 +71,6 @@ public class UpdateUtil {
         progressDialog.setCancelable(true);
         progressDialog.setProgress(0);
         progressDialog.show();
-//        RQ.downLoadAPK(context,url, progressDialog, new RQCallBack() {
-//            @Override
-//            public void success(JSONObject json) {
-//                context.runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        downSuccess(context, progressDialog);
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void fail(JSONObject json) {
-//
-//                context.runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        downFial(context, progressDialog);
-//                    }
-//                });
-//            }
-//        });
     }
 
     /**

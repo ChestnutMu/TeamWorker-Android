@@ -27,12 +27,12 @@
                 android:background="@color/white"
                 android:descendantFocusability="blocksDescendants"
                 android:gravity="center"
-                android:paddingBottom="8dp"
-                android:paddingEnd="5dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
                 android:paddingStart="5dp"
-                android:paddingTop="5dp">
+                android:paddingLeft="5dp"
+                android:paddingTop="5dp"
+                android:paddingEnd="5dp"
+                android:paddingRight="5dp"
+                android:paddingBottom="8dp">
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recyclerView"
@@ -52,9 +52,9 @@
                 android:id="@+id/chatNameLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
                 android:background="@color/white"
                 android:gravity="center_vertical"
-                android:layout_marginTop="15dp"
                 android:orientation="horizontal"
                 android:padding="@dimen/team_worker_padding"
                 android:visibility="@{chat.showChatInfo()?View.VISIBLE:View.GONE}">
@@ -97,10 +97,10 @@
                 android:background="@color/white"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingBottom="6dp"
                 android:paddingLeft="@dimen/team_worker_padding"
-                android:paddingRight="@dimen/team_worker_padding"
                 android:paddingTop="6dp"
+                android:paddingRight="@dimen/team_worker_padding"
+                android:paddingBottom="6dp"
                 android:visibility="@{chat.showChatInfo()?View.VISIBLE:View.GONE}">
 
                 <TextView
@@ -151,20 +151,23 @@
                 android:layout_height="1dp"
                 android:background="@color/garyLight2" />
 
-            <TextView
-                android:id="@+id/btnDelAndOut"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/bg_corner_button_selector"
-                android:gravity="center"
-                android:padding="@dimen/team_worker_padding"
-                android:text="删除并退出"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_big" />
+                android:layout_height="56dp"
+                android:layout_marginTop="56dp"
+                android:layout_marginBottom="@dimen/team_worker_padding"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/btnDelAndOut"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:background="@drawable/bg_corner_button_selector"
+                    android:text="删除并退出"
+                    android:textColor="@color/white" />
+            </LinearLayout>
 
         </LinearLayout>
 

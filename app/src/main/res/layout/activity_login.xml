@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:layout_marginBottom="40dp"
-                android:text="欢迎使用Team Worker"
+                android:text="欢迎使用TeamWorker"
                 android:textColor="@color/white"
                 android:textSize="22sp" />
 

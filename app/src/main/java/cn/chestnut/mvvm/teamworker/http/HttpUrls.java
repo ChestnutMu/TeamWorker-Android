@@ -11,9 +11,9 @@ package cn.chestnut.mvvm.teamworker.http;
 public class HttpUrls {
     //---------域名------------
     //本地服务器ip
-    public static final String HTTPHOST = "http://192.168.199.241";
+//    public static final String HTTPHOST = "http://192.168.199.241";
     //dj服务器ip
-//    public static final String HTTPHOST = "http://13.230.251.164";
+    public static final String HTTPHOST = "http://13.230.251.164";
     //办公室服务器ip
 //    public static final String HTTPHOST = "http://172.18.92.153";
 
@@ -38,6 +38,9 @@ public class HttpUrls {
 
     //注册
     public static final String REGISTER = "/user/unauth/register";
+
+    //密码修改
+    public static final String UPDATE_PASSWORD = "/user/updatePassword";
 
     //通过账号搜索用户
     public static final String SEARCH_USER = "/user/searchUser";

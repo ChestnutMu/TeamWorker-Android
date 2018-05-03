@@ -18,8 +18,8 @@ import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
 import cn.chestnut.mvvm.teamworker.http.RequestManager;
-import cn.chestnut.mvvm.teamworker.model.User;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
+import cn.chestnut.mvvm.teamworker.model.User;
 import cn.chestnut.mvvm.teamworker.utils.MD5;
 import cn.chestnut.mvvm.teamworker.utils.StringUtil;
 
@@ -51,11 +51,18 @@ public class RegisterActivity extends BaseActivity {
         binding.tvSendSms.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (StringUtil.isBlank(binding.etVerificationCode.toString())) {
+                    showToast("请输入手机号");
+                } else if (StringUtil.isChinaPhoneLegal(binding.etAccount.getText().toString())) {
+                    showToast("短信验证码为：0000");
+                } else {
+                    showToast("手机号码格式不正确");
+                }
             }
         });
 
         //点击软键盘上的回车键也进行注册操作
-        binding.etAccount.setOnKeyListener(new View.OnKeyListener() {
+        binding.etConfirmPassword.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
@@ -90,7 +97,7 @@ public class RegisterActivity extends BaseActivity {
         String verificaitonCode = binding.etVerificationCode.getText().toString();
         String password = binding.etPassword.getText().toString();
         String confirmPassword = binding.etConfirmPassword.getText().toString();
-        if (StringUtil.isBlank(telephone) | StringUtil.isBlank(password) | StringUtil.isBlank(confirmPassword)) {
+        if (StringUtil.isBlank(telephone) || StringUtil.isBlank(password) || StringUtil.isBlank(confirmPassword)) {
             showToast("手机号和密码不能为空");
         } else if (password.length() < 6) {
             showToast("密码不能小于6位");

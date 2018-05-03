@@ -24,12 +24,11 @@ import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
 import cn.chestnut.mvvm.teamworker.http.RequestManager;
-import cn.chestnut.mvvm.teamworker.model.User;
 import cn.chestnut.mvvm.teamworker.main.common.BaseActivity;
 import cn.chestnut.mvvm.teamworker.main.common.MyApplication;
+import cn.chestnut.mvvm.teamworker.model.User;
 import cn.chestnut.mvvm.teamworker.model.UserInfo;
 import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
-import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.MD5;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 import cn.chestnut.mvvm.teamworker.utils.StringUtil;
@@ -76,18 +75,6 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 login();
-            }
-        });
-
-        //点击软键盘上的回车键也进行登陆操作
-        binding.etAccount.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
-                    login();
-                    return true;
-                }
-                return false;
             }
         });
 
@@ -173,7 +160,6 @@ public class LoginActivity extends BaseActivity {
         String nickname = PreferenceUtil.getInstances(LoginActivity.this).getPreferenceString("nickname");
         String avatar = PreferenceUtil.getInstances(LoginActivity.this).getPreferenceString("avatar");
 
-//        boolean isFristLogin = PreferenceUtil.getInstances(LoginActivity.this).getPreferenceBoolean("first_load_user_info:" + userInfo.getUserId());
         boolean isFristLogin = false;
 
         PreferenceUtil.getInstances(LoginActivity.this).savePreferenceString("userId", response.getData().getUserId());
@@ -243,11 +229,13 @@ public class LoginActivity extends BaseActivity {
     private void login() {
         String account = binding.etAccount.getText().toString();
         String password = binding.etPassword.getText().toString();
-        password = MD5.MD5(password);
-        if (StringUtil.isStringNotNull(account) && StringUtil.isStringNotNull(password)) {
+        if (StringUtil.isBlank(account) && StringUtil.isBlank(password)) {
+            showToast("手机号和密码不能为空");
+        } else if (StringUtil.isChinaPhoneLegal(account)) {
+            password = MD5.MD5(password);
             login(account, password);
         } else {
-            showToast("用户名和密码不能为空");
+            showToast("手机号码格式不正确");
         }
     }
 

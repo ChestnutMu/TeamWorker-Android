@@ -35,7 +35,6 @@ import java.util.Map;
 import cn.chestnut.mvvm.teamworker.R;
 import cn.chestnut.mvvm.teamworker.databinding.ActivityMyInformationBinding;
 import cn.chestnut.mvvm.teamworker.db.UserDao;
-import cn.chestnut.mvvm.teamworker.db.UserInfoDao;
 import cn.chestnut.mvvm.teamworker.http.ApiResponse;
 import cn.chestnut.mvvm.teamworker.http.AppCallBack;
 import cn.chestnut.mvvm.teamworker.http.HttpUrls;
@@ -46,11 +45,11 @@ import cn.chestnut.mvvm.teamworker.model.User;
 import cn.chestnut.mvvm.teamworker.model.UserInfo;
 import cn.chestnut.mvvm.teamworker.module.massage.MessageDaoUtils;
 import cn.chestnut.mvvm.teamworker.utils.EmojiUtil;
+import cn.chestnut.mvvm.teamworker.utils.GlideLoader;
 import cn.chestnut.mvvm.teamworker.utils.Log;
 import cn.chestnut.mvvm.teamworker.utils.PreferenceUtil;
 import cn.chestnut.mvvm.teamworker.utils.StringUtil;
 import cn.chestnut.mvvm.teamworker.utils.photo.ProcessPhotoUtils;
-import cn.chestnut.mvvm.teamworker.utils.GlideLoader;
 import cn.chestnut.mvvm.teamworker.utils.sqlite.DaoManager;
 
 /**
@@ -141,6 +140,8 @@ public class MyInformationActivity extends BaseActivity {
             public void onClick(View v) {
                 final EditText editText = new EditText(MyInformationActivity.this);
                 editText.setMaxLines(1);
+                editText.setLines(1);
+                editText.setInputType(InputType.TYPE_CLASS_TEXT);
                 new AlertDialog.Builder(MyInformationActivity.this)
                         .setTitle("昵称")
                         .setView(editText)
@@ -173,6 +174,7 @@ public class MyInformationActivity extends BaseActivity {
             public void onClick(View v) {
                 final EditText editText = new EditText(MyInformationActivity.this);
                 editText.setMaxLines(1);
+
                 editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                 new AlertDialog.Builder(MyInformationActivity.this)
                         .setTitle("手机")

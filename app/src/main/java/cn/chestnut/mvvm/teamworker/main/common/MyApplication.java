@@ -12,16 +12,13 @@ import com.qiniu.android.common.AutoZone;
 import com.qiniu.android.storage.Configuration;
 import com.qiniu.android.storage.UploadManager;
 import com.socks.library.KLog;
-import com.squareup.leakcanary.LeakCanary;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cn.chestnut.mvvm.teamworker.BuildConfig;
-import cn.chestnut.mvvm.teamworker.socket.core.TeamWorkerMessageHandler;
-import cn.chestnut.mvvm.teamworker.model.User;
 import cn.chestnut.mvvm.teamworker.model.UserInfo;
+import cn.chestnut.mvvm.teamworker.socket.core.TeamWorkerMessageHandler;
 
 /**
  * Copyright (c) 2017, Chestnut All rights reserved
@@ -87,10 +84,11 @@ public class MyApplication extends MultiDexApplication {
         super.onCreate();
         application = this;
 
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            return;
-        }
-        LeakCanary.install(this);
+//关闭内存泄漏检测
+//        if (LeakCanary.isInAnalyzerProcess(this)) {
+//            return;
+//        }
+//        LeakCanary.install(this);
 
         // android 7.0系统解决拍照的问题
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();

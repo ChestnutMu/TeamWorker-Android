@@ -135,6 +135,8 @@
         <activity android:name=".module.team.ViewTeamInformationActivity" />
         <activity android:name=".module.massage.activity.TeamNotificationActivity" />
         <activity android:name=".module.massage.activity.TeamNotificationDetailActivity"/>
+        <activity android:name=".module.mine.AboutTeamWorkerActivity"/>
+        <activity android:name=".module.mine.ChangePasswordActivity"/>
     </application>
 
 </manifest>

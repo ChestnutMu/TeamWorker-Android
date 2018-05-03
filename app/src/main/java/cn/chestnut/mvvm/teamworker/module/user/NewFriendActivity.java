@@ -1,6 +1,5 @@
 package cn.chestnut.mvvm.teamworker.module.user;
 
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -103,10 +102,10 @@ public class NewFriendActivity extends BaseActivity {
         }
         requestList.addAll(friendRequestDaoUtils.queryNewFriendRequestByUserId(
                 PreferenceUtil.getInstances(this).getPreferenceString("userId")));
-        if (requestList.size() == 0) {
+        if (requestList.size() > 0) {
             adapter.notifyDataSetChanged();
-        }else {
-            showToast("无新的好友请求");
+        } else {
+            showToast("无好友请求");
         }
     }
 
