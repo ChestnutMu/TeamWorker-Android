@@ -9,6 +9,12 @@ android {
             storeFile file('libs/teamworkerkeystore')
             storePassword 'deskchair'
         }
+        release {
+            keyAlias 'teamworker'
+            keyPassword 'deskchair'
+            storeFile file('libs/teamworkerkeystore')
+            storePassword 'deskchair'
+        }
     }
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
@@ -30,12 +36,14 @@ android {
     }
     buildTypes {
         debug {
-            signingConfig signingConfigs.config
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
+            signingConfig signingConfigs.release
         }
     }
     productFlavors {
